@@ -5,6 +5,7 @@ import { ROOMS } from './maps';
 import { SpriteRenderer } from './spriteRenderer';
 import { EnvironmentRenderer } from './environmentRenderer';
 import { soundEngine } from '../audio/soundEngine';
+import { JournalModal } from '../components/JournalModal';
 import { LocationId } from '../types/expedition';
 
 interface RPGAdventureEngineProps {
@@ -14,7 +15,7 @@ interface RPGAdventureEngineProps {
 export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   onTriggerInteraction,
 }) => {
-  const { state, navigateTo } = useExpedition();
+  const { state, navigateTo, toggleMute } = useExpedition();
   const { 
     starsRecovered, 
     secretGardenUnlocked, 
@@ -22,7 +23,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     bureauStamped, 
     courtVerdictReached, 
     namedConstellation, 
-    inventory 
+    inventory,
+    isMuted,
   } = state;
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -35,6 +37,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     return 'overworld';
   });
   const room = ROOMS[currentRoomId] || ROOMS['overworld'];
+
+  // Camera State (Smooth Glide Tracking)
+  const camPosRef = useRef<Position>({ x: 0, y: 0 });
 
   // Player State
   const playerPosRef = useRef<Position>({ ...room.defaultSpawn });
@@ -54,11 +59,36 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   const [isVirtualRunning, setIsVirtualRunning] = useState<boolean>(false);
   const [activeInteractable, setActiveInteractable] = useState<InteractableObject | null>(null);
   const activeInteractableRef = useRef<InteractableObject | null>(null);
+  const [isJournalOpen, setIsJournalOpen] = useState<boolean>(false);
 
   // Target Move (Tap-to-move on mobile/desktop)
   const targetPosRef = useRef<Position | null>(null);
 
-  // Room Transition Helper
+  // Browser Fullscreen Handler
+  const toggleBrowserFullscreen = () => {
+    soundEngine.playClick();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
+  // Full-Screen Resize Listener
+  useEffect(() => {
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Room Transition Helper with Camera Snap
   const changeRoom = useCallback((newRoomId: RoomId, spawnPos?: Position, syncNav = true) => {
     soundEngine.playDoorOpen();
     setCurrentRoomId(newRoomId);
@@ -71,6 +101,19 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     targetPosRef.current = null;
     activeInteractableRef.current = null;
     setActiveInteractable(null);
+
+    // Snap camera smoothly to new room
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let zoom = 1.4;
+    if (vw < 640) zoom = 1.05;
+    else if (vw < 1024) zoom = 1.25;
+
+    let initCamX = newSpawn.x + 12 - vw / (2 * zoom);
+    let initCamY = newSpawn.y + 16 - vh / (2 * zoom);
+    if (targetRoom.width * zoom <= vw) initCamX = -(vw / zoom - targetRoom.width) / 2;
+    if (targetRoom.height * zoom <= vh) initCamY = -(vh / zoom - targetRoom.height) / 2;
+    camPosRef.current = { x: initCamX, y: initCamY };
 
     // Trigger excited companion reaction
     tedEmoteRef.current = 'sparkle';
@@ -87,7 +130,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     }
   }, [navigateTo]);
 
-  // Sync room when navigation changes externally (e.g. from Journal Quick-Travel or Header)
+  // Sync room when navigation changes externally (e.g. from Journal Quick-Travel)
   useEffect(() => {
     if (!currentLocation || currentLocation === 'boot') return;
     const targetRoomId: RoomId = currentLocation === 'hub' ? 'overworld' : (currentLocation as RoomId);
@@ -110,7 +153,6 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       changeRoom(interactable.targetRoom, interactable.targetPos);
     } else {
       soundEngine.playClick();
-      // Companion reacts happily to interactions
       tedEmoteRef.current = 'heart';
       tedEmoteTimerRef.current = 120;
       onTriggerInteraction(interactable);
@@ -145,7 +187,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     };
   }, [handleAction]);
 
-  // Game Loop
+  // 60fps Game & Camera Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -178,11 +220,15 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       frameCount++;
       const currentRoom = ROOMS[currentRoomId] || ROOMS['overworld'];
 
-      // Canvas dimensions match room
-      canvas.width = currentRoom.width;
-      canvas.height = currentRoom.height;
+      const vw = canvas.width;
+      const vh = canvas.height;
 
-      // Handle Movement Input & Sprint
+      // Responsive pixel zoom
+      let zoom = 1.4;
+      if (vw < 640) zoom = 1.05;
+      else if (vw < 1024) zoom = 1.25;
+
+      // Handle Movement Input & Sprint Speed
       let dx = 0;
       let dy = 0;
       const isRunning = keysPressed.current['shift'] || isVirtualRunning;
@@ -262,13 +308,13 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
 
         // Companion Emote when sprinting
-        if (isRunning && frameCount % 120 === 0) {
+        if (isRunning && frameCount % 140 === 0) {
           tedEmoteRef.current = 'blush';
           tedEmoteTimerRef.current = 60;
         }
       } else {
         // Idle companion emotes
-        if (frameCount % 300 === 0 && !tedEmoteRef.current) {
+        if (frameCount % 320 === 0 && !tedEmoteRef.current) {
           const emotes: Array<'heart' | 'music' | 'sleep' | 'sparkle'> = ['heart', 'music', 'sleep', 'sparkle'];
           tedEmoteRef.current = emotes[Math.floor(Math.random() * emotes.length)];
           tedEmoteTimerRef.current = 100;
@@ -318,8 +364,38 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       activeInteractableRef.current = closest;
       setActiveInteractable(closest);
 
-      // --- RENDERING ENVIRONMENT ---
+      // --- CAMERA TARGET CALCULATION & SMOOTH GLIDE ---
+      let targetCamX = playerPosRef.current.x + 12 - vw / (2 * zoom);
+      let targetCamY = playerPosRef.current.y + 16 - vh / (2 * zoom);
+
+      // If room fits on screen, center it! Otherwise clamp within room bounds
+      if (currentRoom.width * zoom <= vw) {
+        targetCamX = -(vw / zoom - currentRoom.width) / 2;
+      } else {
+        targetCamX = Math.max(0, Math.min(currentRoom.width - vw / zoom, targetCamX));
+      }
+
+      if (currentRoom.height * zoom <= vh) {
+        targetCamY = -(vh / zoom - currentRoom.height) / 2;
+      } else {
+        targetCamY = Math.max(0, Math.min(currentRoom.height - vh / zoom, targetCamY));
+      }
+
+      camPosRef.current.x += (targetCamX - camPosRef.current.x) * 0.14;
+      camPosRef.current.y += (targetCamY - camPosRef.current.y) * 0.14;
+
+      // --- RENDERING TO FULL SCREEN CANVAS ---
       ctx.imageSmoothingEnabled = false;
+
+      // Clear full background to deep cosmic void navy
+      ctx.fillStyle = '#101329';
+      ctx.fillRect(0, 0, vw, vh);
+
+      // Transform world with camera glide & zoom
+      ctx.save();
+      ctx.scale(zoom, zoom);
+      ctx.translate(-Math.floor(camPosRef.current.x), -Math.floor(camPosRef.current.y));
+
       let lights: LightSource[] = [];
 
       if (currentRoom.id === 'overworld') {
@@ -440,6 +516,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         currentRoom.theme
       );
 
+      ctx.restore();
+
       animId = requestAnimationFrame(loop);
     };
 
@@ -456,18 +534,22 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     isVirtualRunning
   ]);
 
-  // Canvas Tap/Click-to-Move
+  // Screen-to-World Click/Tap-to-Move Projection
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+    const screenX = e.clientX - rect.left;
+    const screenY = e.clientY - rect.top;
 
-    const clickX = (e.clientX - rect.left) * scaleX;
-    const clickY = (e.clientY - rect.top) * scaleY;
+    let zoom = 1.4;
+    if (canvas.width < 640) zoom = 1.05;
+    else if (canvas.width < 1024) zoom = 1.25;
 
-    targetPosRef.current = { x: clickX - 12, y: clickY - 16 };
+    const worldX = screenX / zoom + camPosRef.current.x;
+    const worldY = screenY / zoom + camPosRef.current.y;
+
+    targetPosRef.current = { x: worldX - 12, y: worldY - 16 };
   };
 
   // Virtual Controls
@@ -482,200 +564,219 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: '920px',
-        margin: '0 auto',
-      }}
-    >
-      {/* Room Title, Location Badge, & Mechanics HUD */}
-      <div
+    <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      {/* FULL SCREEN EDGE-TO-EDGE CANVAS */}
+      <canvas
+        ref={canvasRef}
+        onClick={handleCanvasClick}
+        className="pixelated"
         style={{
-          width: '100%',
-          maxWidth: `${room.width}px`,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '8px',
-          padding: '8px 14px',
-          backgroundColor: 'rgba(27, 32, 66, 0.95)',
-          border: '2px solid var(--color-twilight-blue)',
-          boxShadow: '0 4px 16px rgba(16, 19, 41, 0.8)',
+          display: 'block',
+          width: '100vw',
+          height: '100vh',
+          cursor: 'crosshair',
+        }}
+      />
+
+      {/* FLOATING TOP-LEFT LOCATION HUD */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          top: 14, 
+          left: 14, 
+          zIndex: 100, 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 8,
+          pointerEvents: 'auto',
         }}
       >
-        <div className="font-mono" style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ color: 'var(--color-lantern-gold)', fontWeight: 700 }}>LOC:</span>
-          <span style={{ color: 'var(--color-moon-cream)', fontWeight: 600 }}>{room.name.toUpperCase()}</span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Sprint Toggle */}
-          <button
-            onClick={() => setIsVirtualRunning(prev => !prev)}
-            className={`pixel-btn ${isVirtualRunning ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: '28px' }}
-            title="Toggle Running Speed (or hold Shift)"
-          >
-            {isVirtualRunning ? '⚡ SPRINTING' : '👟 WALK'}
-          </button>
-
-          {currentRoomId !== 'overworld' && (
-            <button
-              onClick={() => changeRoom('overworld')}
-              className="pixel-btn pixel-btn-peach font-mono"
-              style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: '28px' }}
-            >
-              ← RETURN TO VALLEY
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Main 2D RPG Adventure Canvas Container */}
-      <div
-        style={{
-          position: 'relative',
-          boxShadow: 'var(--pixel-border-gold), 0 12px 40px rgba(16, 19, 41, 0.95)',
-          borderRadius: '0',
-          overflow: 'hidden',
-          backgroundColor: 'var(--color-void-navy)',
-          maxWidth: '100%',
-        }}
-      >
-        <canvas
-          ref={canvasRef}
-          onClick={handleCanvasClick}
-          className="pixelated"
+        <div 
           style={{
-            display: 'block',
-            maxWidth: '100%',
-            height: 'auto',
-            cursor: 'crosshair',
+            backgroundColor: 'rgba(27, 32, 66, 0.88)',
+            backdropFilter: 'blur(8px)',
+            border: '2px solid var(--color-twilight-blue)',
+            padding: '6px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 16px rgba(16, 19, 41, 0.9)',
           }}
-        />
+        >
+          <span style={{ color: 'var(--color-lantern-gold)', fontSize: '0.85rem' }}>✦</span>
+          <span className="font-display" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', letterSpacing: '0.05em' }}>
+            BEENIE EXPEDITION
+          </span>
+          <span style={{ color: 'var(--color-twilight-blue)' }}>|</span>
+          <span className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-moon-cream)', fontWeight: 600 }}>
+            {room.name.toUpperCase()}
+          </span>
+        </div>
 
-        {/* Floating Proximity Action Button on Mobile */}
-        {activeInteractable && (
+        {currentRoomId !== 'overworld' && (
           <button
-            onClick={handleAction}
-            className="pixel-btn pixel-btn-primary font-display animate-glow"
-            style={{
-              position: 'absolute',
-              bottom: '16px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 100,
-              padding: '12px 26px',
-              fontSize: '0.85rem',
-              boxShadow: 'var(--pixel-border-gold)',
-            }}
+            onClick={() => changeRoom('overworld')}
+            className="pixel-btn pixel-btn-peach font-mono"
+            style={{ padding: '6px 12px', fontSize: '0.75rem' }}
+            title="Return to the Valley of the Stars"
           >
-            {activeInteractable.promptLabel}
+            ← VALLEY
           </button>
         )}
       </div>
 
-      {/* Retro On-Screen Virtual Controls */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: `${room.width}px`,
-          marginTop: '16px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '14px',
-          padding: '12px 16px',
-          backgroundColor: 'rgba(27, 32, 66, 0.85)',
-          border: '2px solid var(--color-twilight-blue)',
+      {/* FLOATING TOP-RIGHT STATUS & QUEST CONTROLS */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          top: 14, 
+          right: 14, 
+          zIndex: 100, 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 8,
+          pointerEvents: 'auto',
         }}
       >
-        {/* On-Screen D-Pad */}
+        {/* Stars Counter Pill */}
+        <div
+          onClick={() => {
+            soundEngine.playClick();
+            setIsJournalOpen(true);
+          }}
+          className="pixel-badge pixel-badge-gold font-mono"
+          style={{
+            padding: '6px 12px',
+            cursor: 'pointer',
+            boxShadow: 'var(--pixel-border-gold)',
+            backgroundColor: 'rgba(27, 32, 66, 0.9)',
+            backdropFilter: 'blur(8px)',
+          }}
+          title="Open Expedition Journal"
+        >
+          <span style={{ animation: 'starTwinkle 2s infinite' }}>⭐</span>
+          <span>STARS: {starsRecovered} / 7</span>
+        </div>
+
+        {/* Journal Button */}
+        <button
+          onClick={() => {
+            soundEngine.playClick();
+            setIsJournalOpen(true);
+          }}
+          className="pixel-btn pixel-btn-primary font-display"
+          style={{ padding: '6px 12px', fontSize: '0.75rem' }}
+          title="Open Expedition Journal"
+        >
+          📖 JOURNAL
+        </button>
+
+        {/* Audio Mute/Unmute */}
+        <button
+          onClick={toggleMute}
+          className="pixel-btn pixel-btn-ghost"
+          style={{ padding: '6px 10px', fontSize: '0.85rem' }}
+          title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+        >
+          {isMuted ? '🔇' : '🔊'}
+        </button>
+
+        {/* Browser Fullscreen Toggle */}
+        <button
+          onClick={toggleBrowserFullscreen}
+          className="pixel-btn pixel-btn-ghost font-mono"
+          style={{ padding: '6px 10px', fontSize: '0.85rem' }}
+          title="Toggle Browser Fullscreen (F11)"
+        >
+          ⛶
+        </button>
+      </div>
+
+      {/* FLOATING BOTTOM-LEFT D-PAD & SPRINT (TOUCH / MOUSE) */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          bottom: 18, 
+          left: 18, 
+          zIndex: 100, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 8,
+          pointerEvents: 'auto',
+        }}
+      >
+        {/* Sprint Toggle */}
+        <button
+          onClick={() => setIsVirtualRunning(prev => !prev)}
+          className={`pixel-btn ${isVirtualRunning ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
+          style={{
+            padding: '4px 10px',
+            fontSize: '0.7rem',
+            alignSelf: 'flex-start',
+            backgroundColor: 'rgba(27, 32, 66, 0.85)',
+            backdropFilter: 'blur(6px)',
+          }}
+          title="Toggle Sprint (or hold Shift)"
+        >
+          {isVirtualRunning ? '⚡ SPRINTING (SHIFT)' : '👟 WALK'}
+        </button>
+
+        {/* Minimal Glassmorphic D-Pad */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 44px)',
-            gridTemplateRows: 'repeat(3, 44px)',
-            gap: '4px',
+            gridTemplateColumns: 'repeat(3, 40px)',
+            gridTemplateRows: 'repeat(3, 40px)',
+            gap: 3,
+            backgroundColor: 'rgba(27, 32, 66, 0.65)',
+            backdropFilter: 'blur(8px)',
+            padding: 4,
+            border: '1px solid var(--color-twilight-blue)',
+            boxShadow: '0 4px 16px rgba(16, 19, 41, 0.7)',
           }}
         >
           <div />
-          <button
-            onMouseDown={() => handleVirtualDir('up', true)}
-            onMouseUp={() => handleVirtualDir('up', false)}
-            onTouchStart={() => handleVirtualDir('up', true)}
-            onTouchEnd={() => handleVirtualDir('up', false)}
-            className="pixel-btn"
-            style={{ padding: 0 }}
-          >
-            ▲
-          </button>
+          <button onMouseDown={() => handleVirtualDir('up', true)} onMouseUp={() => handleVirtualDir('up', false)} onTouchStart={() => handleVirtualDir('up', true)} onTouchEnd={() => handleVirtualDir('up', false)} className="pixel-btn" style={{ padding: 0 }}>▲</button>
           <div />
-          <button
-            onMouseDown={() => handleVirtualDir('left', true)}
-            onMouseUp={() => handleVirtualDir('left', false)}
-            onTouchStart={() => handleVirtualDir('left', true)}
-            onTouchEnd={() => handleVirtualDir('left', false)}
-            className="pixel-btn"
-            style={{ padding: 0 }}
-          >
-            ◀
-          </button>
-          <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)' }} />
-          <button
-            onMouseDown={() => handleVirtualDir('right', true)}
-            onMouseUp={() => handleVirtualDir('right', false)}
-            onTouchStart={() => handleVirtualDir('right', true)}
-            onTouchEnd={() => handleVirtualDir('right', false)}
-            className="pixel-btn"
-            style={{ padding: 0 }}
-          >
-            ▶
-          </button>
+          <button onMouseDown={() => handleVirtualDir('left', true)} onMouseUp={() => handleVirtualDir('left', false)} onTouchStart={() => handleVirtualDir('left', true)} onTouchEnd={() => handleVirtualDir('left', false)} className="pixel-btn" style={{ padding: 0 }}>◀</button>
+          <div style={{ backgroundColor: 'var(--color-midnight-indigo)' }} />
+          <button onMouseDown={() => handleVirtualDir('right', true)} onMouseUp={() => handleVirtualDir('right', false)} onTouchStart={() => handleVirtualDir('right', true)} onTouchEnd={() => handleVirtualDir('right', false)} className="pixel-btn" style={{ padding: 0 }}>▶</button>
           <div />
-          <button
-            onMouseDown={() => handleVirtualDir('down', true)}
-            onMouseUp={() => handleVirtualDir('down', false)}
-            onTouchStart={() => handleVirtualDir('down', true)}
-            onTouchEnd={() => handleVirtualDir('down', false)}
-            className="pixel-btn"
-            style={{ padding: 0 }}
-          >
-            ▼
-          </button>
+          <button onMouseDown={() => handleVirtualDir('down', true)} onMouseUp={() => handleVirtualDir('down', false)} onTouchStart={() => handleVirtualDir('down', true)} onTouchEnd={() => handleVirtualDir('down', false)} className="pixel-btn" style={{ padding: 0 }}>▼</button>
           <div />
-        </div>
-
-        {/* Action Button & Mechanics Guide */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)', lineHeight: '1.7' }}>
-            <div>Walk: <strong style={{ color: 'var(--color-moon-cream)' }}>WASD / Arrows / Click</strong></div>
-            <div>Sprint: <strong style={{ color: 'var(--color-warm-peach)' }}>Hold Shift / Tap Sprint</strong></div>
-            <div>Action: <strong style={{ color: 'var(--color-lantern-gold)' }}>[ E ] / Space / Enter</strong></div>
-            <div>Companion: <strong style={{ color: 'var(--color-rose-glow)' }}>Walk near Ted to talk ♡</strong></div>
-          </div>
-
-          <button
-            onClick={handleAction}
-            className="pixel-btn pixel-btn-primary font-display"
-            style={{
-              width: '68px',
-              height: '68px',
-              borderRadius: '0',
-              fontSize: '1.1rem',
-              boxShadow: 'var(--pixel-border-gold)',
-            }}
-            title="Interact (E)"
-          >
-            [ E ]
-          </button>
         </div>
       </div>
+
+      {/* FLOATING BOTTOM-RIGHT ACTION BUTTON */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          bottom: 20, 
+          right: 20, 
+          zIndex: 100,
+          pointerEvents: 'auto',
+        }}
+      >
+        <button
+          onClick={handleAction}
+          className={`pixel-btn ${activeInteractable ? 'pixel-btn-primary animate-glow' : 'pixel-btn-ghost'} font-display`}
+          style={{
+            width: '66px',
+            height: '66px',
+            fontSize: '1.1rem',
+            borderRadius: 0,
+            boxShadow: activeInteractable ? 'var(--pixel-border-gold), 0 0 20px var(--color-lantern-gold)' : undefined,
+            backgroundColor: activeInteractable ? 'var(--color-lantern-gold)' : 'rgba(27, 32, 66, 0.75)',
+            backdropFilter: 'blur(8px)',
+          }}
+          title="Interact (E / Space / Enter)"
+        >
+          [ E ]
+        </button>
+      </div>
+
+      {/* IN-GAME EXPEDITION JOURNAL MODAL */}
+      {isJournalOpen && <JournalModal onClose={() => setIsJournalOpen(false)} />}
     </div>
   );
 };
