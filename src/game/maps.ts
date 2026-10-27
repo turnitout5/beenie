@@ -95,7 +95,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 240,
         width: 64,
         height: 48,
-        promptLabel: '[ E ] Birthday Table: Make A Wish',
+        promptLabel: '[ E ] Birthday Table: Cake, White Pasta & Wish',
         type: 'birthday_cake',
       },
       {

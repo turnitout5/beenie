@@ -195,50 +195,56 @@ export const ArchiveScene: React.FC = () => {
               </button>
             </div>
 
-            {/* Reconstructed Chat or Artifact Simulation */}
-            {activeMemory.id === 'mem_ordinary' && (
+            {/* Interactive Memory Artifacts */}
+            {activeMemory.id === 'mem_songs' && (
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px' }}>
-                <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-dusty-lavender)', marginBottom: '12px', textTransform: 'uppercase' }}>
-                  RECONSTRUCTED CHAT TRANSCRIPT [ARCHIVE #402]
+                <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', marginBottom: '10px', textTransform: 'uppercase' }}>
+                  OUR THREE SACRED ANTHEMS
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ alignSelf: 'flex-start', maxWidth: '82%', backgroundColor: 'var(--color-twilight-blue)', color: 'var(--color-moon-cream)', padding: '8px 12px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--color-warm-peach)', display: 'block', fontWeight: 600 }}>Beenish:</span>
-                    "Hey! Are you still awake?"
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ padding: '8px 12px', backgroundColor: 'var(--color-void-navy)', borderLeft: '3px solid var(--color-lantern-gold)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <strong style={{ color: 'var(--color-lantern-gold)' }}>1. Bol Na Halke Halke</strong>
+                      <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--color-dusty-lavender)' }}>For the quiet, tender evenings where no words are needed.</span>
+                    </div>
+                    <button 
+                      onClick={() => soundEngine.playBolNaHalkeHalke()}
+                      className="pixel-btn pixel-btn-ghost font-mono"
+                      style={{ fontSize: '0.7rem', padding: '4px 8px', whiteSpace: 'nowrap' }}
+                    >
+                      PLAY MELODY
+                    </button>
                   </div>
-                  <div style={{ alignSelf: 'flex-end', maxWidth: '82%', backgroundColor: 'var(--color-void-navy)', border: '1px solid var(--color-lantern-gold)', color: 'var(--color-moon-cream)', padding: '8px 12px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--color-lantern-gold)', display: 'block', fontWeight: 600 }}>Ted:</span>
-                    "Yeah! Just thinking about you. Everything okay?"
+                  <div style={{ padding: '8px 12px', backgroundColor: 'var(--color-void-navy)', borderLeft: '3px solid var(--color-rose-glow)' }}>
+                    <strong style={{ color: 'var(--color-rose-glow)' }}>2. Mohabbat Jisko Bakhsh De Zindagi</strong>
+                    <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--color-dusty-lavender)' }}>For the kind of love that doesn’t bend and never ends.</span>
                   </div>
-                  <div style={{ alignSelf: 'flex-start', maxWidth: '82%', backgroundColor: 'var(--color-twilight-blue)', color: 'var(--color-moon-cream)', padding: '8px 12px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--color-warm-peach)', display: 'block', fontWeight: 600 }}>Beenish:</span>
-                    "Yeah, just wanted to talk to you. You made my whole day today :)"
+                  <div style={{ padding: '8px 12px', backgroundColor: 'var(--color-void-navy)', borderLeft: '3px solid var(--color-warm-peach)' }}>
+                    <strong style={{ color: 'var(--color-warm-peach)' }}>3. Lo Maan Liya Humne Hai Nahi Tumko</strong>
+                    <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--color-dusty-lavender)' }}>For the sweet ache of missing each other when miles feel too long.</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeMemory.id === 'mem_laugh' && (
+            {activeMemory.id === 'mem_white_pasta' && (
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px' }}>
-                <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-dusty-lavender)', marginBottom: '10px', textTransform: 'uppercase' }}>
-                  RECONSTRUCTED MOMENT AUDIO LOG
+                <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-warm-peach)', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  THE 2 AM FEAST MENU
                 </div>
-                <div>
-                  <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>[RECORDED LAUGHTER]</div>
-                  <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', lineHeight: '1.6' }}>
-                    [AUDIO FRAGMENT]: Continuous uncontrollable laughter recorded. Neither party remembers what the original joke was. Measured status: Pure unadulterated joy.
-                  </p>
-                </div>
+                <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-moon-cream)', lineHeight: '1.7' }}>
+                  Steaming hot white pasta cooked just how you like it, mounds of Kinder Joys cracked open, jars of Nutella, and big midnight bowls of Koko Krunch. Eating good food with you and listening to you talk beats any five-star restaurant in the world.
+                </p>
               </div>
             )}
 
-            {activeMemory.id === 'mem_classified' && (
+            {activeMemory.id === 'mem_email_origin' && (
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px solid var(--color-lantern-gold)', padding: '14px', marginBottom: '16px', textAlign: 'center' }}>
-                <div className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '4px' }}>
-                  ★ CLASSIFIED DOSSIER #99 DECRYPTED ★
+                <div className="font-display" style={{ fontSize: '0.88rem', color: 'var(--color-lantern-gold)', marginBottom: '4px' }}>
+                  ★ ORIGIN RECORD // binishieeees@gmail.com ★
                 </div>
-                <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)' }}>
-                  SECURITY LEVEL: HEART-CLEARANCE ONLY
+                <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--color-warm-peach)' }}>
+                  Where our magic first sparked. I would choose you every single time.
                 </div>
               </div>
             )}
@@ -273,7 +279,7 @@ export const ArchiveScene: React.FC = () => {
               className="pixel-btn pixel-btn-primary font-display"
               style={{ width: '100%', justifyContent: 'center' }}
             >
-              PRESERVE IN HEART ♡
+              PRESERVE IN HEART
             </button>
           </div>
         </div>

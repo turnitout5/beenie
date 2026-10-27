@@ -115,8 +115,8 @@ export const GardenScene: React.FC = () => {
           }}
         >
           {/* Constellation above them */}
-          <div style={{ fontSize: '1.6rem', marginBottom: '16px', animation: 'pulseGlow 3s infinite' }}>
-            ✨ ✦ ✨
+          <div style={{ fontSize: '1.4rem', color: 'var(--color-lantern-gold)', marginBottom: '16px', animation: 'pulseGlow 3s infinite' }}>
+            ✦ ✦ ✦
           </div>
 
           {/* Both Characters Hand-in-Hand on the Bench */}

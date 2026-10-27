@@ -344,14 +344,14 @@ export const BureauScene: React.FC = () => {
               </p>
             </div>
 
-            {/* Special Visual Gag for The Eyes Incident per Plan.txt */}
-            {activeReport.id === 'eyes' && (
+            {/* Special Visual Gag for The 11/10 Baddie Dossier */}
+            {activeReport.id === '11_out_of_10_baddie' && (
               <div style={{ textAlign: 'center', marginBottom: '16px', backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', border: '1px solid var(--color-twilight-blue)' }}>
-                <div style={{ display: 'inline-block', transform: 'rotate(-25deg) translateY(6px)', transition: 'transform 0.4s ease' }}>
-                  <CompanionBoyfriend pose="blush" initialQuote="I am temporarily incapacitated by looking directly at her eyes!" />
+                <div style={{ display: 'inline-block', transform: 'rotate(-15deg) translateY(4px)', transition: 'transform 0.4s ease' }}>
+                  <CompanionBoyfriend pose="blush" initialQuote="I am permanently incapacitated by her 11/10 baddie energy!" />
                 </div>
                 <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginTop: '8px' }}>
-                  [INVESTIGATOR HAS COLLAPSED FROM ADORATION]
+                  [INVESTIGATOR HAS COLLAPSED FROM OVERWHELMING ADORATION]
                 </div>
               </div>
             )}
@@ -388,14 +388,14 @@ export const BureauScene: React.FC = () => {
           <div
             className="pixel-modal-content pixel-panel pixel-panel-gold"
             onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '540px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}
+            style={{ maxWidth: '560px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}
           >
-            <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', marginBottom: '8px' }}>[BOTANICAL MAP]</div>
+            <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', marginBottom: '8px' }}>[BOTANICAL MAP &amp; EMERGENCY STASH]</div>
             <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '8px' }}>
-              THE SECRET DESK DRAWER OPENS!
+              THE SECRET DESK DRAWER #07 OPENS!
             </div>
             <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.85rem', marginBottom: '16px' }}>
-              Found: An Overgrown Botanical Map &amp; Dried Lavender Petals
+              Found: Overgrown Botanical Map, Mounds of Chocolates &amp; Nutella
             </div>
 
             <div
@@ -405,16 +405,19 @@ export const BureauScene: React.FC = () => {
                 padding: '18px',
                 marginBottom: '20px',
                 textAlign: 'left',
-                fontSize: '0.9rem',
+                fontSize: '0.88rem',
                 color: 'var(--color-moon-cream)',
                 lineHeight: '1.7',
               }}
             >
-              <p style={{ marginBottom: '8px' }}>
-                "You turn the Brass Key. With a crisp metallic click, the drawer slides open."
+              <p style={{ marginBottom: '10px' }}>
+                You turn the Antique Brass Key from the museum. With a crisp metallic click, Drawer #07 slides smoothly open.
               </p>
-              <p style={{ fontStyle: 'italic', color: 'var(--color-warm-peach)' }}>
-                "Inside rests a hand-drawn map pointing toward a hidden gate at the edge of the clearing. The Secret Garden has now been permanently discovered!"
+              <p style={{ marginBottom: '10px' }}>
+                Inside rests the <strong>Overgrown Botanical Map</strong> to the concealed ivy gate, surrounded by an emergency sweet hoard: heaps of Dark, Milk, and Meethi chocolates (dhayeeeer saari!), Kinder Joys, and a jar of Nutella.
+              </p>
+              <p style={{ fontStyle: 'italic', color: 'var(--color-warm-peach)', borderLeft: '3px solid var(--color-lantern-gold)', paddingLeft: '10px', margin: 0 }}>
+                "Note from Ted: For my 11/10 baddie when she needs sugar or when she hits me with 3hm. Now take this map to the ivy gate in the south valley!"
               </p>
             </div>
 

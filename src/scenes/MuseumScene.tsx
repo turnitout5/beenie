@@ -177,10 +177,10 @@ export const MuseumScene: React.FC = () => {
 
                   {/* Category Badge */}
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                    {exhibit.id === 'exhibit_portraits' && '[ MASTER PORTRAIT ]'}
-                    {exhibit.id === 'exhibit_notices' && '[ MICRO OBSERVATIONS ]'}
-                    {exhibit.id === 'exhibit_achievements' && '[ POSITION HOLDER ]'}
-                    {exhibit.id === 'exhibit_phenomenon' && '[ SPECIAL PHENOMENON ]'}
+                    {exhibit.id === 'exhibit_ninja_h2r' && '[ SUPERBIKE & MUSCLE CAR ]'}
+                    {exhibit.id === 'exhibit_white_jet' && '[ PRIVATE JET VISION ]'}
+                    {exhibit.id === 'exhibit_athlete' && '[ CRICKET & BADMINTON ]'}
+                    {exhibit.id === 'exhibit_twin_cities' && '[ SIALKOT & ISLAMABAD ]'}
                   </div>
 
                   <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-moon-cream)' }}>

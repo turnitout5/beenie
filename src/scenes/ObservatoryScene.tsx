@@ -228,10 +228,11 @@ export const ObservatoryScene: React.FC = () => {
                 </div>
 
                 <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', letterSpacing: '0.08em', marginBottom: '8px' }}>
-                  {vignette.sceneVisual === 'photoshoot' && '[ PHOTO SHOOT ]'}
-                  {vignette.sceneVisual === 'walk' && '[ NIGHT WALK ]'}
-                  {vignette.sceneVisual === 'reels' && '[ SILLY VIDEO ]'}
-                  {vignette.sceneVisual === 'date' && '[ CORNER TABLE ]'}
+                  {vignette.sceneVisual === 'family_house' && '[ ISLAMABAD 5-MARLA ]'}
+                  {vignette.sceneVisual === 'mafia_base' && '[ SECRET MAFIA BASE ]'}
+                  {vignette.sceneVisual === 'bakery' && '[ ARTISAN BAKERY ]'}
+                  {vignette.sceneVisual === 'mountain_castle' && '[ MERI QUEEN REALM ]'}
+                  {vignette.sceneVisual === 'gaon_haveli' && '[ 12-MARLA HAVELI ]'}
                 </div>
 
                 <h3 className="font-display" style={{ fontSize: '0.95rem', color: 'var(--color-moon-cream)', marginBottom: '8px' }}>
@@ -251,7 +252,7 @@ export const ObservatoryScene: React.FC = () => {
                   handleOpenVignette(vignette);
                 }}
               >
-                OPEN CHAPTER →
+                OPEN BLUEPRINT →
               </button>
             </div>
           );
@@ -264,12 +265,12 @@ export const ObservatoryScene: React.FC = () => {
           <div
             className="pixel-modal-content pixel-panel pixel-panel-gold"
             onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '540px', backgroundColor: 'var(--color-void-navy)' }}
+            style={{ maxWidth: '580px', backgroundColor: 'var(--color-void-navy)' }}
           >
             <div className="pixel-panel-header">
               <div>
                 <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
-                  FUTURE VIGNETTE // {activeVignette.category.toUpperCase()}
+                  DREAM HOUSE // {activeVignette.category.toUpperCase()}
                 </span>
                 <h3 className="font-display" style={{ color: 'var(--color-moon-cream)', fontSize: '1rem', marginTop: '4px' }}>
                   {activeVignette.title}
@@ -289,58 +290,64 @@ export const ObservatoryScene: React.FC = () => {
               style={{
                 backgroundColor: 'var(--color-midnight-indigo)',
                 border: '2px solid var(--color-twilight-blue)',
-                padding: '24px 16px',
+                padding: '20px 16px',
                 textAlign: 'center',
                 marginBottom: '16px',
                 position: 'relative',
                 overflow: 'hidden',
               }}
             >
-              {activeVignette.sceneVisual === 'photoshoot' && (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '12px' }}>
-                    <div style={{ textAlign: 'center' }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', display: 'block', fontFamily: 'var(--font-mono)' }}>[Posing Elegantly]</span>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', display: 'block', fontFamily: 'var(--font-mono)' }}>[Making Silly Faces]</span>
-                    </div>
-                  </div>
-                  <span className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)' }}>
-                    [Camera Shutter Clicks]
-                  </span>
-                </div>
-              )}
-
-              {activeVignette.sceneVisual === 'walk' && (
+              {activeVignette.sceneVisual === 'family_house' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
-                    [Quiet Evening Walk]
+                    [ Islamabad Hills &bull; 5 Marla Family Sanctuary ]
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
-                    Quiet empty streets, cool night air, hands gently intertwined.
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
+                    Samurai Jack blue bedroom, purple/pink room with a giant teddy bear, an extra-wide sofa for my choti si Beenie, and a cozy gaming room.
                   </div>
                 </div>
               )}
 
-              {activeVignette.sceneVisual === 'reels' && (
+              {activeVignette.sceneVisual === 'mafia_base' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', marginBottom: '6px' }}>
-                    [Filming Together]
+                    [ Jet-Black Compound &bull; Batman Basement ]
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
-                    Filming the most ridiculous couple video that only the two of us understand.
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
+                    Tumbler parking bay, underground shooting range, forged daggers and swords, and a command center where I oversee your missions.
                   </div>
                 </div>
               )}
 
-              {activeVignette.sceneVisual === 'date' && (
+              {activeVignette.sceneVisual === 'bakery' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
-                    [The Corner Table]
+                    [ Sweet Timber Bakery &bull; Warm Aromas ]
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
-                    A warm corner table for two with candlelight and warm laughter.
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
+                    Freshly baked croissants, big plates of hot white pasta for lunch, and endless stacks of Nutella and chocolates.
+                  </div>
+                </div>
+              )}
+
+              {activeVignette.sceneVisual === 'mountain_castle' && (
+                <div>
+                  <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-dream-lilac)', marginBottom: '6px' }}>
+                    [ Meri Queen’s Mountain Castle &bull; Alpine Crest ]
+                  </div>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
+                    Giant crystal jhoomar, glowing fanoos lanterns, royal fur rugs, Queen's wardrobe, horseback archery, and Queen Beenie's custom sword.
+                  </div>
+                </div>
+              )}
+
+              {activeVignette.sceneVisual === 'gaon_haveli' && (
+                <div>
+                  <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-forest-moss)', marginBottom: '6px' }}>
+                    [ 12-Marla Gaon Haveli &bull; Peaceful Village Sky ]
+                  </div>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
+                    Matti ka ghar, charpaiyan laid out under the open starry night, green khet, cool humming tubewell, and tea on the chadar.
                   </div>
                 </div>
               )}
@@ -355,15 +362,20 @@ export const ObservatoryScene: React.FC = () => {
                 marginBottom: '20px',
               }}
             >
+              <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
+                ARCHITECTURAL BLUEPRINT NOTES:
+              </div>
               <p
                 style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '1rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.85rem',
                   lineHeight: '1.8',
                   color: 'var(--color-moon-cream)',
+                  whiteSpace: 'pre-line',
+                  margin: 0,
                 }}
               >
-                "{activeVignette.unlockedNote}"
+                {activeVignette.unlockedNote}
               </p>
             </div>
 
@@ -372,7 +384,7 @@ export const ObservatoryScene: React.FC = () => {
               className="pixel-btn pixel-btn-primary font-display"
               style={{ width: '100%', justifyContent: 'center' }}
             >
-              LOOK FORWARD TO THIS ♡
+              LOOK FORWARD TO THIS
             </button>
           </div>
         </div>

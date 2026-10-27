@@ -407,32 +407,38 @@ export const CourtScene: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-rose-glow)' }}>
                 <strong className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.8rem', display: 'block' }}>
-                  ALLEGED FLAW #01: "UNAUTHORIZED CUTENESS"
+                  ALLEGED FLAW #01: "THE '3HM' PROTOCOL VIOLATION"
                 </strong>
                 <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
-                  Accused of smiling in public, resulting in an immediate 50-point drop in her boyfriend's cognitive ability.
+                  Accused of hitting her boyfriend with "3hm" whenever he makes a mistake, inducing immediate panic and an emergency order of dark chocolates.
                 </p>
-                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>Finding: Innocent (Aesthetic marvel).</span>
+                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>
+                  Boyfriend's Plea: "Guilty of being completely in the right—when she says 3hm, it is 100% my fault."
+                </span>
               </div>
 
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-warm-peach)' }}>
                 <strong className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', display: 'block' }}>
-                  ALLEGED FLAW #02: "DANGEROUS BRILLIANCE"
+                  ALLEGED FLAW #02: "DHAYEEER SAARAY PAISAY EXTORTION"
                 </strong>
                 <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
-                  Accused of achieving position holder status while still making hilarious face filters on video calls.
+                  Accused of demanding endless mounds of Kinder Joys, Nutella, Koko Krunch, and "DHAYYERRRR SARYYYYYYYYYY PAISAY".
                 </p>
-                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>Finding: Commended with highest honors.</span>
+                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>
+                  Finding: Acquitted with highest honors. She deserves every single rupee and chocolate bar in the known universe.
+                </span>
               </div>
 
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-lantern-gold)' }}>
                 <strong className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', display: 'block' }}>
-                  ALLEGED FLAW #03: "UNREASONABLE KINDNESS"
+                  ALLEGED FLAW #03: "11/10 BADDIE, BOLD DEFIANCE"
                 </strong>
                 <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
-                  Accused of loving and caring for her siblings and family so deeply that it makes the whole world softer.
+                  Accused of shattering all earthly rating scales by existing as an indisputable 11/10 baddie, rendering her boyfriend permanently speechless.
                 </p>
-                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>Finding: Irrevocably adored.</span>
+                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>
+                  Finding: Irrevocably adored and celebrated forever.
+                </span>
               </div>
             </div>
 

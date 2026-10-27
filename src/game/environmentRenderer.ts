@@ -1388,39 +1388,61 @@ export class EnvironmentRenderer {
     y: number,
     frame: number
   ): void {
-    // Dark timber picnic / celebration table
+    // Dark timber celebration table
     ctx.fillStyle = '#3E2417';
-    ctx.fillRect(x, y + 20, 56, 18);
+    ctx.fillRect(x - 4, y + 20, 64, 18);
     // Table legs
     ctx.fillStyle = '#26140D';
-    ctx.fillRect(x + 4, y + 36, 6, 12);
-    ctx.fillRect(x + 46, y + 36, 6, 12);
+    ctx.fillRect(x, y + 36, 6, 12);
+    ctx.fillRect(x + 50, y + 36, 6, 12);
     // Cream linen table runner
     ctx.fillStyle = '#F4EBDD';
-    ctx.fillRect(x + 8, y + 20, 40, 18);
+    ctx.fillRect(x + 4, y + 20, 48, 18);
     ctx.fillStyle = '#E5D8C5';
-    ctx.fillRect(x + 8, y + 36, 40, 2);
+    ctx.fillRect(x + 4, y + 36, 48, 2);
 
-    // Frosted 2-tier strawberry birthday cake
+    // Steaming Bowl of White Pasta on the left
+    ctx.fillStyle = '#D6C7B2'; // Ceramic bowl
+    ctx.fillRect(x - 2, y + 24, 12, 7);
+    ctx.fillStyle = '#FFF8E7'; // Creamy white pasta
+    ctx.fillRect(x - 1, y + 23, 10, 3);
+    // Steam curls
+    const steamY = Math.sin(frame * 0.1) * 2;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.fillRect(x + 2, y + 19 + steamY, 1, 3);
+    ctx.fillRect(x + 5, y + 17 - steamY, 1, 3);
+
+    // Nutella Jar & Kinder Joy sweet pile on the right
+    ctx.fillStyle = '#3E2417'; // Nutella jar body
+    ctx.fillRect(x + 42, y + 23, 6, 8);
+    ctx.fillStyle = '#FDFBF7'; // White lid
+    ctx.fillRect(x + 41, y + 21, 8, 2);
+    // Kinder Joy egg
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x + 49, y + 25, 5, 6);
+    ctx.fillStyle = '#E98FAF';
+    ctx.fillRect(x + 49, y + 28, 5, 3);
+
+    // Frosted 2-tier strawberry birthday cake (Center)
     // Base tier
     ctx.fillStyle = '#E98FAF'; // Strawberry frosting
-    ctx.fillRect(x + 16, y + 10, 24, 10);
+    ctx.fillRect(x + 14, y + 10, 24, 10);
     ctx.fillStyle = '#F4EBDD'; // Cream drip
-    ctx.fillRect(x + 16, y + 10, 24, 2);
-    ctx.fillRect(x + 18, y + 12, 3, 3);
-    ctx.fillRect(x + 26, y + 12, 3, 3);
-    ctx.fillRect(x + 34, y + 12, 3, 3);
+    ctx.fillRect(x + 14, y + 10, 24, 2);
+    ctx.fillRect(x + 16, y + 12, 3, 3);
+    ctx.fillRect(x + 24, y + 12, 3, 3);
+    ctx.fillRect(x + 32, y + 12, 3, 3);
 
     // Top tier
     ctx.fillStyle = '#FDFBF7'; // Vanilla cream
-    ctx.fillRect(x + 20, y + 3, 16, 7);
+    ctx.fillRect(x + 18, y + 3, 16, 7);
     ctx.fillStyle = '#D83A56'; // Strawberry topping dots
-    ctx.fillRect(x + 23, y + 2, 2, 2);
-    ctx.fillRect(x + 27, y + 2, 2, 2);
-    ctx.fillRect(x + 31, y + 2, 2, 2);
+    ctx.fillRect(x + 21, y + 2, 2, 2);
+    ctx.fillRect(x + 25, y + 2, 2, 2);
+    ctx.fillRect(x + 29, y + 2, 2, 2);
 
     // 3 Birthday Candles with gentle animated flickering flames
-    const candlePositions = [x + 23, x + 27, x + 31];
+    const candlePositions = [x + 21, x + 25, x + 29];
     candlePositions.forEach((cx, idx) => {
       // Candle stick
       ctx.fillStyle = '#F6D78B';
