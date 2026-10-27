@@ -284,6 +284,70 @@ export const ObservatoryScene: React.FC = () => {
               </button>
             </div>
 
+            {/* Visual Mini-Scene Illustration per Plan.txt */}
+            <div
+              style={{
+                backgroundColor: 'var(--color-midnight-indigo)',
+                border: '2px solid var(--color-twilight-blue)',
+                padding: '24px 16px',
+                textAlign: 'center',
+                marginBottom: '16px',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {activeVignette.sceneVisual === 'photoshoot' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '20px', marginBottom: '12px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--color-warm-peach)', display: 'block', fontFamily: 'var(--font-mono)' }}>Posing Elegantly</span>
+                      <span style={{ fontSize: '2.5rem' }}>💃</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--color-lantern-gold)', display: 'block', fontFamily: 'var(--font-mono)' }}>Making Silly Faces</span>
+                      <span style={{ fontSize: '2.5rem' }}>🤪</span>
+                    </div>
+                  </div>
+                  <span className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)' }}>
+                    [CAMERA FLASH: 3... 2... 1... 📸 CLICK!]
+                  </span>
+                </div>
+              )}
+
+              {activeVignette.sceneVisual === 'walk' && (
+                <div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
+                    🏮 👫 🌙
+                  </div>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)' }}>
+                    Quiet empty streets, cool night air, hands gently intertwined.
+                  </div>
+                </div>
+              )}
+
+              {activeVignette.sceneVisual === 'reels' && (
+                <div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '8px', animation: 'floatGentle 2s infinite' }}>
+                    🎬 🕺 💃 ✨
+                  </div>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)' }}>
+                    Filming the most ridiculous couple reel that only the two of you understand.
+                  </div>
+                </div>
+              )}
+
+              {activeVignette.sceneVisual === 'date' && (
+                <div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
+                    🕯️ ☕ 🍽️ ☕ 🕯️
+                  </div>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)' }}>
+                    A warm corner table for two with candlelight and warm laughter.
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Note */}
             <div
               style={{

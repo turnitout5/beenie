@@ -101,17 +101,25 @@ export const BootScene: React.FC = () => {
       {/* Terminal Screen Panel */}
       <div
         className="pixel-panel pixel-panel-lilac"
+        onClick={() => {
+          if (bootStep < bootLogs.length) {
+            soundEngine.playClick();
+            setBootStep(bootLogs.length);
+          }
+        }}
         style={{
           maxWidth: '680px',
           width: '100%',
           backgroundColor: 'var(--color-void-navy)',
           padding: '28px 24px',
           marginBottom: '32px',
+          cursor: bootStep < bootLogs.length ? 'pointer' : 'default',
         }}
+        title={bootStep < bootLogs.length ? 'Click to skip typing' : ''}
       >
         <div className="pixel-panel-header" style={{ marginBottom: '20px' }}>
           <span className="font-mono" style={{ color: 'var(--color-dream-lilac)', fontSize: '0.8rem' }}>
-            TERMINAL // BOOT_SEQUENCE.LOG
+            TERMINAL // BOOT_SEQUENCE.LOG {bootStep < bootLogs.length && <span style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>[CLICK TO SKIP]</span>}
           </span>
           <span className="pixel-badge pixel-badge-gold">ONLINE</span>
         </div>

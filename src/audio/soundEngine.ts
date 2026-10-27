@@ -226,6 +226,113 @@ class SoundEngine {
 
     this.isAmbientPlaying = true;
   }
+
+  /**
+   * Metallic Key Unlock Click
+   */
+  public playKeyUnlock(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    // Two rapid metallic clicks
+    [0, 0.08].forEach((offset) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1400, now + offset);
+      osc.frequency.exponentialRampToValueAtTime(800, now + offset + 0.04);
+
+      gain.gain.setValueAtTime(0.2, now + offset);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.05);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.06);
+    });
+  }
+
+  /**
+   * Door opening sound (warm wooden shift)
+   */
+  public playDoorOpen(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(260, now);
+    osc.frequency.linearRampToValueAtTime(180, now + 0.25);
+
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.3);
+  }
+
+  private gardenTimer: number | null = null;
+
+  /**
+   * Serene music box arpeggios for the Secret Garden
+   */
+  public startGardenMelody(): void {
+    if (this.isMuted || this.gardenTimer !== null || typeof window === 'undefined') return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    // Gentle chord progression: C - G/B - Am - F (peaceful, nostalgic)
+    const melodyNotes = [
+      523.25, 659.25, 783.99, 1046.50, // C chord
+      493.88, 587.33, 783.99, 987.77,  // G chord
+      440.00, 523.25, 659.25, 880.00,  // Am chord
+      349.23, 440.00, 523.25, 698.46,  // F chord
+    ];
+
+    let noteIdx = 0;
+    const playNextNote = () => {
+      if (this.isMuted || !this.ctx) return;
+      const freq = melodyNotes[noteIdx];
+      noteIdx = (noteIdx + 1) % melodyNotes.length;
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const now = this.ctx.currentTime;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.04, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 1.3);
+    };
+
+    playNextNote();
+    this.gardenTimer = window.setInterval(playNextNote, 800);
+  }
+
+  public stopGardenMelody(): void {
+    if (this.gardenTimer !== null) {
+      clearInterval(this.gardenTimer);
+      this.gardenTimer = null;
+    }
+  }
 }
 
 export const soundEngine = new SoundEngine();
+

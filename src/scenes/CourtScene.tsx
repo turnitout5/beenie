@@ -10,6 +10,21 @@ export const CourtScene: React.FC = () => {
   const [trialStep, setTrialStep] = useState(courtVerdictReached ? 4 : 0);
   const [isSearching, setIsSearching] = useState(false);
   const [showSecretNote, setShowSecretNote] = useState(false);
+  const [showEvidenceModal, setShowEvidenceModal] = useState(false);
+  const [judgeComment, setJudgeComment] = useState("This court is now in session. Counsel, present your evidence.");
+
+  const judgeComments = [
+    "This court is now in session. Counsel, present your evidence.",
+    "Order! Order in the court! Will the defense please stop looking so smitten?",
+    "I have evaluated the evidence. The defendant is unequivocally adorable.",
+    "This court hereby declares the prosecution utterly outmatched by cuteness.",
+  ];
+
+  const handleJudgeClick = () => {
+    soundEngine.playGavel();
+    const nextComment = judgeComments[Math.floor(Math.random() * judgeComments.length)];
+    setJudgeComment(nextComment);
+  };
 
   const handleSearchFlaws = () => {
     soundEngine.playPaperRustle();
@@ -18,6 +33,12 @@ export const CourtScene: React.FC = () => {
       setIsSearching(false);
       setTrialStep(1); // 0 flaws found
     }, 1200);
+  };
+
+  const handleRetry = () => {
+    soundEngine.playClick();
+    setTrialStep(0);
+    setJudgeComment("Court reconvened for a re-investigation... still waiting for actual evidence!");
   };
 
   const handleObjection = () => {
@@ -96,11 +117,8 @@ export const CourtScene: React.FC = () => {
               alignItems: 'center',
               cursor: 'pointer',
             }}
-            onClick={() => {
-              soundEngine.playClick();
-              setShowSecretNote(true);
-            }}
-            title="Click behind the Judge's bench to inspect"
+            onClick={handleJudgeClick}
+            title="Click the Judge to hear judicial rulings"
           >
             <svg width="64" height="60" viewBox="0 0 24 24" shapeRendering="crispEdges" className="pixel-art">
               {/* Oversized White Wig */}
@@ -144,10 +162,26 @@ export const CourtScene: React.FC = () => {
               fontSize: '0.85rem',
               color: 'var(--color-warm-peach)',
               textAlign: 'center',
+              backgroundColor: 'var(--color-midnight-indigo)',
+              padding: '6px 14px',
+              border: '1px solid var(--color-twilight-blue)',
+              maxWidth: '480px',
             }}
           >
-            "This court is now in session. Counsel, present your evidence."
+            "{judgeComment}"
           </div>
+
+          {/* Quick link to peek behind the bench */}
+          <button
+            onClick={() => {
+              soundEngine.playClick();
+              setShowSecretNote(true);
+            }}
+            className="pixel-btn pixel-btn-ghost font-mono"
+            style={{ marginTop: '8px', fontSize: '0.7rem', padding: '2px 8px', minHeight: '26px' }}
+          >
+            [👀 PEEK BEHIND JUDGE'S BENCH]
+          </button>
         </div>
 
         {/* Defense & Prosecution Benches */}
@@ -166,19 +200,35 @@ export const CourtScene: React.FC = () => {
               border: '2px solid var(--color-twilight-blue)',
               padding: '16px',
               textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
             }}
           >
-            <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginBottom: '8px' }}>
-              PROSECUTION EVIDENCE DOSSIER
+            <div>
+              <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginBottom: '8px' }}>
+                PROSECUTION EVIDENCE DOSSIER
+              </div>
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📚</div>
+              <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginBottom: '12px' }}>
+                {isSearching
+                  ? 'Searching archives for flaws...'
+                  : trialStep >= 1
+                  ? 'Result: 0 Flaws Found (Investigation Incompetent)'
+                  : 'Stack of alleged imperfections awaiting examination.'}
+              </p>
             </div>
-            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📚</div>
-            <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
-              {isSearching
-                ? 'Searching archives for flaws...'
-                : trialStep >= 1
-                ? 'Result: 0 Flaws Found (Investigation Incompetent)'
-                : 'Stack of alleged imperfections awaiting examination.'}
-            </p>
+
+            <button
+              onClick={() => {
+                soundEngine.playPaperRustle();
+                setShowEvidenceModal(true);
+              }}
+              className="pixel-btn pixel-btn-ghost font-mono"
+              style={{ fontSize: '0.75rem', padding: '6px 10px' }}
+            >
+              EXAMINE ABSURD EVIDENCE 📂
+            </button>
           </div>
 
           {/* Defense Desk (Boyfriend) */}
@@ -302,15 +352,101 @@ export const CourtScene: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                 <span className="pixel-badge pixel-badge-gold font-mono" style={{ fontSize: '0.8rem', padding: '8px 16px' }}>
                   ✓ STAR #03 RECOVERED AND ASCENDED TO THE SKY!
                 </span>
+              </div>
+
+              {/* Retry Investigation Button */}
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                <button
+                  onClick={handleRetry}
+                  className="pixel-btn pixel-btn-ghost font-display"
+                  style={{ fontSize: '0.75rem', padding: '8px 16px' }}
+                >
+                  <span>RETRY INVESTIGATION 🔄</span>
+                </button>
+                <button
+                  onClick={() => setShowSecretNote(true)}
+                  className="pixel-btn pixel-btn-peach font-display"
+                  style={{ fontSize: '0.75rem', padding: '8px 16px' }}
+                >
+                  <span>VIEW BENCH NOTE 💌</span>
+                </button>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Absurd Evidence Modal */}
+      {showEvidenceModal && (
+        <div className="pixel-modal-backdrop" onClick={() => setShowEvidenceModal(false)}>
+          <div
+            className="pixel-modal-content pixel-panel pixel-panel-gold"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '540px', backgroundColor: 'var(--color-void-navy)' }}
+          >
+            <div className="pixel-panel-header">
+              <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
+                PROSECUTION ARCHIVE // FAILED EXHIBITS
+              </span>
+              <button
+                onClick={() => setShowEvidenceModal(false)}
+                className="pixel-btn pixel-btn-ghost font-mono"
+                style={{ padding: '4px 8px', minWidth: '32px', minHeight: '32px' }}
+              >
+                [X]
+              </button>
+            </div>
+
+            <h3 className="font-display" style={{ color: 'var(--color-warm-peach)', fontSize: '1rem', marginBottom: '14px' }}>
+              ALLEGED IMPERFECTIONS INVESTIGATED:
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-rose-glow)' }}>
+                <strong className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.8rem', display: 'block' }}>
+                  ALLEGED FLAW #01: "UNAUTHORIZED CUTENESS"
+                </strong>
+                <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
+                  Accused of smiling in public, resulting in an immediate 50-point drop in her boyfriend's cognitive ability.
+                </p>
+                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>Finding: Innocent (Aesthetic marvel).</span>
+              </div>
+
+              <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-warm-peach)' }}>
+                <strong className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', display: 'block' }}>
+                  ALLEGED FLAW #02: "DANGEROUS BRILLIANCE"
+                </strong>
+                <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
+                  Accused of achieving position holder status while still making hilarious face filters on video calls.
+                </p>
+                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>Finding: Commended with highest honors.</span>
+              </div>
+
+              <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-lantern-gold)' }}>
+                <strong className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', display: 'block' }}>
+                  ALLEGED FLAW #03: "UNREASONABLE KINDNESS"
+                </strong>
+                <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
+                  Accused of loving and caring for her siblings and family so deeply that it makes the whole world softer.
+                </p>
+                <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>Finding: Irrevocably adored.</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowEvidenceModal(false)}
+              className="pixel-btn pixel-btn-primary font-display"
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
+              DISMISS ABSURD CHARGES
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Secret Note Modal behind Judge's Bench */}
       {showSecretNote && (

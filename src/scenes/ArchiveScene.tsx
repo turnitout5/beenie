@@ -195,6 +195,54 @@ export const ArchiveScene: React.FC = () => {
               </button>
             </div>
 
+            {/* Reconstructed Chat or Artifact Simulation */}
+            {activeMemory.id === 'mem_ordinary' && (
+              <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px' }}>
+                <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-dusty-lavender)', marginBottom: '12px', textTransform: 'uppercase' }}>
+                  RECONSTRUCTED CHAT TRANSCRIPT [ARCHIVE #402]
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ alignSelf: 'flex-start', maxWidth: '82%', backgroundColor: 'var(--color-twilight-blue)', color: 'var(--color-moon-cream)', padding: '8px 12px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--color-warm-peach)', display: 'block', fontWeight: 600 }}>Beenish:</span>
+                    "Hey! Are you still awake?"
+                  </div>
+                  <div style={{ alignSelf: 'flex-end', maxWidth: '82%', backgroundColor: 'var(--color-void-navy)', border: '1px solid var(--color-lantern-gold)', color: 'var(--color-moon-cream)', padding: '8px 12px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--color-lantern-gold)', display: 'block', fontWeight: 600 }}>Ted:</span>
+                    "Yeah! Just thinking about you. Everything okay?"
+                  </div>
+                  <div style={{ alignSelf: 'flex-start', maxWidth: '82%', backgroundColor: 'var(--color-twilight-blue)', color: 'var(--color-moon-cream)', padding: '8px 12px', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--color-warm-peach)', display: 'block', fontWeight: 600 }}>Beenish:</span>
+                    "Yeah, just wanted to talk to you. You made my whole day today :)"
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeMemory.id === 'mem_laugh' && (
+              <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px' }}>
+                <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-dusty-lavender)', marginBottom: '10px', textTransform: 'uppercase' }}>
+                  RECONSTRUCTED MOMENT AUDIO LOG
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <span style={{ fontSize: '2rem' }}>😂</span>
+                  <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', lineHeight: '1.6' }}>
+                    [AUDIO FRAGMENT]: Continuous uncontrollable laughter recorded. Neither party remembers what the original joke was. Measured status: Pure unadulterated joy.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeMemory.id === 'mem_classified' && (
+              <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px solid var(--color-lantern-gold)', padding: '14px', marginBottom: '16px', textAlign: 'center' }}>
+                <div className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '4px' }}>
+                  ★ CLASSIFIED DOSSIER #99 DECRYPTED ★
+                </div>
+                <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)' }}>
+                  SECURITY LEVEL: HEART-CLEARANCE ONLY
+                </div>
+              </div>
+            )}
+
             {/* Note Content */}
             <div
               style={{
@@ -204,6 +252,9 @@ export const ArchiveScene: React.FC = () => {
                 marginBottom: '20px',
               }}
             >
+              <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                WHY THIS MOMENT MATTERS TO ME:
+              </div>
               <p
                 style={{
                   fontFamily: 'var(--font-body)',

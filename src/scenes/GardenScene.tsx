@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useExpedition } from '../state/ExpeditionContext';
 import { BIRTHDAY_LETTER } from '../data/personalization';
 import { soundEngine } from '../audio/soundEngine';
@@ -6,6 +6,13 @@ import { soundEngine } from '../audio/soundEngine';
 export const GardenScene: React.FC = () => {
   const { recoverStar } = useExpedition();
   const [isLetterOpen, setIsLetterOpen] = useState(false);
+
+  useEffect(() => {
+    soundEngine.startGardenMelody();
+    return () => {
+      soundEngine.stopGardenMelody();
+    };
+  }, []);
 
   const handleOpenLetter = () => {
     soundEngine.playStarChime();

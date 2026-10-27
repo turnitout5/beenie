@@ -6,16 +6,32 @@ import { CompanionBoyfriend } from '../components/CompanionBoyfriend';
 import { soundEngine } from '../audio/soundEngine';
 
 export const BureauScene: React.FC = () => {
-  const { state, markReportRead, stampBureau } = useExpedition();
-  const { readReports, bureauStamped } = state;
+  const { state, markReportRead, stampBureau, unlockGarden, navigateTo } = useExpedition();
+  const { readReports, bureauStamped, inventory } = state;
 
   const [activeReport, setActiveReport] = useState<BureauReport | null>(null);
   const [lampOn, setLampOn] = useState(true);
+  const [isDrawerModalOpen, setIsDrawerModalOpen] = useState(false);
+  const [drawerNotice, setDrawerNotice] = useState<string | null>(null);
+
+  const hasBrassKey = inventory.includes('brass_key');
 
   const handleOpenReport = (report: BureauReport) => {
     soundEngine.playPaperRustle();
     setActiveReport(report);
     markReportRead(report.id);
+  };
+
+  const handleInteractDrawer = () => {
+    if (hasBrassKey) {
+      soundEngine.playKeyUnlock();
+      unlockGarden();
+      setIsDrawerModalOpen(true);
+    } else {
+      soundEngine.playClick();
+      setDrawerNotice("The bottom drawer is sealed with an antique brass lock. An inscription reads: 'The key is kept where her portraits reside (Museum of Beenish).' ");
+      setTimeout(() => setDrawerNotice(null), 6000);
+    }
   };
 
   const handleApplyStamp = () => {
@@ -117,6 +133,40 @@ export const BureauScene: React.FC = () => {
                 </button>
               );
             })}
+          </div>
+
+          {/* Secret Drawer (Plan.txt breadcrumb) */}
+          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '2px dashed var(--color-twilight-blue)' }}>
+            <button
+              onClick={handleInteractDrawer}
+              className={`pixel-btn ${hasBrassKey ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                padding: '10px 14px',
+                fontSize: '0.8rem',
+              }}
+            >
+              <span>{hasBrassKey ? '🗝️ UNLOCK DESK DRAWER WITH BRASS KEY' : '🔒 DESK DRAWER #07 (LOCKED)'}</span>
+            </button>
+
+            {drawerNotice && (
+              <div
+                style={{
+                  marginTop: '10px',
+                  padding: '8px 12px',
+                  backgroundColor: 'rgba(233, 143, 175, 0.12)',
+                  border: '1px solid var(--color-rose-glow)',
+                  fontSize: '0.75rem',
+                  color: 'var(--color-rose-glow)',
+                  fontFamily: 'var(--font-mono)',
+                  lineHeight: '1.5',
+                  animation: 'fadeIn 200ms ease',
+                }}
+              >
+                {drawerNotice}
+              </div>
+            )}
           </div>
         </div>
 
@@ -295,6 +345,18 @@ export const BureauScene: React.FC = () => {
               </p>
             </div>
 
+            {/* Special Visual Gag for The Eyes Incident per Plan.txt */}
+            {activeReport.id === 'eyes' && (
+              <div style={{ textAlign: 'center', marginBottom: '16px', backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', border: '1px solid var(--color-twilight-blue)' }}>
+                <div style={{ display: 'inline-block', transform: 'rotate(-25deg) translateY(6px)', transition: 'transform 0.4s ease' }}>
+                  <CompanionBoyfriend pose="blush" initialQuote="I am temporarily incapacitated by looking directly at her eyes!" />
+                </div>
+                <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginTop: '8px' }}>
+                  [INVESTIGATOR HAS COLLAPSED FROM ADORATION]
+                </div>
+              </div>
+            )}
+
             {/* Caption / Evidence Note */}
             <div
               style={{
@@ -317,6 +379,65 @@ export const BureauScene: React.FC = () => {
             >
               CLOSE FILE FOLDER
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Drawer Unlocked Modal */}
+      {isDrawerModalOpen && (
+        <div className="pixel-modal-backdrop" onClick={() => setIsDrawerModalOpen(false)}>
+          <div
+            className="pixel-modal-content pixel-panel pixel-panel-gold"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '540px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}
+          >
+            <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🗺️ 🗝️ 🌹</div>
+            <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '8px' }}>
+              THE SECRET DESK DRAWER OPENS!
+            </div>
+            <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              Found: An Overgrown Botanical Map &amp; Dried Lavender Petals
+            </div>
+
+            <div
+              style={{
+                backgroundColor: 'var(--color-midnight-indigo)',
+                border: '2px solid var(--color-twilight-blue)',
+                padding: '18px',
+                marginBottom: '20px',
+                textAlign: 'left',
+                fontSize: '0.9rem',
+                color: 'var(--color-moon-cream)',
+                lineHeight: '1.7',
+              }}
+            >
+              <p style={{ marginBottom: '8px' }}>
+                "You turn the Brass Key. With a crisp metallic click, the drawer slides open."
+              </p>
+              <p style={{ fontStyle: 'italic', color: 'var(--color-warm-peach)' }}>
+                "Inside rests a hand-drawn map pointing toward a hidden gate at the edge of the clearing. The Secret Garden has now been permanently discovered!"
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => {
+                  setIsDrawerModalOpen(false);
+                  navigateTo('garden');
+                }}
+                className="pixel-btn pixel-btn-peach font-display"
+                style={{ flex: 1, minWidth: '200px', padding: '12px', fontSize: '0.85rem' }}
+              >
+                GO TO SECRET GARDEN NOW 🌹
+              </button>
+              <button
+                onClick={() => setIsDrawerModalOpen(false)}
+                className="pixel-btn pixel-btn-ghost font-display"
+                style={{ padding: '12px 18px', fontSize: '0.85rem' }}
+              >
+                STAY IN BUREAU
+              </button>
+            </div>
           </div>
         </div>
       )}
