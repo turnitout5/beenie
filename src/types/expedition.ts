@@ -57,7 +57,16 @@ export interface FutureVignette {
   title: string;
   category: string;
   description: string;
-  sceneVisual: 'photoshoot' | 'walk' | 'reels' | 'date';
+  sceneVisual: 
+    | 'family_house' 
+    | 'mafia_base' 
+    | 'bakery' 
+    | 'mountain_castle' 
+    | 'gaon_haveli' 
+    | 'photoshoot' 
+    | 'walk' 
+    | 'reels' 
+    | 'date';
   unlockedNote: string;
 }
 

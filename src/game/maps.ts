@@ -205,7 +205,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 55,
         width: 50,
         height: 35,
-        promptLabel: '[ E ] View Portrait: Laughter',
+        promptLabel: '[ E ] Ninja H2R & Dodge Challenger',
         type: 'museum_portrait_1',
       },
       {
@@ -214,7 +214,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 55,
         width: 50,
         height: 35,
-        promptLabel: '[ E ] Inspect Frame: Elegant Gaze',
+        promptLabel: '[ E ] White Jet Vision & Secret Key',
         type: 'museum_portrait_2',
       },
       {
@@ -223,7 +223,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 180,
         width: 40,
         height: 30,
-        promptLabel: '[ E ] Position Holder Artifact',
+        promptLabel: '[ E ] Cricket & Badminton Arena',
         type: 'museum_achievements',
       },
       {
@@ -232,7 +232,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 180,
         width: 40,
         height: 30,
-        promptLabel: '[ E ] Unexplainable Phenomenon',
+        promptLabel: '[ E ] Sialkot to Islamabad Map',
         type: 'museum_phenomenon',
       },
       {
@@ -292,7 +292,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 255,
         width: 40,
         height: 30,
-        promptLabel: '[ E ] Search Prosecution Files',
+        promptLabel: '[ E ] Review "3hm" & Paisay Charges',
         type: 'court_prosecution',
       },
       {
@@ -344,7 +344,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 160,
         width: 30,
         height: 30,
-        promptLabel: '[ E ] Reconstruct Conversation',
+        promptLabel: '[ E ] The Three Anthems',
         type: 'archive_crystal_1',
       },
       {
@@ -353,7 +353,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 150,
         width: 30,
         height: 30,
-        promptLabel: '[ E ] Replay Laugh Audio',
+        promptLabel: '[ E ] 2 AM White Pasta & Sweets',
         type: 'archive_crystal_2',
       },
       {
@@ -362,7 +362,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 160,
         width: 30,
         height: 30,
-        promptLabel: '[ E ] Decrypt Classified Dossier',
+        promptLabel: '[ E ] binishieeees@gmail.com Log',
         type: 'archive_crystal_3',
       },
     ],
@@ -402,7 +402,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 130,
         width: 40,
         height: 40,
-        promptLabel: '[ E ] Look through Telescope',
+        promptLabel: '[ E ] Inspect The 5 Dream Houses',
         type: 'observatory_telescope',
       },
       {
@@ -452,7 +452,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         y: 145,
         width: 60,
         height: 35,
-        promptLabel: '[ E ] Sit & Open Birthday Letter ♡',
+        promptLabel: '[ E ] Sit & Read Birthday Love Letter',
         type: 'garden_bench',
       },
     ],

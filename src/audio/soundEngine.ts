@@ -490,6 +490,63 @@ class SoundEngine {
     osc.start(now);
     osc.stop(now + 0.11);
   }
+
+  /**
+   * Nostalgic music-box celesta motif of "Bol Na Halke Halke"
+   * Dedicated anthem for Beenish and Ted.
+   */
+  public playBolNaHalkeHalke(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    // Melody sequence: [freq, duration, pause]
+    // "Bol na halke halke... bol na halke halke..."
+    const notes: [number, number, number][] = [
+      [392.00, 0.38, 0.05], // G4 ("Bol")
+      [440.00, 0.32, 0.04], // A4 ("na")
+      [493.88, 0.42, 0.06], // B4 ("hal-")
+      [440.00, 0.28, 0.04], // A4 ("ke")
+      [392.00, 0.55, 0.15], // G4 ("hal-ke...")
+      [369.99, 0.35, 0.05], // F#4
+      [392.00, 0.38, 0.05], // G4 ("Bol")
+      [440.00, 0.32, 0.04], // A4 ("na")
+      [523.25, 0.45, 0.06], // C5 ("hal-")
+      [493.88, 0.35, 0.05], // B4 ("ke")
+      [440.00, 0.60, 0.20], // A4 ("hal-ke...")
+      [392.00, 0.70, 0.25], // G4 (resolving tender chord)
+    ];
+
+    let timeOffset = ctx.currentTime + 0.05;
+
+    notes.forEach(([freq, dur, pause]) => {
+      const osc = ctx.createOscillator();
+      const harmonic = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      // Soft singing celesta tone
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, timeOffset);
+
+      harmonic.type = 'triangle';
+      harmonic.frequency.setValueAtTime(freq * 2, timeOffset);
+
+      gain.gain.setValueAtTime(0.001, timeOffset);
+      gain.gain.linearRampToValueAtTime(0.09, timeOffset + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, timeOffset + dur + 0.4);
+
+      osc.connect(gain);
+      harmonic.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(timeOffset);
+      harmonic.start(timeOffset);
+      osc.stop(timeOffset + dur + 0.45);
+      harmonic.stop(timeOffset + dur + 0.45);
+
+      timeOffset += dur + pause;
+    });
+  }
 }
 
 export const soundEngine = new SoundEngine();
