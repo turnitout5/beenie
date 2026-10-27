@@ -175,12 +175,12 @@ export const MuseumScene: React.FC = () => {
                     }}
                   />
 
-                  {/* Icon or Emblem */}
-                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
-                    {exhibit.id === 'exhibit_portraits' && '🖼️'}
-                    {exhibit.id === 'exhibit_notices' && '🔍'}
-                    {exhibit.id === 'exhibit_achievements' && '🏆'}
-                    {exhibit.id === 'exhibit_phenomenon' && '✨'}
+                  {/* Category Badge */}
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                    {exhibit.id === 'exhibit_portraits' && '[ MASTER PORTRAIT ]'}
+                    {exhibit.id === 'exhibit_notices' && '[ MICRO OBSERVATIONS ]'}
+                    {exhibit.id === 'exhibit_achievements' && '[ POSITION HOLDER ]'}
+                    {exhibit.id === 'exhibit_phenomenon' && '[ SPECIAL PHENOMENON ]'}
                   </div>
 
                   <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-moon-cream)' }}>
@@ -235,7 +235,6 @@ export const MuseumScene: React.FC = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '1.5rem' }}>🗝️</span>
           <div>
             <div className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)' }}>
               VIP CURATOR’S DISPLAY CASE
@@ -254,7 +253,7 @@ export const MuseumScene: React.FC = () => {
             className="pixel-btn pixel-btn-primary font-display"
             style={{ padding: '8px 16px', fontSize: '0.8rem' }}
           >
-            <span>TAKE BRASS KEY 🗝️</span>
+            <span>TAKE BRASS KEY</span>
           </button>
         )}
       </div>

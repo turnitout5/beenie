@@ -24,12 +24,9 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
       >
         {/* Terminal Header */}
         <div className="pixel-panel-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem' }}>📖</span>
-            <h2 className="font-display" style={{ fontSize: '1rem', color: 'var(--color-lantern-gold)' }}>
-              BEENISH'S EXPEDITION JOURNAL
-            </h2>
-          </div>
+          <h2 className="font-display" style={{ fontSize: '1rem', color: 'var(--color-lantern-gold)' }}>
+            BEENISH'S EXPEDITION JOURNAL
+          </h2>
           <button
             onClick={onClose}
             className="pixel-btn pixel-btn-ghost font-mono"

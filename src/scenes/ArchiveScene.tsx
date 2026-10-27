@@ -124,8 +124,8 @@ export const ArchiveScene: React.FC = () => {
                     fontSize: '2.5rem',
                   }}
                 >
-                  <span className="animate-float" style={{ display: 'inline-block' }}>
-                    {memory.isClassified ? '🔒' : '💎'}
+                  <span className="font-mono" style={{ fontSize: '0.85rem', color: memory.isClassified ? 'var(--color-lantern-gold)' : 'var(--color-dream-lilac)', letterSpacing: '0.08em' }}>
+                    {memory.isClassified ? '[CLASSIFIED]' : '[MEMORY]'}
                   </span>
                 </div>
 
@@ -162,7 +162,7 @@ export const ArchiveScene: React.FC = () => {
                   handleOpenMemory(memory);
                 }}
               >
-                {memory.isClassified ? 'DECRYPT MEMORY 🔑' : 'RECONSTRUCT MEMORY 📖'}
+                {memory.isClassified ? 'DECRYPT MEMORY' : 'RECONSTRUCT MEMORY'}
               </button>
             </div>
           );
@@ -223,8 +223,8 @@ export const ArchiveScene: React.FC = () => {
                 <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-dusty-lavender)', marginBottom: '10px', textTransform: 'uppercase' }}>
                   RECONSTRUCTED MOMENT AUDIO LOG
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <span style={{ fontSize: '2rem' }}>😂</span>
+                <div>
+                  <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>[RECORDED LAUGHTER]</div>
                   <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', lineHeight: '1.6' }}>
                     [AUDIO FRAGMENT]: Continuous uncontrollable laughter recorded. Neither party remembers what the original joke was. Measured status: Pure unadulterated joy.
                   </p>

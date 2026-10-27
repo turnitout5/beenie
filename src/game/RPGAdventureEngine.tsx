@@ -379,7 +379,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         closest = {
           id: 'npc_ted',
           type: 'npc_ted',
-          promptLabel: '[ E ] Talk to Ted ♡',
+          promptLabel: '[ E ] Talk to Ted',
           x: tedPosRef.current.x,
           y: tedPosRef.current.y,
           width: 24,
@@ -652,6 +652,53 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         )}
       </div>
 
+      {/* TOP-CENTER OBJECTIVE GUIDANCE */}
+      <div 
+        style={{ 
+          position: 'fixed', 
+          top: 14, 
+          left: '50%', 
+          transform: 'translateX(-50%)', 
+          zIndex: 99, 
+          pointerEvents: 'none',
+          maxWidth: 'min(90vw, 680px)',
+        }}
+      >
+        <div
+          className="font-mono"
+          style={{
+            backgroundColor: 'rgba(27, 32, 66, 0.92)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid var(--color-twilight-blue)',
+            padding: '7px 18px',
+            fontSize: '0.78rem',
+            color: 'var(--color-warm-peach)',
+            letterSpacing: '0.04em',
+            boxShadow: '0 4px 16px rgba(16, 19, 41, 0.6)',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {starsRecovered === 0 && !bureauStamped
+            ? 'Current Objective: Walk west along the stone path to the Bureau of Unreasonable Boyfriends.'
+            : !inventory.includes('brass_key') && !secretGardenUnlocked
+            ? 'Current Objective: Walk north to the Museum of Beenish. Check behind the portrait frame.'
+            : inventory.includes('brass_key') && !secretGardenUnlocked
+            ? 'Current Objective: Return to the Bureau to unlock Drawer 07 with the brass key.'
+            : !courtVerdictReached
+            ? 'Current Objective: Walk east across the promenade to the Court of Absolutely No Flaws.'
+            : starsRecovered < 5
+            ? 'Current Objective: Visit the Archive of Things That Happened in the east.'
+            : !namedConstellation
+            ? 'Current Objective: Follow the mountain path north to the Hilltop Observatory.'
+            : !secretGardenUnlocked
+            ? 'Current Objective: Walk southeast to the Secret Garden gate.'
+            : 'The Valley is restored. Visit the garden bench to sit with Ted.'}
+        </div>
+      </div>
+
       {/* FLOATING TOP-RIGHT STATUS & QUEST CONTROLS */}
       <div 
         style={{ 
@@ -681,7 +728,6 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           }}
           title="Open Expedition Journal"
         >
-          <span style={{ animation: 'starTwinkle 2s infinite' }}>⭐</span>
           <span>STARS: {starsRecovered} / 7</span>
         </div>
 
@@ -695,27 +741,27 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           style={{ padding: '6px 12px', fontSize: '0.75rem' }}
           title="Open Expedition Journal"
         >
-          📖 JOURNAL
+          JOURNAL
         </button>
 
         {/* Audio Mute/Unmute */}
         <button
           onClick={toggleMute}
-          className="pixel-btn pixel-btn-ghost"
-          style={{ padding: '6px 10px', fontSize: '0.85rem' }}
+          className="pixel-btn pixel-btn-ghost font-mono"
+          style={{ padding: '6px 10px', fontSize: '0.75rem' }}
           title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
         >
-          {isMuted ? '🔇' : '🔊'}
+          {isMuted ? 'SOUND: OFF' : 'SOUND: ON'}
         </button>
 
         {/* Browser Fullscreen Toggle */}
         <button
           onClick={toggleBrowserFullscreen}
           className="pixel-btn pixel-btn-ghost font-mono"
-          style={{ padding: '6px 10px', fontSize: '0.85rem' }}
+          style={{ padding: '6px 10px', fontSize: '0.75rem' }}
           title="Toggle Browser Fullscreen (F11)"
         >
-          ⛶
+          FULLSCREEN
         </button>
       </div>
 
@@ -745,7 +791,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           }}
           title="Toggle Sprint (or hold Shift)"
         >
-          {isVirtualRunning ? '⚡ SPRINTING (SHIFT)' : '👟 WALK'}
+          {isVirtualRunning ? 'RUN (SHIFT)' : 'WALK'}
         </button>
 
         {/* Minimal Glassmorphic D-Pad */}

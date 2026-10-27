@@ -23,7 +23,7 @@ export const HubScene: React.FC = () => {
       id: 'bureau',
       title: 'The Bureau of Unreasonable Boyfriends',
       subtitle: 'Official Allegation Files',
-      icon: '📂',
+      icon: '[FILE 01]',
       color: 'var(--color-warm-peach)',
       starId: 1,
       description: 'A completely serious government office investigating why she is unreasonably adorable.',
@@ -32,7 +32,7 @@ export const HubScene: React.FC = () => {
       id: 'museum',
       title: 'The Museum of Beenish',
       subtitle: 'The Master Collection',
-      icon: '🏛️',
+      icon: '[GALLERY 02]',
       color: 'var(--color-dream-lilac)',
       starId: 2,
       description: 'One subject. An unreasonable number of exhibits, spotlit traits, and the Position Holder Artifact.',
@@ -41,7 +41,7 @@ export const HubScene: React.FC = () => {
       id: 'court',
       title: 'The Court of Absolutely No Flaws',
       subtitle: 'The Grand Flaw Inquiry',
-      icon: '⚖️',
+      icon: '[COURT 03]',
       color: 'var(--color-lantern-gold)',
       starId: 3,
       description: 'A dramatic courtroom where the prosecution attempts to find a single flaw in Beenish.',
@@ -50,7 +50,7 @@ export const HubScene: React.FC = () => {
       id: 'archive',
       title: 'The Archive of Things That Happened',
       subtitle: 'Keepsake Memory Vault',
-      icon: '📜',
+      icon: '[ARCHIVE 04]',
       color: 'var(--color-dusty-lavender)',
       starId: 4,
       description: 'Floating memory artifacts, real moments, and a top-secret classified conversation.',
@@ -59,7 +59,7 @@ export const HubScene: React.FC = () => {
       id: 'observatory',
       title: 'The Observatory of Things We Haven’t Done Yet',
       subtitle: 'Celestial Horizons',
-      icon: '🔭',
+      icon: '[OBSERVATORY 05]',
       color: 'var(--color-dream-lilac)',
       starId: 5,
       description: 'Photoshoots, nighttime walks, couple reels, and an unnamed constellation for Beenish to name.',
@@ -139,8 +139,7 @@ export const HubScene: React.FC = () => {
             gap: '12px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '1.2rem' }}>🌸</span>
+          <div>
             <span className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)' }}>
               {starsRecovered >= 5
                 ? 'The garden gate is humming softly in the twilight mist...'
@@ -157,7 +156,7 @@ export const HubScene: React.FC = () => {
               className="pixel-btn pixel-btn-peach font-display"
               style={{ padding: '8px 16px', fontSize: '0.8rem' }}
             >
-              <span>🌹 VISIT THE SECRET GARDEN →</span>
+              <span>VISIT THE SECRET GARDEN →</span>
             </button>
           )}
         </div>
@@ -184,19 +183,14 @@ export const HubScene: React.FC = () => {
         />
       </div>
 
-      {/* The 5 Main Portals */}
       <h2
         className="font-display"
         style={{
           fontSize: '1rem',
           color: 'var(--color-dream-lilac)',
           marginBottom: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
         }}
       >
-        <span>🧭</span>
         <span>EXPLORATION DESTINATIONS</span>
       </h2>
 
@@ -309,14 +303,14 @@ export const HubScene: React.FC = () => {
         >
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <span style={{ fontSize: '2rem' }}>🌹</span>
+              <span className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)' }}>[SANCTUARY]</span>
               {secretGardenUnlocked ? (
                 <span className="pixel-badge pixel-badge-peach">
-                  ✨ UNLOCKED
+                  UNLOCKED
                 </span>
               ) : (
                 <span className="pixel-badge" style={{ color: 'var(--color-muted-periwinkle)' }}>
-                  🔒 LOCKED
+                  LOCKED
                 </span>
               )}
             </div>

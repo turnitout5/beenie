@@ -222,16 +222,16 @@ export const ObservatoryScene: React.FC = () => {
                   </span>
                   {isViewed && (
                     <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
-                      [VIEWED ✓]
+                      [VIEWED]
                     </span>
                   )}
                 </div>
 
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
-                  {vignette.sceneVisual === 'photoshoot' && '📸'}
-                  {vignette.sceneVisual === 'walk' && '🌙'}
-                  {vignette.sceneVisual === 'reels' && '🎬'}
-                  {vignette.sceneVisual === 'date' && '☕'}
+                <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', letterSpacing: '0.08em', marginBottom: '8px' }}>
+                  {vignette.sceneVisual === 'photoshoot' && '[ PHOTO SHOOT ]'}
+                  {vignette.sceneVisual === 'walk' && '[ NIGHT WALK ]'}
+                  {vignette.sceneVisual === 'reels' && '[ SILLY VIDEO ]'}
+                  {vignette.sceneVisual === 'date' && '[ CORNER TABLE ]'}
                 </div>
 
                 <h3 className="font-display" style={{ fontSize: '0.95rem', color: 'var(--color-moon-cream)', marginBottom: '8px' }}>
@@ -284,7 +284,7 @@ export const ObservatoryScene: React.FC = () => {
               </button>
             </div>
 
-            {/* Visual Mini-Scene Illustration per Plan.txt */}
+            {/* Visual Mini-Scene Illustration */}
             <div
               style={{
                 backgroundColor: 'var(--color-midnight-indigo)',
@@ -298,28 +298,26 @@ export const ObservatoryScene: React.FC = () => {
             >
               {activeVignette.sceneVisual === 'photoshoot' && (
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '20px', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '12px' }}>
                     <div style={{ textAlign: 'center' }}>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--color-warm-peach)', display: 'block', fontFamily: 'var(--font-mono)' }}>Posing Elegantly</span>
-                      <span style={{ fontSize: '2.5rem' }}>💃</span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', display: 'block', fontFamily: 'var(--font-mono)' }}>[Posing Elegantly]</span>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--color-lantern-gold)', display: 'block', fontFamily: 'var(--font-mono)' }}>Making Silly Faces</span>
-                      <span style={{ fontSize: '2.5rem' }}>🤪</span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', display: 'block', fontFamily: 'var(--font-mono)' }}>[Making Silly Faces]</span>
                     </div>
                   </div>
                   <span className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)' }}>
-                    [CAMERA FLASH: 3... 2... 1... 📸 CLICK!]
+                    [Camera Shutter Clicks]
                   </span>
                 </div>
               )}
 
               {activeVignette.sceneVisual === 'walk' && (
                 <div>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
-                    🏮 👫 🌙
+                  <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
+                    [Quiet Evening Walk]
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)' }}>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
                     Quiet empty streets, cool night air, hands gently intertwined.
                   </div>
                 </div>
@@ -327,21 +325,21 @@ export const ObservatoryScene: React.FC = () => {
 
               {activeVignette.sceneVisual === 'reels' && (
                 <div>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '8px', animation: 'floatGentle 2s infinite' }}>
-                    🎬 🕺 💃 ✨
+                  <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', marginBottom: '6px' }}>
+                    [Filming Together]
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)' }}>
-                    Filming the most ridiculous couple reel that only the two of you understand.
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
+                    Filming the most ridiculous couple video that only the two of us understand.
                   </div>
                 </div>
               )}
 
               {activeVignette.sceneVisual === 'date' && (
                 <div>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
-                    🕯️ ☕ 🍽️ ☕ 🕯️
+                  <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
+                    [The Corner Table]
                   </div>
-                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)' }}>
+                  <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
                     A warm corner table for two with candlelight and warm laughter.
                   </div>
                 </div>

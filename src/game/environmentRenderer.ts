@@ -29,12 +29,12 @@ export class EnvironmentRenderer {
     const lights: LightSource[] = [];
 
     // --- BASE GRASS MATERIAL ---
-    // Deep midnight indigo base - extends generously so widescreen displays have zero black gaps!
-    ctx.fillStyle = '#161A36';
+    // Warm fairytale dusk meadow - lush teal-emerald and warm jade base (vibrant, not gloomy!)
+    ctx.fillStyle = '#1D3B35';
     ctx.fillRect(-600, -600, width + 1200, height + 1200);
 
-    // Subtle dithered grass texture patches across wide area
-    ctx.fillStyle = '#1B2042';
+    // Subtle dithered clover and moss texture patches across wide area
+    ctx.fillStyle = '#264D43';
     for (let x = -400; x < width + 400; x += 16) {
       for (let y = -400; y < height + 400; y += 16) {
         if ((x + y) % 32 === 0) {
@@ -44,8 +44,8 @@ export class EnvironmentRenderer {
       }
     }
 
-    // Tufts of grass blades
-    ctx.fillStyle = '#262D55';
+    // Tufts of emerald grass blades with warm golden-green tips
+    ctx.fillStyle = '#396D5B';
     for (let i = 0; i < 90; i++) {
       const gx = Math.floor(this.seededRandom(i * 17) * (width - 40)) + 20;
       const gy = Math.floor(this.seededRandom(i * 31) * (height - 40)) + 20;
@@ -58,16 +58,16 @@ export class EnvironmentRenderer {
 
     // --- COBBLESTONE ROAD MATERIAL ---
     const drawStoneRoad = (rx: number, ry: number, rw: number, rh: number, isVert: boolean) => {
-      // Base gravel underlay
-      ctx.fillStyle = '#242A4A';
+      // Base gravel underlay (warm twilight slate)
+      ctx.fillStyle = '#343B59';
       ctx.fillRect(rx - 2, ry - 2, rw + 4, rh + 4);
 
       // Cobblestone surface
-      ctx.fillStyle = '#30385F';
+      ctx.fillStyle = '#444D73';
       ctx.fillRect(rx, ry, rw, rh);
 
       // Edge curb lines
-      ctx.fillStyle = '#48527F';
+      ctx.fillStyle = '#6572A3';
       if (isVert) {
         ctx.fillRect(rx, ry, 2, rh);
         ctx.fillRect(rx + rw - 2, ry, 2, rh);
@@ -86,14 +86,14 @@ export class EnvironmentRenderer {
           if (px > rx + rw - stoneW - 2) continue;
 
           // Stone base
-          ctx.fillStyle = '#38426E';
+          ctx.fillStyle = '#4D5882';
           ctx.fillRect(px, sy, stoneW, stoneH);
-          // Highlight edge (top-left)
-          ctx.fillStyle = '#4F5C93';
+          // Highlight edge (top-left) - warm reflective tone
+          ctx.fillStyle = '#7482B5';
           ctx.fillRect(px, sy, stoneW, 1);
           ctx.fillRect(px, sy, 1, stoneH);
           // Shadow crevice (bottom-right)
-          ctx.fillStyle = '#222845';
+          ctx.fillStyle = '#2A304D';
           ctx.fillRect(px, sy + stoneH - 1, stoneW, 1);
           ctx.fillRect(px + stoneW - 1, sy, 1, stoneH);
         }
@@ -115,19 +115,19 @@ export class EnvironmentRenderer {
     const pondH = 120;
 
     // Sandy/mossy shoreline
-    ctx.fillStyle = '#242C48';
+    ctx.fillStyle = '#2D3E45';
     ctx.beginPath();
     ctx.ellipse(pondX + pondW / 2, pondY + pondH / 2, pondW / 2 + 8, pondH / 2 + 6, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Deep water body
-    ctx.fillStyle = '#14203B';
+    // Deep water body (enchanting twilight sapphire)
+    ctx.fillStyle = '#183652';
     ctx.beginPath();
     ctx.ellipse(pondX + pondW / 2, pondY + pondH / 2, pondW / 2, pondH / 2, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Animated water caustics & sine wave ripples
-    ctx.fillStyle = 'rgba(77, 119, 168, 0.4)';
+    ctx.fillStyle = 'rgba(100, 195, 230, 0.45)';
     for (let r = 0; r < 4; r++) {
       const rippleY = pondY + 25 + r * 22 + Math.sin(frame * 0.05 + r) * 3;
       const rippleW = 40 + Math.sin(frame * 0.08 + r * 2) * 12;
@@ -221,6 +221,11 @@ export class EnvironmentRenderer {
       this.drawVictorianLampPost(ctx, pos.x, pos.y, frame + idx * 10);
       lights.push({ x: pos.x + 4, y: pos.y - 14, radius: 48, intensity: 0.88, color: '#F6D78B' });
     });
+
+    // --- CENTRAL BIRTHDAY TABLE (FOR BEENISH) ---
+    this.drawBirthdayTable(ctx, 372, 238, frame);
+    lights.push({ x: 396, y: 248, radius: 80, intensity: 0.95, color: '#F6D78B' });
+    lights.push({ x: 396, y: 260, radius: 45, intensity: 0.7, color: '#E98FAF' });
 
     // --- BLOOMING FLOWERS & FIREFLIES ---
     const flowerCount = starsRecovered >= 5 ? 18 : starsRecovered >= 2 ? 10 : 5;
@@ -451,11 +456,11 @@ export class EnvironmentRenderer {
     }
 
     // Pedestal 1: Position Holder Artifact
-    this.drawMuseumPedestal(ctx, 350, 140, '🏆', '#F6D78B', frame);
+    this.drawMuseumPedestal(ctx, 350, 140, '#F6D78B', frame);
     lights.push({ x: 380, y: 155, radius: 60, intensity: 0.95, color: '#F6D78B' });
 
     // Pedestal 2: Unexplainable Phenomenon
-    this.drawMuseumPedestal(ctx, 470, 140, '✨', '#E98FAF', frame);
+    this.drawMuseumPedestal(ctx, 470, 140, '#E98FAF', frame);
     lights.push({ x: 500, y: 155, radius: 60, intensity: 0.95, color: '#E98FAF' });
 
     // Velvet Stanchion Ropes
@@ -853,17 +858,17 @@ export class EnvironmentRenderer {
     // We create a temporary darkness canvas and cut out light radial gradients
     ctx.save();
 
-    // Dark ambient overlay (higher in mystery rooms and night valley)
-    const darknessAlpha = roomTheme === 'valley' ? 0.48 : roomTheme === 'garden' ? 0.38 : 0.32;
-    ctx.fillStyle = `rgba(16, 19, 41, ${darknessAlpha})`;
+    // Warm, gentle evening dusk overlay (vibrant and clear, never gloomy)
+    const darknessAlpha = roomTheme === 'valley' ? 0.12 : roomTheme === 'garden' ? 0.08 : 0.15;
+    ctx.fillStyle = `rgba(38, 25, 48, ${darknessAlpha})`;
     ctx.fillRect(-600, -600, width + 1200, height + 1200);
 
-    // Player Explorer Lantern light (Always moves with Beenish!)
+    // Player Explorer Lantern light (Warm golden circle moving with Beenish)
     lights.push({
       x: Math.floor(playerPos.x + 12),
       y: Math.floor(playerPos.y + 16),
-      radius: 68,
-      intensity: 0.85,
+      radius: 96,
+      intensity: 0.95,
       color: '#F6D78B',
     });
 
@@ -1352,7 +1357,6 @@ export class EnvironmentRenderer {
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
-    icon: string,
     glowColor: string,
     frame: number
   ): void {
@@ -1366,15 +1370,76 @@ export class EnvironmentRenderer {
     ctx.lineWidth = 1;
     ctx.strokeRect(x + 6, y - 10, 38, 26);
 
-    // Floating Artifact Inside with sine hover
+    // Floating Gem / Key silhouette with sine hover
     const hover = Math.sin(frame * 0.08) * 3;
-    ctx.font = '16px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(icon, x + 25, y + 6 + hover);
-    ctx.textAlign = 'start';
+    ctx.fillStyle = glowColor;
+    ctx.beginPath();
+    ctx.arc(x + 25, y + 4 + hover, 5, 0, Math.PI * 2);
+    ctx.fill();
 
     // Brass Plaque
     ctx.fillStyle = glowColor;
     ctx.fillRect(x + 10, y + 28, 30, 8);
+  }
+
+  private static drawBirthdayTable(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    frame: number
+  ): void {
+    // Dark timber picnic / celebration table
+    ctx.fillStyle = '#3E2417';
+    ctx.fillRect(x, y + 20, 56, 18);
+    // Table legs
+    ctx.fillStyle = '#26140D';
+    ctx.fillRect(x + 4, y + 36, 6, 12);
+    ctx.fillRect(x + 46, y + 36, 6, 12);
+    // Cream linen table runner
+    ctx.fillStyle = '#F4EBDD';
+    ctx.fillRect(x + 8, y + 20, 40, 18);
+    ctx.fillStyle = '#E5D8C5';
+    ctx.fillRect(x + 8, y + 36, 40, 2);
+
+    // Frosted 2-tier strawberry birthday cake
+    // Base tier
+    ctx.fillStyle = '#E98FAF'; // Strawberry frosting
+    ctx.fillRect(x + 16, y + 10, 24, 10);
+    ctx.fillStyle = '#F4EBDD'; // Cream drip
+    ctx.fillRect(x + 16, y + 10, 24, 2);
+    ctx.fillRect(x + 18, y + 12, 3, 3);
+    ctx.fillRect(x + 26, y + 12, 3, 3);
+    ctx.fillRect(x + 34, y + 12, 3, 3);
+
+    // Top tier
+    ctx.fillStyle = '#FDFBF7'; // Vanilla cream
+    ctx.fillRect(x + 20, y + 3, 16, 7);
+    ctx.fillStyle = '#D83A56'; // Strawberry topping dots
+    ctx.fillRect(x + 23, y + 2, 2, 2);
+    ctx.fillRect(x + 27, y + 2, 2, 2);
+    ctx.fillRect(x + 31, y + 2, 2, 2);
+
+    // 3 Birthday Candles with gentle animated flickering flames
+    const candlePositions = [x + 23, x + 27, x + 31];
+    candlePositions.forEach((cx, idx) => {
+      // Candle stick
+      ctx.fillStyle = '#F6D78B';
+      ctx.fillRect(cx, y - 3, 2, 6);
+      // Flickering flame
+      const flicker = Math.sin(frame * 0.2 + idx * 1.7) > 0;
+      ctx.fillStyle = flicker ? '#FFA040' : '#FFD270';
+      ctx.fillRect(cx - (flicker ? 0 : 1), y - 6, flicker ? 2 : 3, 3);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(cx, y - 5, 1, 1);
+    });
+
+    // Small rustic carved wooden sign beside the table
+    ctx.fillStyle = '#3E2417';
+    ctx.fillRect(x + 58, y + 14, 4, 26); // Stake
+    ctx.fillStyle = '#5A3828';
+    ctx.fillRect(x + 48, y + 8, 24, 12); // Board
+    ctx.fillStyle = '#F4EBDD';
+    ctx.font = '6px monospace';
+    ctx.fillText('OCT 27', x + 50, y + 16);
   }
 }

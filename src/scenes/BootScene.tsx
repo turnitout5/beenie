@@ -8,40 +8,39 @@ export const BootScene: React.FC = () => {
   const { navigateTo } = useExpedition();
   const [bootStep, setBootStep] = useState(0);
   const [evadeOffset, setEvadeOffset] = useState({ x: 0, y: 0 });
-  const [evadeMessage, setEvadeMessage] = useState('GO BACK TO SLEEP');
+  const [evadeMessage, setEvadeMessage] = useState('Go back to sleep');
   const [evadeCount, setEvadeCount] = useState(0);
   const runawayBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const evadeQuips = [
-    "Nice try, Beenie!",
-    "Error 404: Sleep Not Found",
-    "Nope, someone loves you too much!",
-    "Too fast for you ♡",
-    "No sleeping on your birthday!",
-    "Mission is mandatory!",
+    "Nice try, Beenie.",
+    "Not happening today.",
+    "Ted says you have to see this.",
+    "Too slow.",
+    "You're not sleeping through your birthday.",
+    "Come on, I spent weeks on this.",
   ];
 
-  // Sequence of boot lines
-  const bootLogs = [
-    "INITIALIZING EXPEDITION OS v2.0...",
-    "SCANNING SECTOR FOR LOST STARS...",
-    "CRITICAL ALERT: STORAGE OVERFLOW DETECTED.",
-    "REASON: The list of wonderful things about Beenish exceeded universal limits.",
-    "EXPLORER DETECTED: BEENISH TASAFFAR.",
-    "STATUS: Apparently, someone loves you an unreasonable amount.",
-    "WOULD YOU LIKE TO INVESTIGATE?",
+  // Authentic human birthday note lines
+  const noteLines = [
+    "To Beenish,",
+    "I wanted to give you something that couldn't be bought in any store.",
+    "So I built you a world of your own: The Valley of the Stars.",
+    "Seven places are scattered across the valley—holding your photos, our memories, and all the quiet things I love about you.",
+    "Start by walking west along the stone path to the Bureau of Unreasonable Boyfriends.",
+    "Happy Birthday, Beenie.",
   ];
 
   useEffect(() => {
     soundEngine.startNightAmbience();
-    if (bootStep < bootLogs.length) {
+    if (bootStep < noteLines.length) {
       const timer = setTimeout(() => {
         soundEngine.playClick();
         setBootStep(prev => prev + 1);
-      }, 700);
+      }, 650);
       return () => clearTimeout(timer);
     }
-  }, [bootStep, bootLogs.length]);
+  }, [bootStep, noteLines.length]);
 
   const handleEvade = () => {
     soundEngine.playClick();
@@ -49,7 +48,6 @@ export const BootScene: React.FC = () => {
     setEvadeCount(nextCount);
     setEvadeMessage(evadeQuips[nextCount % evadeQuips.length]);
 
-    // Random offset within reasonable bounds
     const randX = (Math.random() - 0.5) * 260;
     const randY = (Math.random() - 0.5) * 160;
     setEvadeOffset({ x: randX, y: randY });
@@ -68,154 +66,191 @@ export const BootScene: React.FC = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '24px',
+        padding: '32px 24px',
         position: 'relative',
         zIndex: 1,
       }}
     >
-      {/* Title & Atmosphere */}
+      {/* Title */}
       <div style={{ textAlign: 'center', marginBottom: '28px' }}>
         <div
-          className="font-display"
+          className="font-mono"
           style={{
-            fontSize: 'clamp(1.2rem, 3.5vw, 2.2rem)',
-            color: 'var(--color-lantern-gold)',
-            textShadow: '0 0 16px rgba(246, 215, 139, 0.4)',
-            letterSpacing: '0.08em',
+            fontSize: '0.8rem',
+            color: 'var(--color-warm-peach)',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
             marginBottom: '8px',
           }}
         >
-          ✦ THE BEENISH EXPEDITION ✦
+          October 27 &bull; Birthday Expedition
         </div>
+        <h1
+          className="font-display"
+          style={{
+            fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+            color: 'var(--color-lantern-gold)',
+            letterSpacing: '0.06em',
+            margin: 0,
+            textShadow: '0 0 20px rgba(246, 215, 139, 0.35)',
+          }}
+        >
+          THE BEENISH EXPEDITION
+        </h1>
         <p
           className="font-mono"
           style={{
             color: 'var(--color-dusty-lavender)',
-            fontSize: 'clamp(0.8rem, 2vw, 0.95rem)',
+            fontSize: '0.9rem',
+            marginTop: '6px',
           }}
         >
-          A world that shouldn't exist, dedicated to a girl who absolutely does.
+          A world built for Beenish Tasaffar by Ted.
         </p>
       </div>
 
-      {/* Terminal Screen Panel */}
+      {/* Handcrafted Note Panel */}
       <div
-        className="pixel-panel pixel-panel-lilac"
+        className="pixel-panel pixel-panel-gold"
         onClick={() => {
-          if (bootStep < bootLogs.length) {
+          if (bootStep < noteLines.length) {
             soundEngine.playClick();
-            setBootStep(bootLogs.length);
+            setBootStep(noteLines.length);
           }
         }}
         style={{
-          maxWidth: '680px',
+          maxWidth: '640px',
           width: '100%',
-          backgroundColor: 'var(--color-void-navy)',
-          padding: '28px 24px',
-          marginBottom: '32px',
-          cursor: bootStep < bootLogs.length ? 'pointer' : 'default',
+          backgroundColor: 'rgba(27, 32, 66, 0.94)',
+          backdropFilter: 'blur(10px)',
+          padding: '28px 26px',
+          marginBottom: '28px',
+          boxShadow: 'var(--pixel-border-gold), 0 8px 30px rgba(16, 19, 41, 0.75)',
+          cursor: bootStep < noteLines.length ? 'pointer' : 'default',
         }}
-        title={bootStep < bootLogs.length ? 'Click to skip typing' : ''}
       >
-        <div className="pixel-panel-header" style={{ marginBottom: '20px' }}>
-          <span className="font-mono" style={{ color: 'var(--color-dream-lilac)', fontSize: '0.8rem' }}>
-            TERMINAL // BOOT_SEQUENCE.LOG {bootStep < bootLogs.length && <span style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>[CLICK TO SKIP]</span>}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: '1px solid var(--color-twilight-blue)',
+            paddingBottom: '12px',
+            marginBottom: '20px',
+          }}
+        >
+          <span
+            className="font-mono"
+            style={{
+              color: 'var(--color-warm-peach)',
+              fontSize: '0.78rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Dispatch &bull; From Ted
           </span>
-          <span className="pixel-badge pixel-badge-gold">ONLINE</span>
+          <span
+            className="font-mono"
+            style={{
+              color: 'var(--color-lantern-gold)',
+              fontSize: '0.75rem',
+            }}
+          >
+            For Beenie
+          </span>
         </div>
 
-        {/* Typed Lines */}
+        {/* Written Lines */}
         <div
           className="font-mono"
           style={{
-            minHeight: '160px',
-            fontSize: '0.9rem',
+            minHeight: '170px',
+            fontSize: '0.95rem',
             lineHeight: '1.9',
             display: 'flex',
             flexDirection: 'column',
-            gap: '6px',
+            gap: '10px',
           }}
         >
-          {bootLogs.slice(0, bootStep).map((log, idx) => (
-            <div key={idx} style={{ display: 'flex', gap: '8px', animation: 'fadeIn 250ms ease' }}>
-              <span style={{ color: 'var(--color-muted-periwinkle)' }}>&gt;</span>
+          {noteLines.slice(0, bootStep).map((line, idx) => (
+            <div key={idx} style={{ display: 'flex', gap: '10px', animation: 'fadeIn 250ms ease' }}>
+              <span style={{ color: 'var(--color-dusty-lavender)' }}>&gt;</span>
               <span
                 style={{
                   color:
-                    idx === 2
-                      ? 'var(--color-rose-glow)'
-                      : idx === 3
-                      ? 'var(--color-warm-peach)'
-                      : idx === 4
+                    idx === 0
                       ? 'var(--color-lantern-gold)'
+                      : idx === noteLines.length - 1
+                      ? 'var(--color-rose-glow)'
+                      : idx === 4
+                      ? 'var(--color-warm-peach)'
                       : 'var(--color-moon-cream)',
-                  fontWeight: idx >= 4 ? 600 : 400,
+                  fontWeight: idx === 0 || idx === noteLines.length - 1 ? 600 : 400,
                 }}
               >
-                {log}
+                {line}
               </span>
             </div>
           ))}
 
-          {bootStep < bootLogs.length && (
+          {bootStep < noteLines.length && (
             <div style={{ color: 'var(--color-lantern-gold)', animation: 'starTwinkle 0.8s infinite' }}>
-              &gt; ▋
+              &gt; _ <span style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)' }}>[click to read all]</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Sprites Vignette */}
+      {/* Characters Vignette */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: '40px',
-          marginBottom: '36px',
+          marginBottom: '32px',
         }}
       >
         <ProtagonistBeenish pose="holdingLantern" />
-        <CompanionBoyfriend pose="wave" initialQuote="Hey Beenie! Ready for your birthday mission? ♡" />
+        <CompanionBoyfriend pose="wave" initialQuote="Happy birthday, Beenie. Come take a look." />
       </div>
 
-      {/* Interactive Choice Buttons */}
-      {bootStep >= bootLogs.length && (
+      {/* Action Buttons */}
+      {bootStep >= noteLines.length && (
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '24px',
+            gap: '20px',
             flexWrap: 'wrap',
             position: 'relative',
           }}
         >
-          {/* Primary Acceptance Button */}
           <button
             onClick={handleAccept}
             className="pixel-btn pixel-btn-primary font-display"
             style={{
-              padding: '16px 28px',
-              fontSize: '1rem',
+              padding: '14px 30px',
+              fontSize: '0.95rem',
               animation: 'scaleUp 300ms ease',
             }}
           >
-            <span>ACCEPT MISSION ♡</span>
+            <span>Step Into The Valley</span>
           </button>
 
-          {/* The Runaway "Go Back To Sleep" Button */}
           <button
             ref={runawayBtnRef}
             onMouseEnter={handleEvade}
             onTouchStart={handleEvade}
             onClick={handleEvade}
-            className="pixel-btn pixel-btn-ghost font-display"
+            className="pixel-btn pixel-btn-ghost font-mono"
             style={{
-              padding: '16px 24px',
+              padding: '14px 22px',
               fontSize: '0.85rem',
               transform: `translate(${evadeOffset.x}px, ${evadeOffset.y}px)`,
-              transition: 'transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1)',
+              transition: 'transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1)',
               borderColor: 'var(--color-dusty-lavender)',
               cursor: 'pointer',
             }}

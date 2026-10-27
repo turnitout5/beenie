@@ -383,6 +383,113 @@ class SoundEngine {
     osc.start(now);
     osc.stop(now + 0.13);
   }
+
+  /**
+   * Procedural Happy Birthday Music Box Jingle
+   */
+  public playBirthdayJingle(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    // Happy birthday notes [freq, duration, pause]
+    const notes: [number, number][] = [
+      [392.00, 0.22], // G4
+      [392.00, 0.22], // G4
+      [440.00, 0.44], // A4
+      [392.00, 0.44], // G4
+      [523.25, 0.44], // C5
+      [493.88, 0.88], // B4
+      [392.00, 0.22], // G4
+      [392.00, 0.22], // G4
+      [440.00, 0.44], // A4
+      [392.00, 0.44], // G4
+      [587.33, 0.44], // D5
+      [523.25, 0.90], // C5
+    ];
+
+    let timeOffset = ctx.currentTime + 0.05;
+
+    notes.forEach(([freq, dur]) => {
+      const osc = ctx.createOscillator();
+      const oscHarmonic = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      // Music box bell chime
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, timeOffset);
+
+      oscHarmonic.type = 'triangle';
+      oscHarmonic.frequency.setValueAtTime(freq * 2, timeOffset);
+
+      gain.gain.setValueAtTime(0.001, timeOffset);
+      gain.gain.exponentialRampToValueAtTime(0.12, timeOffset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, timeOffset + dur);
+
+      osc.connect(gain);
+      oscHarmonic.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(timeOffset);
+      oscHarmonic.start(timeOffset);
+      osc.stop(timeOffset + dur + 0.05);
+      oscHarmonic.stop(timeOffset + dur + 0.05);
+
+      timeOffset += dur + 0.06;
+    });
+  }
+
+  /**
+   * Soft airy puff sound when blowing out birthday candles
+   */
+  public playBlowCandles(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.26);
+  }
+
+  /**
+   * Cheerful confetti pop sound
+   */
+  public playConfettiPop(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(450, now);
+    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.08);
+
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.11);
+  }
 }
 
 export const soundEngine = new SoundEngine();

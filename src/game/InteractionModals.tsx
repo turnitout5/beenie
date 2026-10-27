@@ -41,6 +41,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   const [isSearchingCourt, setIsSearchingCourt] = useState<boolean>(false);
   const [constellationInput, setConstellationInput] = useState<string>('');
   const [selectedVignetteId, setSelectedVignetteId] = useState<string>('fut_photoshoot');
+  const [candlesBlown, setCandlesBlown] = useState<boolean>(false);
 
   if (!activeObject) return null;
 
@@ -58,7 +59,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
             <div>
-              <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.75rem' }}>BUREAU CASE FILE #001</span>
+              <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.75rem', letterSpacing: '0.08em' }}>BUREAU CASE FILE #001</span>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1rem', marginTop: '2px' }}>
                 REASONS BEENISH IS UNREASONABLY ADORABLE
               </h2>
@@ -79,7 +80,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 className={`pixel-btn ${selectedReportId === r.id ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
                 style={{ fontSize: '0.75rem', padding: '6px 12px' }}
               >
-                {r.title} {readReports.includes(r.id) && '✓'}
+                {r.title} {readReports.includes(r.id) && '[READ]'}
               </button>
             ))}
           </div>
@@ -102,7 +103,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {/* Special Eyes Incident Gag */}
             {report.id === 'eyes' && (
               <div style={{ textAlign: 'center', margin: '12px 0', backgroundColor: 'var(--color-void-navy)', padding: '10px' }}>
-                <div style={{ display: 'inline-block', transform: 'rotate(-25deg)' }}>
+                <div style={{ display: 'inline-block', transform: 'rotate(-20deg)' }}>
                   <CompanionBoyfriend pose="blush" initialQuote="I am temporarily incapacitated by looking directly at her eyes!" />
                 </div>
                 <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-rose-glow)', marginTop: '6px' }}>
@@ -119,12 +120,12 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           {/* Official Stamp */}
           <div style={{ textAlign: 'center' }}>
             {bureauStamped ? (
-              <div className="font-display" style={{ color: 'var(--color-rose-glow)', fontSize: '1.1rem', border: '3px solid var(--color-rose-glow)', padding: '8px 16px', display: 'inline-block', transform: 'rotate(-3deg)' }}>
+              <div className="font-display" style={{ color: 'var(--color-rose-glow)', fontSize: '1rem', border: '2px solid var(--color-rose-glow)', padding: '8px 16px', display: 'inline-block', transform: 'rotate(-2deg)' }}>
                 ★ SUBJECT IS EXTREMELY LOVED. CASE CLOSED. ★
               </div>
             ) : (
               <button onClick={handleStamp} className="pixel-btn pixel-btn-primary font-display" style={{ padding: '12px 24px' }}>
-                STAMP OFFICIAL CASE FILE 📑
+                STAMP OFFICIAL CASE FILE
               </button>
             )}
           </div>
@@ -138,19 +139,21 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     return (
       <div className="pixel-modal-backdrop" onClick={onClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '520px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>{hasBrassKey ? '🗝️ 🗺️ 🌹' : '🔒'}</div>
+          <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', letterSpacing: '0.12em', marginBottom: '8px' }}>
+            {hasBrassKey ? '[ DRAWER UNLOCKED ]' : '[ SECURE DRAWER ]'}
+          </div>
           <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '8px' }}>
-            {hasBrassKey ? 'DESK DRAWER #07 UNLOCKED!' : 'LOCKED DESK DRAWER #07'}
+            {hasBrassKey ? 'DESK DRAWER #07 UNLOCKED' : 'LOCKED DESK DRAWER #07'}
           </h2>
 
           {hasBrassKey ? (
             <div>
               <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-moon-cream)', lineHeight: '1.7', marginBottom: '16px' }}>
-                You insert the Antique Brass Key from the museum. With a crisp click, the drawer slides open!
-                Inside lies an <strong>Overgrown Botanical Map</strong> with dried lavender petals, pointing toward the concealed ivy gate in the Valley!
+                You insert the Antique Brass Key from the museum. With a crisp click, the drawer slides open.
+                Inside lies an <strong>Overgrown Botanical Map</strong> with dried lavender petals, pointing toward the concealed ivy gate in the Valley.
               </p>
-              <div className="pixel-badge pixel-badge-gold" style={{ marginBottom: '20px' }}>
-                ✨ THE SECRET GARDEN IS NOW PERMANENTLY ACCESSIBLE!
+              <div className="pixel-badge pixel-badge-gold font-mono" style={{ marginBottom: '20px' }}>
+                THE SECRET GARDEN IS NOW ACCESSIBLE
               </div>
               <button 
                 onClick={() => {
@@ -166,7 +169,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           ) : (
             <div>
               <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-moon-cream)', lineHeight: '1.7', marginBottom: '16px' }}>
-                The drawer is tightly locked with an antique brass lock. A small inscription reads:
+                The drawer is tightly locked with an antique brass lock. A small brass plaque reads:
                 <br /><em style={{ color: 'var(--color-warm-peach)' }}>"The key is kept where her portraits reside (Museum of Beenish)."</em>
               </p>
               <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
@@ -184,7 +187,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     const getTedQuote = () => {
       switch (state.currentLocation) {
         case 'hub':
-          return "The stars fell all across the Valley, but honestly, walking out here with you makes the whole sky bright anyway. Where should we go next? ♡";
+          return "The stars fell all across the Valley, but honestly, walking out here with you makes the whole sky bright anyway. Where should we go next?";
         case 'bureau':
           return "I spent three days verifying allegation #03 for your case file. Can confirm: completely, objectively adorable. Did you check Drawer #07?";
         case 'museum':
@@ -196,9 +199,9 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         case 'observatory':
           return "Looking through this telescope into the future... whatever chapters we write together, I know it's going to be my favorite adventure.";
         case 'garden':
-          return "Come sit beside me on the bench under the willow tree, Beenie... I wrote something for you. ♡";
+          return "Come sit beside me on the bench under the willow tree, Beenie... I wrote something for you.";
         default:
-          return "I've been working on this expedition for weeks! Hope you're loving every step, Beenie ♡";
+          return "I've been working on this for weeks. Happy birthday, Beenie.";
       }
     };
 
@@ -208,7 +211,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           <CompanionBoyfriend pose="thumbsup" initialQuote={getTedQuote()} />
           <div style={{ marginTop: '20px' }}>
             <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-              KEEP EXPLORING TOGETHER ♡
+              KEEP EXPLORING TOGETHER
             </button>
           </div>
         </div>
@@ -226,17 +229,19 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
       <div className="pixel-modal-backdrop" onClick={onClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '580px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
-            <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
-              MUSEUM OF BEENISH // EXHIBITION ARCHIVE
+            <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem', letterSpacing: '0.08em' }}>
+              MUSEUM OF BEENISH // EXHIBIT ARCHIVE
             </span>
             <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {isPortrait2 && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '8px' }}>🖼️</div>
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                [ MASTER GALLERY &bull; FRAME #02 ]
+              </div>
               <h3 className="font-display" style={{ color: 'var(--color-dream-lilac)', fontSize: '1.1rem', marginBottom: '6px' }}>
-                PORTRAIT #02: THE ELEGANT GAZE
+                PORTRAIT: THE ELEGANT GAZE
               </h3>
               <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', marginBottom: '16px' }}>
                 "Even someone who only caught a glimpse would stop and remember."
@@ -245,12 +250,12 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               {/* Secret Key Behind Frame */}
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px dashed var(--color-lantern-gold)', padding: '16px', marginBottom: '20px' }}>
                 <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.9rem', marginBottom: '6px' }}>
-                  🗝️ SECRET ITEM DISCOVERED BEHIND FRAME!
+                  SECRET ITEM DISCOVERED BEHIND FRAME
                 </div>
                 <p className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', marginBottom: '12px' }}>
                   {hasBrassKey 
-                    ? 'You have already recovered the Antique Brass Key from behind this portrait!'
-                    : 'A small antique brass key is taped to the back of the frame! (Unlocks Drawer #07 in the Bureau)'}
+                    ? 'You have already taken the Antique Brass Key from behind this frame.'
+                    : 'A small antique brass key is tucked behind the canvas. It opens Drawer #07 in the Bureau of Unreasonable Boyfriends.'}
                 </p>
                 {!hasBrassKey && (
                   <button 
@@ -263,7 +268,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                     }}
                     className="pixel-btn pixel-btn-primary font-display"
                   >
-                    TAKE BRASS KEY 🗝️
+                    TAKE BRASS KEY
                   </button>
                 )}
               </div>
@@ -272,9 +277,11 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
           {activeObject.type === 'museum_portrait_1' && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '8px' }}>🖼️</div>
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                [ MASTER GALLERY &bull; FRAME #01 ]
+              </div>
               <h3 className="font-display" style={{ color: 'var(--color-dream-lilac)', fontSize: '1.1rem', marginBottom: '6px' }}>
-                PORTRAIT #01: UNCONTROLLABLE LAUGHTER
+                PORTRAIT: UNCONTROLLABLE LAUGHTER
               </h3>
               <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', lineHeight: '1.7', marginBottom: '20px' }}>
                 "The world sees a stunning girl. I get to see the exact moment your laughter fills the room and makes everything lighter."
@@ -287,7 +294,9 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
           {isAchieve && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '8px' }}>🏆</div>
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                [ HALL OF HONORS ]
+              </div>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '6px' }}>
                 THE POSITION HOLDER ARTIFACT
               </h3>
@@ -305,18 +314,20 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
           {isPhenom && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '8px' }}>✨</div>
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                [ OBSERVATION CHAMBER ]
+              </div>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '6px' }}>
                 THE UNEXPLAINABLE BEENISH PHENOMENON
               </h3>
               <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', lineHeight: '1.7', marginBottom: '16px' }}>
                 Scientists have spent years studying this phenomenon without reaching a consensus. Her boyfriend has reached the following conclusion:
               </p>
-              <div className="font-mono" style={{ fontSize: '1.1rem', color: 'var(--color-warm-peach)', fontWeight: 'bold', margin: '14px 0 24px' }}>
+              <div className="font-mono" style={{ fontSize: '1.05rem', color: 'var(--color-warm-peach)', fontWeight: 'bold', margin: '14px 0 24px' }}>
                 "Bas meri Beenish hain. Samajh nahi aata, bas hain."
               </div>
               <button onClick={() => { examineExhibit('ex_phenomenon'); onClose(); }} className="pixel-btn pixel-btn-peach font-display" style={{ width: '100%', justifyContent: 'center' }}>
-                ACCEPT THE PHENOMENON ♡
+                ACCEPT THE PHENOMENON
               </button>
             </div>
           )}
@@ -331,12 +342,14 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
       return (
         <div className="pixel-modal-backdrop" onClick={onClose}>
           <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '440px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💌</div>
+            <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
+              [ SECRET BENCH NOTE ]
+            </div>
             <h3 className="font-display" style={{ color: 'var(--color-warm-peach)', fontSize: '1rem', marginBottom: '10px' }}>
-              SECRET NOTE BEHIND JUDGE'S BENCH
+              NOTE BEHIND THE JUDGE'S BENCH
             </h3>
             <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '20px' }}>
-              "P.S. There never were any flaws. You are completely and wonderfully perfect to me, Beenie. ♡"
+              "P.S. There never were any flaws. You are completely and wonderfully perfect to me, Beenie."
             </p>
             <button onClick={onClose} className="pixel-btn pixel-btn-peach font-display" style={{ width: '100%', justifyContent: 'center' }}>
               KEEP SECRET NOTE
@@ -355,9 +368,11 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           </div>
 
           <div style={{ textAlign: 'center', padding: '16px' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>⚖️ 🔨</div>
+            <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', marginBottom: '6px' }}>
+              [ CASE NO. 00-PERFECT ]
+            </div>
             <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '10px' }}>
-              TRIAL PROCEEDINGS: STATE VS. BEENISH
+              TRIAL PROCEEDINGS: THE STATE VS. BEENISH
             </h3>
 
             {courtStep === 0 && (
@@ -373,11 +388,11 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                     setTimeout(() => {
                       setIsSearchingCourt(false);
                       setCourtStep(1);
-                    }, 1000);
+                    }, 900);
                   }}
                   className="pixel-btn pixel-btn-primary font-display"
                 >
-                  {isSearchingCourt ? 'SEARCHING ARCHIVES...' : 'SEARCH EVIDENCE FOR FLAWS 🔍'}
+                  {isSearchingCourt ? 'SEARCHING ARCHIVES...' : 'SEARCH EVIDENCE FOR FLAWS'}
                 </button>
               </div>
             )}
@@ -385,7 +400,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {courtStep === 1 && (
               <div>
                 <p className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.9rem', marginBottom: '14px' }}>
-                  Prosecution found 0 records! They now ask the boyfriend for an honest statement.
+                  Prosecution found zero records. They now demand an honest statement from the boyfriend.
                 </p>
                 <button
                   onClick={() => {
@@ -394,18 +409,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   }}
                   className="pixel-btn pixel-btn-peach font-display"
                 >
-                  SHOUT: OBJECTION! 📢
+                  CALL OBJECTION
                 </button>
               </div>
             )}
 
             {courtStep >= 2 && (
               <div>
-                <div className="font-display" style={{ color: 'var(--color-rose-glow)', fontSize: '1.3rem', margin: '14px 0' }}>
-                  ★ VERDICT: NOT GUILTY ★
+                <div className="font-display" style={{ color: 'var(--color-rose-glow)', fontSize: '1.2rem', margin: '14px 0' }}>
+                  VERDICT: NOT GUILTY
                 </div>
                 <div className="font-mono" style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', fontSize: '0.85rem', color: 'var(--color-moon-cream)', textAlign: 'left', marginBottom: '16px' }}>
-                  <div><strong>FINDING:</strong> The defense is hopelessly biased, the prosecution has no evidence, and the judge has decided to go home.</div>
+                  <div><strong>FINDING:</strong> The defense is hopelessly biased, the prosecution has no evidence, and the judge has adjourned to spend time with the defendant.</div>
                   <div style={{ color: 'var(--color-dusty-lavender)', marginTop: '6px' }}>
                     <em>"Notice: This case may be reopened if the boyfriend ever develops a functioning sense of objectivity."</em>
                   </div>
@@ -454,15 +469,15 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ alignSelf: 'flex-start', backgroundColor: 'var(--color-twilight-blue)', padding: '6px 10px', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>
                   <span style={{ color: 'var(--color-warm-peach)', fontSize: '0.65rem', display: 'block' }}>Beenish:</span>
-                  "Hey! Are you awake?"
+                  "Hey, are you awake?"
                 </div>
                 <div style={{ alignSelf: 'flex-end', backgroundColor: 'var(--color-void-navy)', border: '1px solid var(--color-lantern-gold)', padding: '6px 10px', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>
                   <span style={{ color: 'var(--color-lantern-gold)', fontSize: '0.65rem', display: 'block' }}>Ted:</span>
-                  "Yeah! Thinking about you. Everything okay?"
+                  "Yeah. Thinking about you. Everything okay?"
                 </div>
                 <div style={{ alignSelf: 'flex-start', backgroundColor: 'var(--color-twilight-blue)', padding: '6px 10px', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>
                   <span style={{ color: 'var(--color-warm-peach)', fontSize: '0.65rem', display: 'block' }}>Beenish:</span>
-                  "Yeah, you made my whole day today :)"
+                  "Yeah, you made my whole day today."
                 </div>
               </div>
             </div>
@@ -470,18 +485,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
           {/* Audio log simulation for laughter */}
           {memory.id === 'mem_laugh' && (
-            <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '2rem' }}>😂</span>
-              <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)' }}>
-                [AUDIO LOG]: Uncontrollable laughter recorded. Neither party remembers what the joke was. Status: Pure joy.
+            <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', marginBottom: '16px' }}>
+              <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>[RECORDED LAUGHTER]</div>
+              <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)' }}>
+                Neither of us remembers what the joke was. Just the sound of your laughter filling the entire room.
               </p>
             </div>
           )}
 
           {/* Classified Memory */}
           {memory.id === 'mem_classified' && (
-            <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px solid var(--color-lantern-gold)', padding: '12px', textAlign: 'center', marginBottom: '16px' }}>
-              <span className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.85rem' }}>★ CLASSIFIED MEMORY DECRYPTED ★</span>
+            <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-lantern-gold)', padding: '10px', textAlign: 'center', marginBottom: '16px' }}>
+              <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', letterSpacing: '0.08em' }}>CLASSIFIED MEMORY DECRYPTED</span>
             </div>
           )}
 
@@ -497,11 +512,11 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               readMemory(memory.id);
               recoverStar(4, 'archive_complete');
               onClose();
-            }}
+            }} 
             className="pixel-btn pixel-btn-primary font-display" 
             style={{ width: '100%', justifyContent: 'center' }}
           >
-            PRESERVE IN HEART ♡
+            KEEP IN MY HEART
           </button>
         </div>
       </div>
@@ -539,22 +554,19 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             ))}
           </div>
 
-          <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px solid var(--color-twilight-blue)', padding: '20px', textAlign: 'center', marginBottom: '20px' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
-              {vig.sceneVisual === 'photoshoot' && '📸 💃 🤪'}
-              {vig.sceneVisual === 'walk' && '🏮 👫 🌙'}
-              {vig.sceneVisual === 'reels' && '🎬 🕺 💃'}
-              {vig.sceneVisual === 'date' && '🕯️ ☕ 🍽️'}
+          <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '20px', textAlign: 'center', marginBottom: '20px' }}>
+            <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--color-warm-peach)', letterSpacing: '0.12em', marginBottom: '6px' }}>
+              [ {vig.category.toUpperCase()} ]
             </div>
-            <h4 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1rem', marginBottom: '6px' }}>{vig.title}</h4>
-            <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', marginBottom: '12px' }}>{vig.description}</p>
+            <h4 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1rem', marginBottom: '8px' }}>{vig.title}</h4>
+            <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', marginBottom: '12px', lineHeight: '1.7' }}>{vig.description}</p>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--color-warm-peach)', fontStyle: 'italic' }}>
               "{vig.unlockedNote}"
             </p>
           </div>
 
           <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-            LOOK FORWARD TO THIS ♡
+            LOOK FORWARD TO THIS
           </button>
         </div>
       </div>
@@ -565,7 +577,9 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     return (
       <div className="pixel-modal-backdrop" onClick={onClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '520px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '6px' }}>✦ ✨ ✦</div>
+          <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', letterSpacing: '0.12em', marginBottom: '8px' }}>
+            [ THE UNNAMED CONSTELLATION ]
+          </div>
           <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '8px' }}>
             A FUTURE WE HAVEN’T FIGURED OUT YET
           </h3>
@@ -575,8 +589,8 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.9rem', marginBottom: '12px' }}>
                 Constellation Name: <strong style={{ color: 'var(--color-lantern-gold)' }}>"{namedConstellation}"</strong>
               </p>
-              <div className="pixel-badge pixel-badge-gold" style={{ marginBottom: '20px' }}>
-                ★ INSCRIBED IN THE SKY FOREVER!
+              <div className="pixel-badge pixel-badge-gold font-mono" style={{ marginBottom: '20px' }}>
+                INSCRIBED IN THE SKY FOREVER
               </div>
               <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
                 GAZE AT OUR CONSTELLATION
@@ -606,7 +620,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                     width: '100%',
                     padding: '12px',
                     backgroundColor: 'var(--color-midnight-indigo)',
-                    border: '2px solid var(--color-twilight-blue)',
+                    border: '1px solid var(--color-twilight-blue)',
                     color: 'var(--color-moon-cream)',
                     fontSize: '0.9rem',
                     marginBottom: '16px',
@@ -614,7 +628,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   }}
                 />
                 <button type="submit" disabled={!constellationInput.trim()} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-                  INSCRIBE IN SKY ✦
+                  INSCRIBE IN SKY
                 </button>
               </form>
             </div>
@@ -628,10 +642,12 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   if (activeObject.type === 'garden_bench') {
     return (
       <div className="pixel-modal-backdrop" onClick={onClose}>
-        <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '680px', backgroundColor: 'var(--color-void-navy)', padding: '36px 28px', border: '3px solid var(--color-lantern-gold)' }}>
-          <div style={{ textAlign: 'center', marginBottom: '24px', borderBottom: '2px dashed var(--color-twilight-blue)', paddingBottom: '16px' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>💌</div>
-            <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.3rem', marginBottom: '4px' }}>
+        <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '680px', backgroundColor: 'var(--color-void-navy)', padding: '36px 28px', border: '2px solid var(--color-lantern-gold)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '24px', borderBottom: '1px dashed var(--color-twilight-blue)', paddingBottom: '16px' }}>
+            <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
+              October 27 &bull; For Beenish
+            </div>
+            <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', marginBottom: '4px' }}>
               {BIRTHDAY_LETTER.title}
             </div>
             <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.9rem' }}>
@@ -645,9 +661,9 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             ))}
           </div>
 
-          <div style={{ borderTop: '2px dashed var(--color-twilight-blue)', paddingTop: '16px', textAlign: 'right', marginBottom: '20px' }}>
+          <div style={{ borderTop: '1px dashed var(--color-twilight-blue)', paddingTop: '16px', textAlign: 'right', marginBottom: '20px' }}>
             <div className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.85rem' }}>{BIRTHDAY_LETTER.signoff}</div>
-            <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginTop: '4px' }}>Ted ♡</div>
+            <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginTop: '4px' }}>Ted</div>
             <div className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.95rem', marginTop: '10px', fontStyle: 'italic' }}>
               "{BIRTHDAY_LETTER.postscript}"
             </div>
@@ -662,51 +678,143 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             className="pixel-btn pixel-btn-peach font-display" 
             style={{ width: '100%', justifyContent: 'center' }}
           >
-            SIT TOGETHER IN PEACE FOREVER ♡
+            SIT TOGETHER IN PEACE
           </button>
         </div>
       </div>
     );
   }
 
-  // 9. OVERWORLD SIGNPOST
+  // 9. BIRTHDAY CAKE & MOMENT FOR BEENISH
+  if (activeObject.type === 'birthday_cake') {
+    return (
+      <div className="pixel-modal-backdrop" onClick={onClose}>
+        <div 
+          className="pixel-modal-content pixel-panel pixel-panel-gold" 
+          onClick={e => e.stopPropagation()} 
+          style={{ maxWidth: '580px', backgroundColor: 'var(--color-void-navy)', padding: '28px' }}
+        >
+          <div className="pixel-panel-header" style={{ marginBottom: '18px' }}>
+            <div>
+              <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.75rem', letterSpacing: '0.12em' }}>
+                OCTOBER 27 &bull; CENTRAL PLAZA
+              </span>
+              <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginTop: '2px' }}>
+                A Birthday Moment For Beenish
+              </h2>
+            </div>
+            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+          </div>
+
+          {!candlesBlown ? (
+            <div>
+              <div 
+                style={{ 
+                  backgroundColor: 'var(--color-midnight-indigo)', 
+                  border: '1px solid var(--color-twilight-blue)', 
+                  padding: '18px', 
+                  marginBottom: '20px', 
+                  lineHeight: '1.8' 
+                }}
+              >
+                <p className="font-mono" style={{ fontSize: '0.9rem', color: 'var(--color-moon-cream)', marginBottom: '12px' }}>
+                  A two-tier strawberry cake rests on the linen runner under the evening sky. Three candles flicker gently in the quiet breeze.
+                </p>
+                <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', fontStyle: 'italic' }}>
+                  "Before you explore the rest of the valley, make a wish, Beenie."
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  soundEngine.playBlowCandles();
+                  soundEngine.playBirthdayJingle();
+                  setCandlesBlown(true);
+                }}
+                className="pixel-btn pixel-btn-primary font-display"
+                style={{ width: '100%', padding: '14px', justifyContent: 'center', fontSize: '0.95rem' }}
+              >
+                Make A Wish &amp; Blow Out The Candles
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div 
+                style={{ 
+                  backgroundColor: 'var(--color-midnight-indigo)', 
+                  border: '1px solid var(--color-twilight-blue)', 
+                  padding: '20px', 
+                  marginBottom: '20px', 
+                  lineHeight: '1.8' 
+                }}
+              >
+                <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-dusty-lavender)', marginBottom: '10px' }}>
+                  [The flames drift away into three thin curls of lavender smoke.]
+                </div>
+                <p className="font-mono" style={{ fontSize: '0.92rem', color: 'var(--color-moon-cream)', marginBottom: '14px' }}>
+                  May this year give you everything you've been working so hard for—every goal, every peace of mind, and all the joy you deserve. I'm right beside you, cheering for you through all of it.
+                </p>
+                <div className="font-display" style={{ color: 'var(--color-lantern-gold)', textAlign: 'right', fontSize: '0.95rem' }}>
+                  — Ted
+                </div>
+              </div>
+
+              <button
+                onClick={onClose}
+                className="pixel-btn pixel-btn-peach font-display"
+                style={{ width: '100%', padding: '12px', justifyContent: 'center' }}
+              >
+                Continue The Expedition
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // 10. OVERWORLD SIGNPOST
   if (activeObject.type === 'signpost') {
     return (
       <div className="pixel-modal-backdrop" onClick={onClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🧭</div>
+          <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', marginBottom: '8px' }}>
+            [ VALLEY GUIDEPOST ]
+          </div>
           <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1rem', marginBottom: '14px' }}>
-            VALLEY OF THE STARS SIGNPOST
+            VALLEY OF THE STARS GUIDEPOST
           </h3>
-          <div className="font-mono" style={{ textAlign: 'left', lineHeight: '1.9', fontSize: '0.85rem', color: 'var(--color-moon-cream)', backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', marginBottom: '20px' }}>
-            <div>↖ <strong>NORTH-WEST:</strong> Bureau of Unreasonable Boyfriends</div>
-            <div>↑ <strong>NORTH:</strong> The Museum of Beenish</div>
-            <div>↗ <strong>NORTH-EAST:</strong> Court of Absolutely No Flaws</div>
-            <div>→ <strong>EAST:</strong> Archive of Things That Happened</div>
-            <div>⇡ <strong>HILLTOP:</strong> Observatory of Future Stars</div>
-            <div>↘ <strong>SOUTH-EAST:</strong> {state.secretGardenUnlocked ? '🌹 The Secret Garden' : '🔒 Concealed Ivy Gate'}</div>
+          <div className="font-mono" style={{ textAlign: 'left', lineHeight: '2.0', fontSize: '0.85rem', color: 'var(--color-moon-cream)', backgroundColor: 'var(--color-midnight-indigo)', padding: '16px', marginBottom: '20px', border: '1px solid var(--color-twilight-blue)' }}>
+            <div>&bull; <strong>WEST:</strong> Bureau of Unreasonable Boyfriends (Start here)</div>
+            <div>&bull; <strong>NORTH:</strong> The Museum of Beenish</div>
+            <div>&bull; <strong>EAST:</strong> Court of Absolutely No Flaws</div>
+            <div>&bull; <strong>SOUTHEAST:</strong> Archive of Things That Happened</div>
+            <div>&bull; <strong>HILLTOP TRAIL:</strong> Observatory of Future Stars</div>
+            <div>&bull; <strong>GARDEN GATE:</strong> {state.secretGardenUnlocked ? 'The Secret Garden (Open)' : 'Concealed Ivy Gate (Locked)'}</div>
           </div>
           <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-            CLOSE SIGNPOST
+            CLOSE GUIDEPOST
           </button>
         </div>
       </div>
     );
   }
 
-  // 10. SECRET GARDEN GATE (LOCKED HINT)
+  // 11. SECRET GARDEN GATE (LOCKED HINT)
   if (activeObject.id === 'door_garden' && !state.secretGardenUnlocked) {
     return (
       <div className="pixel-modal-backdrop" onClick={onClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔒 🌿 🗝️</div>
+          <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', marginBottom: '8px' }}>
+            [ CONCEALED IVY GATE &bull; LOCKED ]
+          </div>
           <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1rem', marginBottom: '10px' }}>
-            CONCEALED IVY GATE (LOCKED)
+            CONCEALED IVY GATE
           </h3>
           <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', lineHeight: '1.7', marginBottom: '16px' }}>
-            Dense ivy and wild roses twist around an ancient iron gate. A weathered wooden plaque reads:
+            Dense ivy and wild roses twist around an old iron gate. A weathered wooden plaque reads:
           </p>
-          <div className="font-mono" style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '12px', color: 'var(--color-warm-peach)', fontSize: '0.8rem', lineHeight: '1.6', marginBottom: '20px' }}>
+          <div className="font-mono" style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '14px', color: 'var(--color-warm-peach)', fontSize: '0.82rem', lineHeight: '1.7', marginBottom: '20px' }}>
             "The key is hidden behind a beloved portrait in the Museum of Beenish.
             It opens Bureau Drawer #07, where the Botanical Map rests."
           </div>

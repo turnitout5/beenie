@@ -41,7 +41,8 @@ export interface InteractableObject {
     | 'observatory_telescope'
     | 'observatory_altar'
     | 'garden_bench'
-    | 'signpost';
+    | 'signpost'
+    | 'birthday_cake';
   targetRoom?: RoomId;
   targetPos?: Position;
 }

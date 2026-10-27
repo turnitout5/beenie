@@ -80,7 +80,7 @@ export const BureauScene: React.FC = () => {
             style={{ fontSize: '0.75rem', padding: '6px 12px' }}
             title="Toggle Desk Lamp"
           >
-            {lampOn ? '💡 LAMP: ON' : '🌑 LAMP: OFF'}
+            {lampOn ? 'LAMP: ON' : 'LAMP: OFF'}
           </button>
         </div>
       </div>
@@ -98,7 +98,7 @@ export const BureauScene: React.FC = () => {
         <div className="pixel-panel" style={{ backgroundColor: 'var(--color-midnight-indigo)' }}>
           <div className="pixel-panel-header">
             <span className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)' }}>
-              🗄️ CLASSIFIED FILING CABINET
+              CLASSIFIED FILING CABINET
             </span>
             <span className="pixel-badge font-mono" style={{ fontSize: '0.7rem' }}>
               {readReports.length} / {BUREAU_REPORTS.length} READ
@@ -124,12 +124,11 @@ export const BureauScene: React.FC = () => {
                     fontSize: '0.8rem',
                   }}
                 >
-                  <span style={{ fontSize: '1.1rem' }}>📂</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600 }}>{report.code}: {report.title}</div>
                     <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>Subject: {report.subject}</div>
                   </div>
-                  {isRead && <span style={{ color: 'var(--color-lantern-gold)' }}>✓</span>}
+                  {isRead && <span style={{ color: 'var(--color-lantern-gold)' }}>[READ]</span>}
                 </button>
               );
             })}
@@ -147,7 +146,7 @@ export const BureauScene: React.FC = () => {
                 fontSize: '0.8rem',
               }}
             >
-              <span>{hasBrassKey ? '🗝️ UNLOCK DESK DRAWER WITH BRASS KEY' : '🔒 DESK DRAWER #07 (LOCKED)'}</span>
+              <span>{hasBrassKey ? 'UNLOCK DESK DRAWER WITH BRASS KEY' : 'DESK DRAWER #07 (LOCKED)'}</span>
             </button>
 
             {drawerNotice && (
@@ -275,7 +274,7 @@ export const BureauScene: React.FC = () => {
                     cursor: readReports.length < 3 ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  <span>STAMP OFFICIAL CASE FILE 📑</span>
+                  <span>STAMP OFFICIAL CASE FILE</span>
                 </button>
               </div>
             )}
@@ -391,7 +390,7 @@ export const BureauScene: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
             style={{ maxWidth: '540px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}
           >
-            <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🗺️ 🗝️ 🌹</div>
+            <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', marginBottom: '8px' }}>[BOTANICAL MAP]</div>
             <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '8px' }}>
               THE SECRET DESK DRAWER OPENS!
             </div>
@@ -428,7 +427,7 @@ export const BureauScene: React.FC = () => {
                 className="pixel-btn pixel-btn-peach font-display"
                 style={{ flex: 1, minWidth: '200px', padding: '12px', fontSize: '0.85rem' }}
               >
-                GO TO SECRET GARDEN NOW 🌹
+                GO TO SECRET GARDEN NOW
               </button>
               <button
                 onClick={() => setIsDrawerModalOpen(false)}

@@ -150,8 +150,7 @@ export const CourtScene: React.FC = () => {
                 marginTop: '-4px',
               }}
             >
-              <span style={{ fontSize: '0.7rem' }} className="font-mono">⚖️ THE HON. JUDGE</span>
-              <span style={{ fontSize: '0.9rem' }}>🔨</span>
+              <span style={{ fontSize: '0.7rem' }} className="font-mono">THE HON. JUDGE</span>
             </div>
           </div>
 
@@ -180,7 +179,7 @@ export const CourtScene: React.FC = () => {
             className="pixel-btn pixel-btn-ghost font-mono"
             style={{ marginTop: '8px', fontSize: '0.7rem', padding: '2px 8px', minHeight: '26px' }}
           >
-            [👀 PEEK BEHIND JUDGE'S BENCH]
+            [PEEK BEHIND JUDGE'S BENCH]
           </button>
         </div>
 
@@ -209,7 +208,7 @@ export const CourtScene: React.FC = () => {
               <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginBottom: '8px' }}>
                 PROSECUTION EVIDENCE DOSSIER
               </div>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📚</div>
+              <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', marginBottom: '8px' }}>[DOCUMENTS]</div>
               <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginBottom: '12px' }}>
                 {isSearching
                   ? 'Searching archives for flaws...'
@@ -227,7 +226,7 @@ export const CourtScene: React.FC = () => {
               className="pixel-btn pixel-btn-ghost font-mono"
               style={{ fontSize: '0.75rem', padding: '6px 10px' }}
             >
-              EXAMINE ABSURD EVIDENCE 📂
+              EXAMINE EVIDENCE
             </button>
           </div>
 
@@ -262,7 +261,7 @@ export const CourtScene: React.FC = () => {
               className="pixel-btn pixel-btn-primary font-display"
               style={{ padding: '14px 28px', fontSize: '0.9rem' }}
             >
-              <span>{isSearching ? 'SEARCHING ARCHIVES...' : 'SEARCH EVIDENCE FOR FLAWS 🔍'}</span>
+              <span>{isSearching ? 'SEARCHING ARCHIVES...' : 'SEARCH EVIDENCE FOR FLAWS'}</span>
             </button>
           )}
 
@@ -276,7 +275,7 @@ export const CourtScene: React.FC = () => {
                 className="pixel-btn pixel-btn-peach font-display"
                 style={{ padding: '14px 28px', fontSize: '1rem' }}
               >
-                <span>SHOUT: OBJECTION! 📢</span>
+                <span>CALL OBJECTION</span>
               </button>
             </div>
           )}
@@ -298,7 +297,7 @@ export const CourtScene: React.FC = () => {
                 className="pixel-btn pixel-btn-primary font-display"
                 style={{ padding: '14px 28px', fontSize: '0.9rem' }}
               >
-                <span>BANG GAVEL FOR FINAL VERDICT 🔨</span>
+                <span>DELIVER FINAL VERDICT</span>
               </button>
             </div>
           )}
@@ -365,14 +364,14 @@ export const CourtScene: React.FC = () => {
                   className="pixel-btn pixel-btn-ghost font-display"
                   style={{ fontSize: '0.75rem', padding: '8px 16px' }}
                 >
-                  <span>RETRY INVESTIGATION 🔄</span>
+                  <span>RETRY INVESTIGATION</span>
                 </button>
                 <button
                   onClick={() => setShowSecretNote(true)}
                   className="pixel-btn pixel-btn-peach font-display"
                   style={{ fontSize: '0.75rem', padding: '8px 16px' }}
                 >
-                  <span>VIEW BENCH NOTE 💌</span>
+                  <span>VIEW BENCH NOTE</span>
                 </button>
               </div>
             </div>
@@ -456,7 +455,7 @@ export const CourtScene: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
             style={{ maxWidth: '440px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}
           >
-            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💌</div>
+          <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', marginBottom: '8px' }}>[BENCH NOTE]</div>
             <div className="font-display" style={{ color: 'var(--color-warm-peach)', fontSize: '1rem', marginBottom: '10px' }}>
               SECRET NOTE BEHIND THE BENCH
             </div>

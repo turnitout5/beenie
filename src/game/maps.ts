@@ -20,6 +20,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 550, y: 70, width: 140, height: 75 }, // Court building
       { x: 620, y: 310, width: 120, height: 75 }, // Archive building
       { x: 600, y: 480, width: 130, height: 60 }, // Garden gate area
+      { x: 370, y: 250, width: 60, height: 35 },  // Central Birthday Cake Table
     ],
     interactables: [
       {
@@ -89,12 +90,21 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         targetPos: { x: 260, y: 390 },
       },
       {
+        id: 'central_birthday_cake',
+        x: 368,
+        y: 240,
+        width: 64,
+        height: 48,
+        promptLabel: '[ E ] Birthday Table: Make A Wish',
+        type: 'birthday_cake',
+      },
+      {
         id: 'hub_signpost',
-        x: 388,
-        y: 360,
-        width: 24,
-        height: 24,
-        promptLabel: '[ E ] Read Signpost',
+        x: 335,
+        y: 320,
+        width: 28,
+        height: 28,
+        promptLabel: '[ E ] Read Guidepost',
         type: 'signpost',
       },
     ],

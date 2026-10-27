@@ -171,13 +171,9 @@ export const GardenScene: React.FC = () => {
             />
           </div>
 
-          {/* Gentle Wildflowers beneath the bench */}
-          <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '1.2rem' }}>
-            <span>🌸</span>
-            <span>🌿</span>
-            <span>🏮</span>
-            <span>🌿</span>
-            <span>🌸</span>
+          {/* Clean footer line */}
+          <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', marginTop: '14px', letterSpacing: '0.1em' }}>
+            [ THE WILLOW TREE BENCH ]
           </div>
         </div>
 
@@ -192,7 +188,7 @@ export const GardenScene: React.FC = () => {
               boxShadow: 'var(--pixel-border-gold)',
             }}
           >
-            <span>💌 OPEN YOUR BIRTHDAY LETTER ♡</span>
+            <span>OPEN YOUR BIRTHDAY LETTER</span>
           </button>
         </div>
       </div>
@@ -207,12 +203,14 @@ export const GardenScene: React.FC = () => {
               maxWidth: '680px',
               backgroundColor: 'var(--color-void-navy)',
               padding: '36px 28px',
-              border: '3px solid var(--color-lantern-gold)',
+              border: '2px solid var(--color-lantern-gold)',
             }}
           >
             {/* Letter Header */}
-            <div style={{ textAlign: 'center', marginBottom: '28px', borderBottom: '2px dashed var(--color-twilight-blue)', paddingBottom: '16px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💌</div>
+            <div style={{ textAlign: 'center', marginBottom: '28px', borderBottom: '1px dashed var(--color-twilight-blue)', paddingBottom: '16px' }}>
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
+                October 27 &bull; For Beenish
+              </div>
               <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', marginBottom: '4px' }}>
                 {BIRTHDAY_LETTER.title}
               </div>
