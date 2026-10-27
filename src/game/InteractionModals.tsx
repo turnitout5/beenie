@@ -179,15 +179,36 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     );
   }
 
-  // 3. TALK TO TED AT DESK
+  // 3. TALK TO TED
   if (activeObject.type === 'bureau_desk' || activeObject.type === 'npc_ted') {
+    const getTedQuote = () => {
+      switch (state.currentLocation) {
+        case 'hub':
+          return "The stars fell all across the Valley, but honestly, walking out here with you makes the whole sky bright anyway. Where should we go next? ♡";
+        case 'bureau':
+          return "I spent three days verifying allegation #03 for your case file. Can confirm: completely, objectively adorable. Did you check Drawer #07?";
+        case 'museum':
+          return "They put all these exhibits up, but you're still the only true masterpiece in this entire gallery, Beenie. (P.S. Did you check behind the frame?)";
+        case 'court':
+          return "I may be wearing the judge's wig, but let the record state that I am 100% unconditionally biased in your favor!";
+        case 'archive':
+          return "Every single memory in these crystals is etched into my heart forever. That ordinary conversation? It made my entire year.";
+        case 'observatory':
+          return "Looking through this telescope into the future... whatever chapters we write together, I know it's going to be my favorite adventure.";
+        case 'garden':
+          return "Come sit beside me on the bench under the willow tree, Beenie... I wrote something for you. ♡";
+        default:
+          return "I've been working on this expedition for weeks! Hope you're loving every step, Beenie ♡";
+      }
+    };
+
     return (
       <div className="pixel-modal-backdrop" onClick={onClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <CompanionBoyfriend pose="thumbsup" initialQuote="I've been working on this expedition for weeks! Hope you're finding all the stars, Beenie ♡" />
+          <CompanionBoyfriend pose="thumbsup" initialQuote={getTedQuote()} />
           <div style={{ marginTop: '20px' }}>
             <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-              KEEP EXPLORING
+              KEEP EXPLORING TOGETHER ♡
             </button>
           </div>
         </div>

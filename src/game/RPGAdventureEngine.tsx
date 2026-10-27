@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useExpedition } from '../state/ExpeditionContext';
-import { Direction, Position, RoomId, InteractableObject } from './types';
+import { Direction, Position, RoomId, InteractableObject, LightSource } from './types';
 import { ROOMS } from './maps';
 import { SpriteRenderer } from './spriteRenderer';
+import { EnvironmentRenderer } from './environmentRenderer';
 import { soundEngine } from '../audio/soundEngine';
-
 import { LocationId } from '../types/expedition';
 
 interface RPGAdventureEngineProps {
@@ -15,7 +15,15 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   onTriggerInteraction,
 }) => {
   const { state, navigateTo } = useExpedition();
-  const { starsRecovered, recoveredStarIds, secretGardenUnlocked, currentLocation } = state;
+  const { 
+    starsRecovered, 
+    secretGardenUnlocked, 
+    currentLocation, 
+    bureauStamped, 
+    courtVerdictReached, 
+    namedConstellation, 
+    inventory 
+  } = state;
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -38,9 +46,12 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   const tedPosRef = useRef<Position>({ x: room.defaultSpawn.x, y: room.defaultSpawn.y + 28 });
   const tedDirRef = useRef<Direction>('up');
   const trailRef = useRef<Position[]>([]);
+  const tedEmoteRef = useRef<'heart' | 'exclamation' | 'question' | 'music' | 'blush' | 'sparkle' | 'sleep' | null>('heart');
+  const tedEmoteTimerRef = useRef<number>(120);
 
   // Controls State
   const keysPressed = useRef<Record<string, boolean>>({});
+  const [isVirtualRunning, setIsVirtualRunning] = useState<boolean>(false);
   const [activeInteractable, setActiveInteractable] = useState<InteractableObject | null>(null);
   const activeInteractableRef = useRef<InteractableObject | null>(null);
 
@@ -60,6 +71,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     targetPosRef.current = null;
     activeInteractableRef.current = null;
     setActiveInteractable(null);
+
+    // Trigger excited companion reaction
+    tedEmoteRef.current = 'sparkle';
+    tedEmoteTimerRef.current = 100;
 
     if (newRoomId === 'garden') {
       soundEngine.startGardenMelody();
@@ -95,6 +110,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       changeRoom(interactable.targetRoom, interactable.targetPos);
     } else {
       soundEngine.playClick();
+      // Companion reacts happily to interactions
+      tedEmoteRef.current = 'heart';
+      tedEmoteTimerRef.current = 120;
       onTriggerInteraction(interactable);
     }
   }, [changeRoom, onTriggerInteraction, secretGardenUnlocked]);
@@ -158,16 +176,17 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
     const loop = () => {
       frameCount++;
-      const currentRoom = ROOMS[currentRoomId];
+      const currentRoom = ROOMS[currentRoomId] || ROOMS['overworld'];
 
       // Canvas dimensions match room
       canvas.width = currentRoom.width;
       canvas.height = currentRoom.height;
 
-      // Handle Movement Input
+      // Handle Movement Input & Sprint
       let dx = 0;
       let dy = 0;
-      const speed = 2.4;
+      const isRunning = keysPressed.current['shift'] || isVirtualRunning;
+      const speed = isRunning ? 3.8 : 2.4;
 
       if (keysPressed.current['w'] || keysPressed.current['arrowup']) {
         dy -= speed;
@@ -210,9 +229,13 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       const isMoving = dx !== 0 || dy !== 0;
       isWalkingRef.current = isMoving;
 
+      // Footstep sound & movement physics
       if (isMoving) {
-        if (frameCount % 8 === 0) {
+        const stepRate = isRunning ? 6 : 9;
+        if (frameCount % stepRate === 0) {
           walkFrameRef.current++;
+          const surface = currentRoom.theme === 'valley' ? 'grass' : currentRoom.id === 'museum' ? 'stone' : 'wood';
+          soundEngine.playFootstep(surface);
         }
 
         const nextX = playerPosRef.current.x + dx;
@@ -227,20 +250,42 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           playerPosRef.current.y = Math.max(10, Math.min(currentRoom.height - 34, nextY));
         }
 
-        // Add to companion trail queue
+        // Companion Ted Follower Trail Queue
         trailRef.current.push({ ...playerPosRef.current });
-        if (trailRef.current.length > 22) {
+        const trailDelay = isRunning ? 16 : 22;
+        if (trailRef.current.length > trailDelay) {
           const followPos = trailRef.current.shift();
           if (followPos) {
             tedPosRef.current = { ...followPos };
             tedDirRef.current = playerDirRef.current;
           }
         }
+
+        // Companion Emote when sprinting
+        if (isRunning && frameCount % 120 === 0) {
+          tedEmoteRef.current = 'blush';
+          tedEmoteTimerRef.current = 60;
+        }
+      } else {
+        // Idle companion emotes
+        if (frameCount % 300 === 0 && !tedEmoteRef.current) {
+          const emotes: Array<'heart' | 'music' | 'sleep' | 'sparkle'> = ['heart', 'music', 'sleep', 'sparkle'];
+          tedEmoteRef.current = emotes[Math.floor(Math.random() * emotes.length)];
+          tedEmoteTimerRef.current = 100;
+        }
+      }
+
+      // Decrement emote timer
+      if (tedEmoteTimerRef.current > 0) {
+        tedEmoteTimerRef.current--;
+        if (tedEmoteTimerRef.current === 0) {
+          tedEmoteRef.current = null;
+        }
       }
 
       // Proximity Detection for Interactables
       let closest: InteractableObject | null = null;
-      let minDistance = 42;
+      let minDistance = 44;
 
       for (const item of currentRoom.interactables) {
         const dist = Math.hypot(
@@ -253,329 +298,165 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
       }
 
+      // Also detect proximity to Ted to talk to him anywhere!
+      const distToTed = Math.hypot(
+        playerPosRef.current.x - tedPosRef.current.x,
+        playerPosRef.current.y - tedPosRef.current.y
+      );
+      if (!closest && distToTed < 36 && !isMoving) {
+        closest = {
+          id: 'npc_ted',
+          type: 'npc_ted',
+          promptLabel: '[ E ] Talk to Ted ♡',
+          x: tedPosRef.current.x,
+          y: tedPosRef.current.y,
+          width: 24,
+          height: 28,
+        };
+      }
+
       activeInteractableRef.current = closest;
       setActiveInteractable(closest);
 
       // --- RENDERING ENVIRONMENT ---
       ctx.imageSmoothingEnabled = false;
+      let lights: LightSource[] = [];
 
-      // Floor / Grass
-      if (currentRoom.theme === 'valley') {
-        ctx.fillStyle = '#1B2042';
-        ctx.fillRect(0, 0, currentRoom.width, currentRoom.height);
-
-        // Cobblestone path ribbons
-        ctx.fillStyle = '#30385F';
-        // Main cross paths
-        ctx.fillRect(360, 40, 60, 540);
-        ctx.fillRect(120, 160, 520, 50);
-        ctx.fillRect(360, 420, 320, 50);
-
-        // Cobblestone stone accents
-        ctx.fillStyle = '#666FA0';
-        for (let py = 60; py < 560; py += 30) {
-          ctx.fillRect(375, py, 12, 6);
-          ctx.fillRect(395, py + 12, 10, 6);
-        }
-
-        // Buildings facades
-        // Bureau (NW)
-        ctx.fillStyle = '#1B2042';
-        ctx.fillRect(70, 70, 140, 75);
-        ctx.strokeStyle = '#30385F';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(70, 70, 140, 75);
-        // Bureau Door
-        ctx.fillStyle = '#101329';
-        ctx.fillRect(130, 115, 30, 30);
-        // Sign
-        ctx.fillStyle = '#F3B79C';
-        ctx.fillRect(85, 80, 110, 12);
-        ctx.fillStyle = '#101329';
-        ctx.font = '8px monospace';
-        ctx.fillText('01. BUREAU', 115, 89);
-
-        // Museum (North)
-        ctx.fillStyle = '#1B2042';
-        ctx.fillRect(310, 50, 160, 75);
-        ctx.strokeStyle = '#666FA0';
-        ctx.strokeRect(310, 50, 160, 75);
-        ctx.fillStyle = '#101329';
-        ctx.fillRect(375, 95, 40, 30);
-        ctx.fillStyle = '#C3A9E8';
-        ctx.fillRect(330, 60, 120, 12);
-        ctx.fillStyle = '#101329';
-        ctx.fillText('02. MUSEUM', 365, 69);
-
-        // Court (NE)
-        ctx.fillStyle = '#1B2042';
-        ctx.fillRect(550, 70, 140, 75);
-        ctx.strokeStyle = '#F6D78B';
-        ctx.strokeRect(550, 70, 140, 75);
-        ctx.fillStyle = '#101329';
-        ctx.fillRect(605, 115, 30, 30);
-        ctx.fillStyle = '#F6D78B';
-        ctx.fillRect(565, 80, 110, 12);
-        ctx.fillStyle = '#101329';
-        ctx.fillText('03. COURT', 595, 89);
-
-        // Archive (East)
-        ctx.fillStyle = '#1B2042';
-        ctx.fillRect(620, 310, 120, 75);
-        ctx.strokeStyle = '#9588BD';
-        ctx.strokeRect(620, 310, 120, 75);
-        ctx.fillStyle = '#101329';
-        ctx.fillRect(665, 355, 30, 30);
-        ctx.fillStyle = '#9588BD';
-        ctx.fillRect(630, 320, 100, 12);
-        ctx.fillStyle = '#101329';
-        ctx.fillText('04. ARCHIVE', 655, 329);
-
-        // Secret Garden Gate (SE)
-        ctx.fillStyle = secretGardenUnlocked ? '#354E50' : '#101329';
-        ctx.fillRect(620, 480, 110, 60);
-        ctx.strokeStyle = secretGardenUnlocked ? '#E98FAF' : '#30385F';
-        ctx.strokeRect(620, 480, 110, 60);
-        ctx.fillStyle = secretGardenUnlocked ? '#E98FAF' : '#666FA0';
-        ctx.font = '8px monospace';
-        ctx.fillText(secretGardenUnlocked ? '🌹 SECRET GARDEN' : '🔒 OVERGROWN GATE', 635, 510);
-
-        // Wildflowers blooming along paths (scales with progress!)
-        const isBloomed = starsRecovered >= 3;
-        for (let fx = 160; fx < 350; fx += 40) {
-          SpriteRenderer.drawFlowerCluster(ctx, fx, 230, isBloomed);
-          SpriteRenderer.drawFlowerCluster(ctx, fx + 200, 230, isBloomed);
-        }
-        for (let fy = 200; fy < 500; fy += 50) {
-          SpriteRenderer.drawFlowerCluster(ctx, 440, fy, isBloomed);
-        }
-
-      } else {
-        // Interior Room Floor & Walls
-        ctx.fillStyle = '#1B2042';
-        ctx.fillRect(0, 0, currentRoom.width, currentRoom.height);
-
-        // Top Wall
-        ctx.fillStyle = '#101329';
-        ctx.fillRect(0, 0, currentRoom.width, 45);
-        ctx.strokeStyle = '#30385F';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(0, 0, currentRoom.width, 45);
-
-        // Interior Props depending on room
-        if (currentRoom.id === 'bureau') {
-          // Desk
-          ctx.fillStyle = '#30385F';
-          ctx.fillRect(190, 150, 120, 45);
-          ctx.strokeStyle = '#F3B79C';
-          ctx.strokeRect(190, 150, 120, 45);
-          // Desk Lamp
-          ctx.fillStyle = '#F6D78B';
-          ctx.fillRect(200, 140, 8, 12);
-          // Paperwork
-          ctx.fillStyle = '#F4EBDD';
-          ctx.fillRect(230, 155, 14, 10);
-          ctx.fillRect(250, 158, 16, 12);
-          // Filing Cabinet
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(60, 70, 70, 50);
-          ctx.strokeStyle = '#666FA0';
-          ctx.strokeRect(60, 70, 70, 50);
-          ctx.fillStyle = '#F4EBDD';
-          ctx.fillText('FILES', 80, 100);
-          // Desk Drawer #07
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(370, 70, 80, 45);
-          ctx.strokeStyle = '#F6D78B';
-          ctx.strokeRect(370, 70, 80, 45);
-          ctx.fillStyle = '#F6D78B';
-          ctx.fillText('DRAWER 07', 385, 95);
-
-        } else if (currentRoom.id === 'museum') {
-          // Red Carpet Runner
-          ctx.fillStyle = '#30385F';
-          ctx.fillRect(260, 50, 80, 390);
-          ctx.fillStyle = '#E98FAF';
-          ctx.fillRect(265, 50, 70, 390);
-
-          // Portrait Frames on Wall
-          ctx.fillStyle = '#F6D78B';
-          ctx.fillRect(100, 15, 50, 35);
-          ctx.fillRect(220, 15, 50, 35);
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(104, 19, 42, 27);
-          ctx.fillRect(224, 19, 42, 27);
-          ctx.fillStyle = '#F4EBDD';
-          ctx.fillText('P1', 118, 36);
-          ctx.fillText('P2 🗝️', 234, 36);
-
-          // Pedestals
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(350, 140, 60, 45);
-          ctx.fillRect(470, 140, 60, 45);
-          ctx.strokeStyle = '#C3A9E8';
-          ctx.strokeRect(350, 140, 60, 45);
-          ctx.strokeRect(470, 140, 60, 45);
-          ctx.fillStyle = '#F6D78B';
-          ctx.fillText('🏆', 372, 168);
-          ctx.fillText('✨', 492, 168);
-
-        } else if (currentRoom.id === 'court') {
-          // Judge Bench
-          ctx.fillStyle = '#30385F';
-          ctx.fillRect(190, 80, 160, 50);
-          ctx.strokeStyle = '#F6D78B';
-          ctx.strokeRect(190, 80, 160, 50);
-          ctx.fillStyle = '#F4EBDD';
-          ctx.fillText('⚖️ HON. JUDGE BENCH', 210, 110);
-
-          // Prosecution & Defense Tables
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(80, 220, 100, 40);
-          ctx.fillRect(350, 220, 100, 40);
-          ctx.strokeStyle = '#30385F';
-          ctx.strokeRect(80, 220, 100, 40);
-          ctx.strokeRect(350, 220, 100, 40);
-          ctx.fillStyle = '#F4EBDD';
-          ctx.fillText('PROSECUTION', 90, 245);
-          ctx.fillText('DEFENSE (TED)', 360, 245);
-
-        } else if (currentRoom.id === 'archive') {
-          // Floating Memory Crystals!
-          const bob = Math.sin(frameCount * 0.06) * 4;
-          SpriteRenderer.drawCrystal(ctx, 100, 150, false, bob);
-          SpriteRenderer.drawCrystal(ctx, 260, 140, false, -bob);
-          SpriteRenderer.drawCrystal(ctx, 420, 150, true, bob);
-
-          // Bookshelves
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(40, 50, 130, 30);
-          ctx.fillRect(210, 50, 130, 30);
-          ctx.fillRect(380, 50, 130, 30);
-          ctx.strokeStyle = '#9588BD';
-          ctx.strokeRect(40, 50, 130, 30);
-          ctx.strokeRect(210, 50, 130, 30);
-          ctx.strokeRect(380, 50, 130, 30);
-
-        } else if (currentRoom.id === 'observatory') {
-          // Telescope
-          ctx.fillStyle = '#F6D78B';
-          ctx.fillRect(180, 110, 35, 12);
-          ctx.fillStyle = '#101329';
-          ctx.fillRect(190, 122, 15, 25);
-          ctx.fillStyle = '#F4EBDD';
-          ctx.fillText('TELESCOPE', 170, 160);
-
-          // Altar for Constellation
-          ctx.fillStyle = '#1B2042';
-          ctx.fillRect(270, 110, 60, 40);
-          ctx.strokeStyle = '#C3A9E8';
-          ctx.strokeRect(270, 110, 60, 40);
-          ctx.fillStyle = '#C3A9E8';
-          ctx.fillText('✦ ALTAR ✦', 280, 135);
-
-        } else if (currentRoom.id === 'garden') {
-          // Pond
-          ctx.fillStyle = '#101329';
-          ctx.beginPath();
-          ctx.ellipse(150, 225, 70, 45, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#718C83';
-          ctx.lineWidth = 3;
-          ctx.stroke();
-
-          // Ancient Tree & Bench
-          ctx.fillStyle = '#354E50';
-          ctx.beginPath();
-          ctx.arc(410, 90, 45, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Wooden Bench
-          ctx.fillStyle = '#F6D78B';
-          ctx.fillRect(370, 145, 60, 20);
-          ctx.fillStyle = '#101329';
-          ctx.font = '8px monospace';
-          ctx.fillText('BENCH 💌', 380, 158);
-
-          // Fireflies in garden
-          ctx.fillStyle = '#F6D78B';
-          const t = frameCount * 0.05;
-          ctx.fillRect(160 + Math.sin(t) * 20, 180 + Math.cos(t) * 15, 3, 3);
-          ctx.fillRect(320 + Math.sin(t + 1) * 25, 220 + Math.cos(t + 1) * 20, 3, 3);
-          ctx.fillRect(440 + Math.sin(t + 2) * 20, 160 + Math.cos(t + 2) * 15, 3, 3);
-        }
-
-        // Exit Door
-        ctx.fillStyle = '#F6D78B';
-        ctx.fillRect(currentRoom.width / 2 - 20, currentRoom.height - 30, 40, 10);
-      }
-
-      // Draw Ted (Companion Follower)
-      // If in Overworld or Archive/Observatory, Ted follows her!
-      if (currentRoom.id === 'overworld' || currentRoom.id === 'archive' || currentRoom.id === 'observatory') {
-        SpriteRenderer.drawTed(
+      if (currentRoom.id === 'overworld') {
+        lights = EnvironmentRenderer.renderOverworld(
           ctx,
-          tedPosRef.current,
-          tedDirRef.current,
-          isWalkingRef.current,
-          walkFrameRef.current
-        );
-      } else if (currentRoom.id === 'garden') {
-        // Ted is sitting waiting on the bench
-        SpriteRenderer.drawTed(
-          ctx,
-          { x: 380, y: 135 },
-          'down',
-          false,
-          0
+          currentRoom.width,
+          currentRoom.height,
+          frameCount,
+          starsRecovered,
+          secretGardenUnlocked
         );
       } else if (currentRoom.id === 'bureau') {
-        // Ted is behind the desk
-        SpriteRenderer.drawTed(
+        lights = EnvironmentRenderer.renderBureauInterior(
           ctx,
-          { x: 238, y: 125 },
-          'down',
-          false,
-          0
+          currentRoom.width,
+          currentRoom.height,
+          frameCount,
+          bureauStamped
+        );
+      } else if (currentRoom.id === 'museum') {
+        lights = EnvironmentRenderer.renderMuseumInterior(
+          ctx,
+          currentRoom.width,
+          currentRoom.height,
+          frameCount,
+          inventory.includes('brass_key')
         );
       } else if (currentRoom.id === 'court') {
-        // Ted at defense table
-        SpriteRenderer.drawTed(
+        lights = EnvironmentRenderer.renderCourtroomInterior(
           ctx,
-          { x: 390, y: 200 },
-          'down',
-          false,
-          0
+          currentRoom.width,
+          currentRoom.height,
+          frameCount,
+          courtVerdictReached
+        );
+      } else if (currentRoom.id === 'archive') {
+        lights = EnvironmentRenderer.renderArchiveInterior(
+          ctx,
+          currentRoom.width,
+          currentRoom.height,
+          frameCount
+        );
+      } else if (currentRoom.id === 'observatory') {
+        lights = EnvironmentRenderer.renderObservatoryInterior(
+          ctx,
+          currentRoom.width,
+          currentRoom.height,
+          frameCount,
+          namedConstellation
+        );
+      } else if (currentRoom.id === 'garden') {
+        lights = EnvironmentRenderer.renderGardenInterior(
+          ctx,
+          currentRoom.width,
+          currentRoom.height,
+          frameCount
         );
       }
 
-      // Draw Beenish (Player)
+      // Render Golden Inquiry Sparkles on Interactables
+      for (const item of currentRoom.interactables) {
+        if (item.type !== 'door') {
+          SpriteRenderer.drawSparkle(ctx, item.x + item.width / 2, item.y + item.height / 2, frameCount);
+        }
+      }
+
+      // Render Footstep Dust Puffs when walking
+      if (isMoving && frameCount % 6 === 0) {
+        SpriteRenderer.drawDustPuff(ctx, playerPosRef.current.x, playerPosRef.current.y, frameCount);
+      }
+
+      // Draw Companion (Ted)
+      SpriteRenderer.drawTed(
+        ctx,
+        tedPosRef.current,
+        tedDirRef.current,
+        isMoving,
+        walkFrameRef.current
+      );
+
+      // Draw Ted's Emote Balloon if active
+      if (tedEmoteRef.current) {
+        SpriteRenderer.drawEmoteBubble(
+          ctx,
+          tedPosRef.current.x + 12,
+          tedPosRef.current.y,
+          tedEmoteRef.current,
+          frameCount
+        );
+      }
+
+      // Draw Beenish Protagonist
       SpriteRenderer.drawBeenish(
         ctx,
         playerPosRef.current,
         playerDirRef.current,
-        isWalkingRef.current,
+        isMoving,
         walkFrameRef.current
       );
 
-      // Draw Action Prompt Bubble above Beenish if an interactable is in range
-      if (closest) {
+      // Draw Proximity Action Prompt [ E ]
+      if (activeInteractable) {
         SpriteRenderer.drawPromptBubble(
           ctx,
           playerPosRef.current.x + 12,
           playerPosRef.current.y,
-          closest.promptLabel
+          activeInteractable.promptLabel
         );
       }
+
+      // --- DYNAMIC NIGHT LIGHTING PASS ---
+      EnvironmentRenderer.renderLightingPass(
+        ctx,
+        currentRoom.width,
+        currentRoom.height,
+        lights,
+        playerPosRef.current,
+        currentRoom.theme
+      );
 
       animId = requestAnimationFrame(loop);
     };
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [currentRoomId, starsRecovered, recoveredStarIds, secretGardenUnlocked]);
+  }, [
+    currentRoomId, 
+    starsRecovered, 
+    secretGardenUnlocked, 
+    bureauStamped, 
+    courtVerdictReached, 
+    namedConstellation, 
+    inventory, 
+    isVirtualRunning
+  ]);
 
-  // Handle canvas click / tap for move-to-point
+  // Canvas Tap/Click-to-Move
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -586,10 +467,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     const clickX = (e.clientX - rect.left) * scaleX;
     const clickY = (e.clientY - rect.top) * scaleY;
 
-    targetPosRef.current = { x: clickX, y: clickY };
+    targetPosRef.current = { x: clickX - 12, y: clickY - 16 };
   };
 
-  // Virtual D-Pad Button Handlers for Mobile
+  // Virtual Controls
   const handleVirtualDir = (dir: Direction, isDown: boolean) => {
     const keyMap: Record<Direction, string> = {
       up: 'w',
@@ -606,37 +487,47 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        position: 'relative',
         width: '100%',
-        padding: '12px 10px 40px',
-        userSelect: 'none',
+        maxWidth: '920px',
+        margin: '0 auto',
       }}
     >
-      {/* Current Room Banner & Breadcrumb */}
+      {/* Room Title, Location Badge, & Mechanics HUD */}
       <div
-        className="pixel-panel pixel-panel-gold font-mono"
         style={{
           width: '100%',
           maxWidth: `${room.width}px`,
-          padding: '8px 16px',
-          marginBottom: '10px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: 'var(--color-midnight-indigo)',
-          fontSize: '0.8rem',
+          marginBottom: '8px',
+          padding: '8px 14px',
+          backgroundColor: 'rgba(27, 32, 66, 0.95)',
+          border: '2px solid var(--color-twilight-blue)',
+          boxShadow: '0 4px 16px rgba(16, 19, 41, 0.8)',
         }}
       >
-        <div>
-          <span style={{ color: 'var(--color-lantern-gold)', fontWeight: 600 }}>LOCATION: </span>
-          <span style={{ color: 'var(--color-moon-cream)' }}>{room.name.toUpperCase()}</span>
+        <div className="font-mono" style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ color: 'var(--color-lantern-gold)', fontWeight: 700 }}>LOC:</span>
+          <span style={{ color: 'var(--color-moon-cream)', fontWeight: 600 }}>{room.name.toUpperCase()}</span>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Sprint Toggle */}
+          <button
+            onClick={() => setIsVirtualRunning(prev => !prev)}
+            className={`pixel-btn ${isVirtualRunning ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
+            style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: '28px' }}
+            title="Toggle Running Speed (or hold Shift)"
+          >
+            {isVirtualRunning ? '⚡ SPRINTING' : '👟 WALK'}
+          </button>
+
           {currentRoomId !== 'overworld' && (
             <button
               onClick={() => changeRoom('overworld')}
-              className="pixel-btn pixel-btn-ghost font-mono"
-              style={{ padding: '3px 8px', fontSize: '0.75rem', minHeight: '26px' }}
+              className="pixel-btn pixel-btn-peach font-mono"
+              style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: '28px' }}
             >
               ← RETURN TO VALLEY
             </button>
@@ -644,11 +535,11 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         </div>
       </div>
 
-      {/* Main 2D RPG Adventure Canvas */}
+      {/* Main 2D RPG Adventure Canvas Container */}
       <div
         style={{
           position: 'relative',
-          boxShadow: 'var(--pixel-border-gold), 0 8px 32px rgba(16, 19, 41, 0.9)',
+          boxShadow: 'var(--pixel-border-gold), 0 12px 40px rgba(16, 19, 41, 0.95)',
           borderRadius: '0',
           overflow: 'hidden',
           backgroundColor: 'var(--color-void-navy)',
@@ -678,8 +569,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 100,
-              padding: '12px 24px',
+              padding: '12px 26px',
               fontSize: '0.85rem',
+              boxShadow: 'var(--pixel-border-gold)',
             }}
           >
             {activeInteractable.promptLabel}
@@ -687,7 +579,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         )}
       </div>
 
-      {/* Retro Mobile Virtual Controls (Always accessible, great on mobile or mouse) */}
+      {/* Retro On-Screen Virtual Controls */}
       <div
         style={{
           width: '100%',
@@ -697,7 +589,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '12px',
+          gap: '14px',
+          padding: '12px 16px',
+          backgroundColor: 'rgba(27, 32, 66, 0.85)',
+          border: '2px solid var(--color-twilight-blue)',
         }}
       >
         {/* On-Screen D-Pad */}
@@ -756,22 +651,23 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           <div />
         </div>
 
-        {/* Action Button & Instructions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)' }}>
-            <div>Controls: <strong style={{ color: 'var(--color-moon-cream)' }}>WASD / Arrows</strong> to Walk</div>
-            <div>Action: <strong style={{ color: 'var(--color-lantern-gold)' }}>[ E ] / Space</strong> to Interact</div>
-            <div>Or click anywhere to walk directly!</div>
+        {/* Action Button & Mechanics Guide */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)', lineHeight: '1.7' }}>
+            <div>Walk: <strong style={{ color: 'var(--color-moon-cream)' }}>WASD / Arrows / Click</strong></div>
+            <div>Sprint: <strong style={{ color: 'var(--color-warm-peach)' }}>Hold Shift / Tap Sprint</strong></div>
+            <div>Action: <strong style={{ color: 'var(--color-lantern-gold)' }}>[ E ] / Space / Enter</strong></div>
+            <div>Companion: <strong style={{ color: 'var(--color-rose-glow)' }}>Walk near Ted to talk ♡</strong></div>
           </div>
 
           <button
             onClick={handleAction}
             className="pixel-btn pixel-btn-primary font-display"
             style={{
-              width: '64px',
-              height: '64px',
+              width: '68px',
+              height: '68px',
               borderRadius: '0',
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               boxShadow: 'var(--pixel-border-gold)',
             }}
             title="Interact (E)"

@@ -63,3 +63,13 @@ export interface RoomDefinition {
   collisionBoxes: CollisionBox[];
   theme: string;
 }
+
+export type EmoteType = 'heart' | 'exclamation' | 'question' | 'music' | 'blush' | 'sparkle' | 'sleep' | null;
+
+export interface LightSource {
+  x: number;
+  y: number;
+  radius: number;
+  intensity: number;
+  color?: string;
+}

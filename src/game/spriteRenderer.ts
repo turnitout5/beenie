@@ -251,6 +251,121 @@ export class SpriteRenderer {
   }
 
   /**
+   * Draws a pixel emote balloon over a character's head
+   */
+  public static drawEmoteBubble(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    emote: 'heart' | 'exclamation' | 'question' | 'music' | 'blush' | 'sparkle' | 'sleep',
+    frame: number
+  ): void {
+    const bob = Math.sin(frame * 0.12) * 2;
+    const bx = Math.floor(x - 12);
+    const by = Math.floor(y - 32 + bob);
+
+    ctx.save();
+    // Shadow
+    ctx.fillStyle = 'rgba(16, 19, 41, 0.5)';
+    ctx.fillRect(bx + 1, by + 1, 24, 20);
+
+    // Balloon Body
+    ctx.fillStyle = '#F4EBDD';
+    ctx.fillRect(bx, by, 22, 18);
+    ctx.strokeStyle = '#101329';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, 22, 18);
+
+    // Pointer tail
+    ctx.fillStyle = '#F4EBDD';
+    ctx.beginPath();
+    ctx.moveTo(bx + 9, by + 18);
+    ctx.lineTo(bx + 13, by + 18);
+    ctx.lineTo(bx + 11, by + 22);
+    ctx.fill();
+
+    // Emote Icon
+    if (emote === 'heart') {
+      ctx.fillStyle = '#E98FAF';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('♡', bx + 11, by + 14);
+    } else if (emote === 'exclamation') {
+      ctx.fillStyle = '#B13434';
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('!', bx + 11, by + 14);
+    } else if (emote === 'question') {
+      ctx.fillStyle = '#30385F';
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('?', bx + 11, by + 14);
+    } else if (emote === 'music') {
+      ctx.fillStyle = '#9588BD';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('♪', bx + 11, by + 14);
+    } else if (emote === 'blush') {
+      ctx.fillStyle = '#F3B79C';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('///', bx + 11, by + 13);
+    } else if (emote === 'sleep') {
+      ctx.fillStyle = '#666FA0';
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('zzz', bx + 11, by + 13);
+    } else {
+      ctx.fillStyle = '#F6D78B';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('✦', bx + 11, by + 14);
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * Draws a footstep dust puff particle
+   */
+  public static drawDustPuff(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    frame: number
+  ): void {
+    const age = frame % 6;
+    if (age > 4) return;
+    ctx.save();
+    ctx.fillStyle = `rgba(244, 235, 221, ${0.4 - age * 0.08})`;
+    ctx.beginPath();
+    ctx.arc(x + 12 - (age * 1.5), y + 26, 2 + age, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /**
+   * Draws golden inquiry sparkle on interactables
+   */
+  public static drawSparkle(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    frame: number
+  ): void {
+    const pulse = Math.sin(frame * 0.1) * 0.5 + 0.5;
+    if (pulse < 0.2) return;
+
+    ctx.save();
+    ctx.fillStyle = `rgba(246, 215, 139, ${pulse})`;
+    ctx.fillRect(x, y - 2, 2, 6);
+    ctx.fillRect(x - 2, y, 6, 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x, y, 2, 2);
+    ctx.restore();
+  }
+
+  /**
    * Draws Wildflowers (with blooming scale)
    */
   public static drawFlowerCluster(
