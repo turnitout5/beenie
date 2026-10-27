@@ -105,9 +105,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     // Snap camera smoothly to new room
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    let zoom = 1.4;
-    if (vw < 640) zoom = 1.05;
-    else if (vw < 1024) zoom = 1.25;
+    const scaleX = vw / targetRoom.width;
+    const scaleY = vh / targetRoom.height;
+    const zoom = Math.max(scaleX, scaleY, newRoomId === 'overworld' ? 1.35 : 1.55);
 
     let initCamX = newSpawn.x + 12 - vw / (2 * zoom);
     let initCamY = newSpawn.y + 16 - vh / (2 * zoom);
@@ -223,10 +223,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       const vw = canvas.width;
       const vh = canvas.height;
 
-      // Responsive pixel zoom
-      let zoom = 1.4;
-      if (vw < 640) zoom = 1.05;
-      else if (vw < 1024) zoom = 1.25;
+      // Dynamic Full-Screen Wide Zoom (Guarantees zero black borders on any widescreen display!)
+      const scaleX = vw / currentRoom.width;
+      const scaleY = vh / currentRoom.height;
+      const zoom = Math.max(scaleX, scaleY, currentRoom.id === 'overworld' ? 1.35 : 1.55);
 
       // Handle Movement Input & Sprint Speed
       let dx = 0;
@@ -296,6 +296,30 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           playerPosRef.current.y = Math.max(10, Math.min(currentRoom.height - 34, nextY));
         }
 
+        // --- DOOR AUTO-ENTER TRIGGER ---
+        // Walking directly into any doorway immediately enters the room seamlessly!
+        const px = playerPosRef.current.x + 8;
+        const py = playerPosRef.current.y + 16;
+        for (const item of currentRoom.interactables) {
+          if (item.type === 'door' && item.targetRoom) {
+            if (
+              px >= item.x - 8 &&
+              px <= item.x + item.width + 8 &&
+              py >= item.y - 8 &&
+              py <= item.y + item.height + 12
+            ) {
+              if (item.id === 'door_garden' && !secretGardenUnlocked) {
+                playerPosRef.current.y += 14;
+                soundEngine.playClick();
+                onTriggerInteraction(item);
+                break;
+              }
+              changeRoom(item.targetRoom, item.targetPos);
+              return;
+            }
+          }
+        }
+
         // Companion Ted Follower Trail Queue
         trailRef.current.push({ ...playerPosRef.current });
         const trailDelay = isRunning ? 16 : 22;
@@ -329,11 +353,13 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
       }
 
-      // Proximity Detection for Interactables
+      // Proximity Detection for Interactables (Doors are auto-enter, so [ E ] is only for inspectable objects)
       let closest: InteractableObject | null = null;
       let minDistance = 44;
 
       for (const item of currentRoom.interactables) {
+        if (item.type === 'door') continue; // Doors auto-trigger!
+
         const dist = Math.hypot(
           playerPosRef.current.x + 12 - (item.x + item.width / 2),
           playerPosRef.current.y + 16 - (item.y + item.height / 2)
@@ -542,9 +568,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     const screenX = e.clientX - rect.left;
     const screenY = e.clientY - rect.top;
 
-    let zoom = 1.4;
-    if (canvas.width < 640) zoom = 1.05;
-    else if (canvas.width < 1024) zoom = 1.25;
+    const currentRoom = ROOMS[currentRoomId] || ROOMS['overworld'];
+    const scaleX = canvas.width / currentRoom.width;
+    const scaleY = canvas.height / currentRoom.height;
+    const zoom = Math.max(scaleX, scaleY, currentRoom.id === 'overworld' ? 1.35 : 1.55);
 
     const worldX = screenX / zoom + camPosRef.current.x;
     const worldY = screenY / zoom + camPosRef.current.y;

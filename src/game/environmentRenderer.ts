@@ -29,14 +29,14 @@ export class EnvironmentRenderer {
     const lights: LightSource[] = [];
 
     // --- BASE GRASS MATERIAL ---
-    // Deep midnight indigo base
+    // Deep midnight indigo base - extends generously so widescreen displays have zero black gaps!
     ctx.fillStyle = '#161A36';
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(-600, -600, width + 1200, height + 1200);
 
-    // Subtle dithered grass texture patches
+    // Subtle dithered grass texture patches across wide area
     ctx.fillStyle = '#1B2042';
-    for (let x = 0; x < width; x += 16) {
-      for (let y = 0; y < height; y += 16) {
+    for (let x = -400; x < width + 400; x += 16) {
+      for (let y = -400; y < height + 400; y += 16) {
         if ((x + y) % 32 === 0) {
           ctx.fillRect(x + 2, y + 4, 3, 2);
           ctx.fillRect(x + 8, y + 10, 2, 3);
@@ -856,7 +856,7 @@ export class EnvironmentRenderer {
     // Dark ambient overlay (higher in mystery rooms and night valley)
     const darknessAlpha = roomTheme === 'valley' ? 0.48 : roomTheme === 'garden' ? 0.38 : 0.32;
     ctx.fillStyle = `rgba(16, 19, 41, ${darknessAlpha})`;
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(-600, -600, width + 1200, height + 1200);
 
     // Player Explorer Lantern light (Always moves with Beenish!)
     lights.push({
