@@ -6,7 +6,13 @@ export type LocationId =
   | 'court' 
   | 'archive' 
   | 'observatory' 
-  | 'garden';
+  | 'garden'
+  | 'dream_estates'
+  | 'castle_realm'
+  | 'mafia_realm'
+  | 'islamabad_realm'
+  | 'bakery_realm'
+  | 'haveli_realm';
 
 export interface JournalEntry {
   id: string;
@@ -85,6 +91,13 @@ export interface ExpeditionState {
   secretGardenUnlocked: boolean;
   courtVerdictReached: boolean;
   bureauStamped: boolean;
+  bureauChargesSolved?: boolean;
+  museumJetCodeSolved?: boolean;
+  drawer07Unlocked?: boolean;
+  courtScalesBalanced?: boolean;
+  archiveChronologySolved?: boolean;
+  observatoryConstellationConnected?: boolean;
+  gardenLanternsLit?: number;
   journal: JournalEntry[];
   isMuted: boolean;
 }

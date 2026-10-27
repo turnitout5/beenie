@@ -7,7 +7,13 @@ export type RoomId =
   | 'court'
   | 'archive'
   | 'observatory'
-  | 'garden';
+  | 'garden'
+  | 'dream_estates'
+  | 'castle_realm'
+  | 'mafia_realm'
+  | 'islamabad_realm'
+  | 'bakery_realm'
+  | 'haveli_realm';
 
 export interface Position {
   x: number;
@@ -42,7 +48,17 @@ export interface InteractableObject {
     | 'observatory_altar'
     | 'garden_bench'
     | 'signpost'
-    | 'birthday_cake';
+    | 'birthday_cake'
+    | 'garage_vehicles'
+    | 'jet_tarmac'
+    | 'feast_table'
+    | 'paisay_vault'
+    | 'sports_arena'
+    | 'house_islamabad'
+    | 'house_mafia'
+    | 'house_bakery'
+    | 'house_castle'
+    | 'house_haveli';
   targetRoom?: RoomId;
   targetPos?: Position;
 }

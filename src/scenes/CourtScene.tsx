@@ -43,7 +43,7 @@ export const CourtScene: React.FC = () => {
 
   const handleObjection = () => {
     soundEngine.playGavel();
-    setTrialStep(2); // Boyfriend objects dramatically
+    setTrialStep(2); // Pagluu objects dramatically
   };
 
   const handleDeliverVerdict = () => {
@@ -230,7 +230,7 @@ export const CourtScene: React.FC = () => {
             </button>
           </div>
 
-          {/* Defense Desk (Boyfriend) */}
+          {/* Defense Desk (Pagluu / Ahmad) */}
           <div
             style={{
               backgroundColor: 'var(--color-midnight-indigo)',
@@ -243,11 +243,11 @@ export const CourtScene: React.FC = () => {
             }}
           >
             <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-lantern-gold)', marginBottom: '8px' }}>
-              LEAD DEFENSE COUNSEL
+              LEAD DEFENSE COUNSEL (PAGLUU)
             </div>
             <CompanionBoyfriend
               pose={trialStep === 2 ? 'thumbsup' : 'idle'}
-              initialQuote="I demand this entire trial be dismissed on the grounds that Beenish is undeniably adorable!"
+              initialQuote="I demand this entire trial be dismissed on the grounds that Paaaari is undeniably, overwhelmingly adorable!"
             />
           </div>
         </div>
@@ -268,7 +268,7 @@ export const CourtScene: React.FC = () => {
           {trialStep === 1 && (
             <div style={{ animation: 'fadeIn 200ms ease' }}>
               <p className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.9rem', marginBottom: '14px' }}>
-                Prosecution found 0 flaws. Prosecution now demands an honest statement from the boyfriend.
+                Prosecution found 0 flaws. Prosecution now demands an honest statement from Pagluu.
               </p>
               <button
                 onClick={handleObjection}
@@ -344,10 +344,10 @@ export const CourtScene: React.FC = () => {
                   marginBottom: '16px',
                 }}
               >
-                <div><strong>DEFENDANT:</strong> Beenish Tasaffar</div>
+                <div><strong>DEFENDANT:</strong> Paaaari / Beghum G (Beenish Tasaffar)</div>
                 <div><strong>FINDING:</strong> The defense is hopelessly biased, the prosecution has no evidence, and the judge has decided to go home.</div>
                 <div style={{ marginTop: '8px', color: 'var(--color-dusty-lavender)' }}>
-                  <em>"Notice: This case may be reopened if the boyfriend ever develops a functioning sense of objectivity."</em>
+                  <em>"Notice: This case may be reopened if Pagluu ever develops a functioning sense of objectivity."</em>
                 </div>
               </div>
 
@@ -407,13 +407,13 @@ export const CourtScene: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '12px', borderLeft: '3px solid var(--color-rose-glow)' }}>
                 <strong className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.8rem', display: 'block' }}>
-                  ALLEGED FLAW #01: "THE '3HM' PROTOCOL VIOLATION"
+                  ALLEGED FLAW #01: "THE 'HM HM HM' PROTOCOL VIOLATION"
                 </strong>
                 <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
-                  Accused of hitting her boyfriend with "3hm" whenever he makes a mistake, inducing immediate panic and an emergency order of dark chocolates.
+                  Accused of hitting Pagluu with "hm hm hm" whenever he makes a mistake, inducing immediate panic and an emergency order of dark chocolates.
                 </p>
                 <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>
-                  Boyfriend's Plea: "Guilty of being completely in the right—when she says 3hm, it is 100% my fault."
+                  Pagluu's Plea: "Guilty of being completely in the right—when Paaaari says hm hm hm, it is 100% my fault."
                 </span>
               </div>
 
@@ -434,7 +434,7 @@ export const CourtScene: React.FC = () => {
                   ALLEGED FLAW #03: "11/10 BADDIE, BOLD DEFIANCE"
                 </strong>
                 <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginTop: '4px' }}>
-                  Accused of shattering all earthly rating scales by existing as an indisputable 11/10 baddie, rendering her boyfriend permanently speechless.
+                  Accused of shattering all earthly rating scales by existing as an indisputable 11/10 baddie, rendering Pagluu permanently speechless.
                 </p>
                 <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.7rem' }}>
                   Finding: Irrevocably adored and celebrated forever.

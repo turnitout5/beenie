@@ -21,12 +21,12 @@ export const HubScene: React.FC = () => {
   const portals: HubPortal[] = [
     {
       id: 'bureau',
-      title: 'The Bureau of Unreasonable Boyfriends',
+      title: 'The Bureau of Unreasonable Paglu',
       subtitle: 'Official Allegation Files',
       icon: '[FILE 01]',
       color: 'var(--color-warm-peach)',
       starId: 1,
-      description: 'A completely serious government office investigating why she is unreasonably adorable.',
+      description: 'A completely serious office investigating why meri Paaaari is unreasonably adorable.',
     },
     {
       id: 'museum',
@@ -177,8 +177,8 @@ export const HubScene: React.FC = () => {
           pose="thumbsup"
           initialQuote={
             starsRecovered >= 5
-              ? "The whole sky is glowing now, Beenie! The garden is waiting for you."
-              : "Pick any location to explore! I personally recommend checking my biased reports first."
+              ? "The whole sky is glowing now, meri Paaaari! The secret garden is waiting for you."
+              : "Pick any location to explore, meri Beghum G! Pagluu personally recommends checking the biased dossiers first."
           }
         />
       </div>

@@ -13,22 +13,22 @@ export const BootScene: React.FC = () => {
   const runawayBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const evadeQuips = [
-    "Nice try, Beenie.",
+    "Nice try, Paaaari.",
     "Not happening today.",
-    "Ted says you have to see this.",
+    "Pagluu says you have to see this.",
     "Too slow.",
     "You're not sleeping through your birthday.",
-    "Come on, I spent weeks on this.",
+    "Come on, Pagluu spent weeks on this.",
   ];
 
   // Authentic human birthday note lines
   const noteLines = [
-    "To Beenish,",
+    "To Meri Paaaari (Beghum G),",
     "I wanted to give you something that couldn't be bought in any store.",
     "So I built you a world of your own: The Valley of the Stars.",
     "Seven places are scattered across the valley—holding your photos, our memories, and all the quiet things I love about you.",
-    "Start by walking west along the stone path to the Bureau of Unreasonable Boyfriends.",
-    "Happy Birthday, Beenie.",
+    "Start by walking west along the stone path to the Bureau of Unreasonable Paglu.",
+    "Happy Birthday, meri Paaaari.",
   ];
 
   useEffect(() => {
@@ -55,6 +55,7 @@ export const BootScene: React.FC = () => {
 
   const handleAccept = () => {
     soundEngine.playStarChime();
+    soundEngine.startBolNaHalkeHalkeTuneLoop();
     navigateTo('hub');
   };
 
@@ -83,7 +84,7 @@ export const BootScene: React.FC = () => {
             marginBottom: '8px',
           }}
         >
-          October 27 &bull; Birthday Expedition
+          October 31 &bull; Birthday Expedition
         </div>
         <h1
           className="font-display"
@@ -105,7 +106,7 @@ export const BootScene: React.FC = () => {
             marginTop: '6px',
           }}
         >
-          A world built for Beenish Tasaffar by Ted.
+          A world built for Paaaari (Beenish) by her Pagluu (Ahmad).
         </p>
       </div>
 
@@ -148,7 +149,7 @@ export const BootScene: React.FC = () => {
               textTransform: 'uppercase',
             }}
           >
-            Dispatch &bull; From Ted
+            Dispatch &bull; From Pagluu (Ahmad)
           </span>
           <span
             className="font-mono"
@@ -157,7 +158,7 @@ export const BootScene: React.FC = () => {
               fontSize: '0.75rem',
             }}
           >
-            For Beenie
+            For Paaaari
           </span>
         </div>
 
@@ -213,7 +214,7 @@ export const BootScene: React.FC = () => {
         }}
       >
         <ProtagonistBeenish pose="holdingLantern" />
-        <CompanionBoyfriend pose="wave" initialQuote="Happy birthday, Beenie. Come take a look." />
+        <CompanionBoyfriend pose="wave" initialQuote="Happy birthday, meri Paaaari! Come take a look." />
       </div>
 
       {/* Action Buttons */}

@@ -300,10 +300,10 @@ export const ObservatoryScene: React.FC = () => {
               {activeVignette.sceneVisual === 'family_house' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
-                    [ Islamabad Hills &bull; 5 Marla Family Sanctuary ]
+                    [ Islamabad Hills &bull; 5 Marla Humara Pyaara Ghar ]
                   </div>
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
-                    Samurai Jack blue bedroom, purple/pink room with a giant teddy bear, an extra-wide sofa for my choti si Beenie, and a cozy gaming room.
+                    Samurai Jack blue bedroom, purple/pink room with bara sa teddy bear, living room may extra-wide comfy sofa meri choti si Beenie k liye, aur gaming room!
                   </div>
                 </div>
               )}
@@ -311,10 +311,10 @@ export const ObservatoryScene: React.FC = () => {
               {activeVignette.sceneVisual === 'mafia_base' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-warm-peach)', marginBottom: '6px' }}>
-                    [ Jet-Black Compound &bull; Batman Basement ]
+                    [ Secret Mafia Mansion &bull; Batman Basement ]
                   </div>
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
-                    Tumbler parking bay, underground shooting range, forged daggers and swords, and a command center where I oversee your missions.
+                    Tumbler parking bay, underground sniper range, concealed makeup weapons, glowing forge jahan swords banenge, aur command room!
                   </div>
                 </div>
               )}
@@ -322,10 +322,10 @@ export const ObservatoryScene: React.FC = () => {
               {activeVignette.sceneVisual === 'bakery' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-lantern-gold)', marginBottom: '6px' }}>
-                    [ Sweet Timber Bakery &bull; Warm Aromas ]
+                    [ Sweet Timber Bakery &bull; Meetha Heaven ]
                   </div>
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
-                    Freshly baked croissants, big plates of hot white pasta for lunch, and endless stacks of Nutella and chocolates.
+                    Garam garam crispy croissants, lunch may steaming white pasta, aur charon taraf Nutella aur chocolates k dher!
                   </div>
                 </div>
               )}
@@ -333,10 +333,10 @@ export const ObservatoryScene: React.FC = () => {
               {activeVignette.sceneVisual === 'mountain_castle' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-dream-lilac)', marginBottom: '6px' }}>
-                    [ Meri Queen’s Mountain Castle &bull; Alpine Crest ]
+                    [ Meri Queen Ka Mountain Castle &bull; Badalon K Beech ]
                   </div>
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
-                    Giant crystal jhoomar, glowing fanoos lanterns, royal fur rugs, Queen's wardrobe, horseback archery, and Queen Beenie's custom sword.
+                    Bary bary crystal jhumar, glowing fanoos, red carpets, Princess Beenie ka uncha tower, delicate royal heels, aur Queen Beenie ki custom sword!
                   </div>
                 </div>
               )}
@@ -344,10 +344,10 @@ export const ObservatoryScene: React.FC = () => {
               {activeVignette.sceneVisual === 'gaon_haveli' && (
                 <div>
                   <div className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-forest-moss)', marginBottom: '6px' }}>
-                    [ 12-Marla Gaon Haveli &bull; Peaceful Village Sky ]
+                    [ 12-Marla Gaon Haveli &bull; Desi Sukoon ]
                   </div>
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', lineHeight: '1.6' }}>
-                    Matti ka ghar, charpaiyan laid out under the open starry night, green khet, cool humming tubewell, and tea on the chadar.
+                    Matti ka ghar, green khet, tubewell ka thanda tezz paani, shaam ko wooden charpai par floral chadar aur garam garam chai!
                   </div>
                 </div>
               )}

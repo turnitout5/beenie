@@ -14,7 +14,7 @@ export const HeaderNav: React.FC = () => {
   const getLocationLabel = () => {
     switch (currentLocation) {
       case 'hub': return 'Valley of the Stars';
-      case 'bureau': return 'Bureau of Unreasonable Boyfriends';
+      case 'bureau': return 'Bureau of Unreasonable Paglu';
       case 'museum': return 'Museum of Beenish';
       case 'court': return 'Court of Absolutely No Flaws';
       case 'archive': return 'Archive of Things That Happened';
@@ -92,7 +92,7 @@ export const HeaderNav: React.FC = () => {
             style={{ padding: '6px 12px', fontSize: '0.75rem' }}
             title="Open Expedition Journal"
           >
-            <span>📖</span>
+            <span className="font-mono" style={{ marginRight: '4px' }}>[J]</span>
             <span style={{ display: 'inline' }}>JOURNAL</span>
           </button>
 
@@ -104,7 +104,7 @@ export const HeaderNav: React.FC = () => {
               style={{ padding: '6px 12px', fontSize: '0.75rem' }}
               title="Return to Valley of the Stars"
             >
-              <span>🧭</span>
+              <span className="font-mono" style={{ marginRight: '4px' }}>[&lt;]</span>
               <span>VALLEY</span>
             </button>
           )}
@@ -112,15 +112,15 @@ export const HeaderNav: React.FC = () => {
           {/* Audio Mute/Unmute Toggle */}
           <button
             onClick={toggleMute}
-            className="pixel-btn pixel-btn-ghost"
+            className="pixel-btn pixel-btn-ghost font-mono"
             style={{
               padding: '6px 10px',
-              fontSize: '0.85rem',
+              fontSize: '0.75rem',
               minWidth: '40px',
             }}
             title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
           >
-            {isMuted ? '🔇' : '🔊'}
+            {isMuted ? 'MUTED' : 'AUDIO'}
           </button>
         </div>
       </header>

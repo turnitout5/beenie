@@ -39,7 +39,7 @@ export const WorldMapDiorama: React.FC<WorldMapDioramaProps> = ({
     >
       <div className="pixel-panel-header" style={{ marginBottom: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '1.2rem' }}>🗺️</span>
+          <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem' }}>[MAP]</span>
           <span className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-dream-lilac)' }}>
             INTERACTIVE EXPEDITION MAP
           </span>
@@ -82,7 +82,7 @@ export const WorldMapDiorama: React.FC<WorldMapDioramaProps> = ({
         <rect x="0" y="200" width="800" height="40" fill="#354E50" />
         <rect x="120" y="210" width="560" height="15" fill="#718C83" />
 
-        {/* LOCATION 1: BUREAU OF UNREASONABLE BOYFRIENDS (Left) */}
+        {/* LOCATION 1: BUREAU OF UNREASONABLE PAGLU (Left) */}
         <g
           onClick={() => handleSelect('bureau')}
           style={{ cursor: 'pointer' }}
@@ -259,7 +259,7 @@ export const WorldMapDiorama: React.FC<WorldMapDioramaProps> = ({
           {/* Label Pin */}
           <rect x="715" y="195" width="70" height="14" fill="#101329" stroke={secretGardenUnlocked ? '#E98FAF' : '#30385F'} strokeWidth="1" />
           <text x="750" y="205" fill={secretGardenUnlocked ? '#E98FAF' : '#666FA0'} fontSize="7" fontFamily="monospace" textAnchor="middle" fontWeight="bold">
-            {secretGardenUnlocked ? '🌹 GARDEN' : '🔒 SECRET'}
+            {secretGardenUnlocked ? '★ GARDEN' : '[LOCKED]'}
           </text>
         </g>
 

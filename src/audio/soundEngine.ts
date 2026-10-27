@@ -9,6 +9,10 @@ class SoundEngine {
   private isMuted: boolean = false;
   private ambientGain: GainNode | null = null;
   private isAmbientPlaying: boolean = false;
+  private musicAudio: HTMLAudioElement | null = null;
+  private currentSong: 'bol_na_halke_halke' | 'mohabat' | null = null;
+  private isSongPlaying: boolean = false;
+  private songListeners: Array<(isPlaying: boolean, song: 'bol_na_halke_halke' | 'mohabat' | null) => void> = [];
 
   constructor() {
     // Check saved mute state from localStorage
@@ -39,7 +43,115 @@ class SoundEngine {
     if (this.ambientGain) {
       this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.08, this.ctx?.currentTime || 0);
     }
+    if (this.musicAudio) {
+      this.musicAudio.volume = this.isMuted ? 0 : 0.65;
+    }
     return this.isMuted;
+  }
+
+  public onSongChange(listener: (isPlaying: boolean, song: 'bol_na_halke_halke' | 'mohabat' | null) => void): () => void {
+    this.songListeners.push(listener);
+    return () => {
+      this.songListeners = this.songListeners.filter(l => l !== listener);
+    };
+  }
+
+  private notifySongChange(): void {
+    this.songListeners.forEach(l => l(this.isSongPlaying, this.currentSong));
+  }
+
+  public getSongPlaying(): boolean {
+    return this.isSongPlaying;
+  }
+
+  public getCurrentSong(): 'bol_na_halke_halke' | 'mohabat' | null {
+    return this.currentSong;
+  }
+
+  /**
+   * Plays the authentic studio recording of the couple's favorite songs
+   */
+  public playSong(song: 'bol_na_halke_halke' | 'mohabat' = 'bol_na_halke_halke'): void {
+    if (typeof window === 'undefined') return;
+
+    const songFile = song === 'bol_na_halke_halke' 
+      ? '/audio/bol_na_halke_halke.mp3' 
+      : '/audio/mohabat_jisko_baksh_zindagi.mp3';
+
+    if (this.musicAudio) {
+      if (this.currentSong === song && !this.musicAudio.paused) {
+        return; // Already playing this song
+      }
+      this.musicAudio.pause();
+    }
+
+    try {
+      this.musicAudio = new Audio(songFile);
+      this.musicAudio.loop = true;
+      this.musicAudio.volume = this.isMuted ? 0 : 0.65;
+      this.currentSong = song;
+
+      const playPromise = this.musicAudio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            this.isSongPlaying = true;
+            this.notifySongChange();
+          })
+          .catch((err) => {
+            console.log('Audio autoplay prevented by browser. Will resume on first click.', err);
+            this.isSongPlaying = false;
+            this.notifySongChange();
+            // User interaction unlocker
+            const unlock = () => {
+              if (this.musicAudio) {
+                this.musicAudio.play().then(() => {
+                  this.isSongPlaying = true;
+                  this.notifySongChange();
+                }).catch(() => {});
+              }
+              window.removeEventListener('click', unlock);
+              window.removeEventListener('keydown', unlock);
+            };
+            window.addEventListener('click', unlock, { once: true });
+            window.addEventListener('keydown', unlock, { once: true });
+          });
+      }
+    } catch (e) {
+      console.warn('Could not initialize audio player:', e);
+    }
+  }
+
+  public pauseSong(): void {
+    if (this.musicAudio) {
+      this.musicAudio.pause();
+      this.isSongPlaying = false;
+      this.notifySongChange();
+    }
+  }
+
+  public toggleSong(song: 'bol_na_halke_halke' | 'mohabat' = 'bol_na_halke_halke'): boolean {
+    if (this.isSongPlaying && this.currentSong === song) {
+      this.pauseSong();
+      return false;
+    } else {
+      this.playSong(song);
+      return true;
+    }
+  }
+
+  /**
+   * Plays bike / muscle car horn sound
+   */
+  public playHorn(variant: 1 | 2 = 1): void {
+    if (this.isMuted || typeof window === 'undefined') return;
+    try {
+      const horn = new Audio(`/audio/horn${variant}.mp3`);
+      horn.volume = 0.5;
+      horn.play().catch(() => {});
+    } catch {
+      this.playGavel();
+    }
   }
 
   /**
@@ -251,6 +363,32 @@ class SoundEngine {
       gain.connect(ctx.destination);
       osc.start(now + offset);
       osc.stop(now + offset + 0.06);
+    });
+  }
+
+  /**
+   * Retro Coin / Paisay Chime (B5 -> E6)
+   */
+  public playCoin(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const freqs = [987.77, 1318.51];
+    freqs.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+      gain.gain.setValueAtTime(0.18, now + idx * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.08);
+      osc.stop(now + idx * 0.08 + 0.38);
     });
   }
 
@@ -491,61 +629,141 @@ class SoundEngine {
     osc.stop(now + 0.11);
   }
 
-  /**
-   * Nostalgic music-box celesta motif of "Bol Na Halke Halke"
-   * Dedicated anthem for Beenish and Ted.
-   */
-  public playBolNaHalkeHalke(): void {
-    if (this.isMuted) return;
-    const ctx = this.initContext();
-    if (!ctx) return;
+  private tuneTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private isTuneLooping: boolean = false;
 
-    // Melody sequence: [freq, duration, pause]
-    // "Bol na halke halke... bol na halke halke..."
+  /**
+   * Official Bollypiano & HitXP Transcription of "Bol Na Halke Halke" (Chorus)
+   * 90 BPM in E Minor (E E F# D E A F# E | E E F# D E A F# E | E E F# D E A | A B A G F# E)
+   * Pure, plain, crystalline autotuned sine tones.
+   */
+  public playBolNaHalkeHalkeNotes(): number {
+    if (this.isMuted) return 8000;
+    const ctx = this.initContext();
+    if (!ctx) return 8000;
+
+    // Autotuned exact frequencies (Key of E Minor):
+    const E4  = 329.63; // Sa
+    const Fs4 = 369.99; // Re
+    const G4  = 392.00; // Ga
+    const A4  = 440.00; // Ma
+    const B4  = 493.88; // Pa
+    const D4  = 293.66; // komal Ni
+
+    // Exact Score specified by user:
+    // Line 1: Bol Na Halke Halke    -> E E F# D E A
+    // Line 2: Bol Na Halke Halke    -> E E F# D E A
+    // Line 3: Hooth se halke halke  -> E E F# D E A
+    // Line 4: Bol na halke          -> B A G F# E
     const notes: [number, number, number][] = [
-      [392.00, 0.38, 0.05], // G4 ("Bol")
-      [440.00, 0.32, 0.04], // A4 ("na")
-      [493.88, 0.42, 0.06], // B4 ("hal-")
-      [440.00, 0.28, 0.04], // A4 ("ke")
-      [392.00, 0.55, 0.15], // G4 ("hal-ke...")
-      [369.99, 0.35, 0.05], // F#4
-      [392.00, 0.38, 0.05], // G4 ("Bol")
-      [440.00, 0.32, 0.04], // A4 ("na")
-      [523.25, 0.45, 0.06], // C5 ("hal-")
-      [493.88, 0.35, 0.05], // B4 ("ke")
-      [440.00, 0.60, 0.20], // A4 ("hal-ke...")
-      [392.00, 0.70, 0.25], // G4 (resolving tender chord)
+      // --- Line 1: booooool na halke halkeeeeeeeee (E E F# D E A) ---
+      [620, E4, 0],    // booooool (elongated)
+      [330, E4, 0],    // na
+      [330, Fs4, 0],   // Hal-
+      [330, D4, 0],    // ke
+      [330, E4, 0],    // Hal-
+      [1300, A4, 380], // halkeeeeeeeee (elongated held) + breath gap
+
+      // --- Line 2: boooool na halkee halkeeeeeee (E E F# D E A) ---
+      [600, E4, 0],    // boooool (elongated)
+      [330, E4, 0],    // na
+      [330, Fs4, 0],   // Hal-
+      [420, D4, 0],    // kee (elongated)
+      [330, E4, 0],    // Hal-
+      [1300, A4, 380], // halkeeeeeee (elongated held) + breath gap
+
+      // --- Line 3: honthhhh say-hal ke hakeeeeeee (E E F# D E A) ---
+      [620, E4, 0],    // honthhhh (elongated)
+      [220, E4, 0],    // say-
+      [240, Fs4, 0],   // hal
+      [330, D4, 0],    // ke
+      [330, E4, 0],    // hal-
+      [1300, A4, 380], // halkeeeeeee (elongated held) + breath gap
+
+      // --- Line 4: booooolllll na halke halkeee (B A G F# F# E) ---
+      [650, B4, 0],    // booooolllll (elongated)
+      [330, A4, 0],    // na
+      [380, G4, 0],    // hal-
+      [330, Fs4, 0],   // ke
+      [350, Fs4, 0],   // hal- (completes the second halke!)
+      [1600, E4, 0],   // keee (long pure root resolution!)
     ];
 
-    let timeOffset = ctx.currentTime + 0.05;
+    const now = ctx.currentTime + 0.05;
+    let timeOffsetMs = 0;
 
-    notes.forEach(([freq, dur, pause]) => {
+    notes.forEach(([durMs, freq, pauseAfterMs]) => {
+      const noteStart = now + timeOffsetMs / 1000.0;
+      const durSec = durMs / 1000.0;
+      const tailSec = Math.min(0.45, durSec * 0.5 + 0.1);
+
       const osc = ctx.createOscillator();
-      const harmonic = ctx.createOscillator();
       const gain = ctx.createGain();
 
-      // Soft singing celesta tone
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, timeOffset);
+      osc.frequency.setValueAtTime(freq, noteStart);
 
-      harmonic.type = 'triangle';
-      harmonic.frequency.setValueAtTime(freq * 2, timeOffset);
-
-      gain.gain.setValueAtTime(0.001, timeOffset);
-      gain.gain.linearRampToValueAtTime(0.09, timeOffset + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.0001, timeOffset + dur + 0.4);
+      // Clean, pure plain tone envelope
+      gain.gain.setValueAtTime(0.0001, noteStart);
+      gain.gain.linearRampToValueAtTime(0.20, noteStart + 0.015);
+      if (durSec > 0.3) {
+        // Sustains audible volume throughout the full elongated duration
+        gain.gain.setValueAtTime(0.18, noteStart + durSec - 0.08);
+      }
+      gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + durSec + tailSec);
 
       osc.connect(gain);
-      harmonic.connect(gain);
       gain.connect(ctx.destination);
 
-      osc.start(timeOffset);
-      harmonic.start(timeOffset);
-      osc.stop(timeOffset + dur + 0.45);
-      harmonic.stop(timeOffset + dur + 0.45);
+      osc.start(noteStart);
+      osc.stop(noteStart + durSec + tailSec + 0.05);
 
-      timeOffset += dur + pause;
+      timeOffsetMs += durMs + pauseAfterMs;
     });
+
+    return timeOffsetMs;
+  }
+
+  public playBolNaHalkeHalke(): void {
+    this.playBolNaHalkeHalkeNotes();
+  }
+
+  /**
+   * Continuous gentle background loop of the procedural celesta tune
+   */
+  public startBolNaHalkeHalkeTuneLoop(): void {
+    if (this.isTuneLooping) return;
+    this.isTuneLooping = true;
+
+    const playLoop = () => {
+      if (!this.isTuneLooping) return;
+      const durationMs = this.playBolNaHalkeHalkeNotes();
+      this.tuneTimeoutId = setTimeout(playLoop, durationMs + 2200);
+    };
+
+    playLoop();
+  }
+
+  public stopBolNaHalkeHalkeTuneLoop(): void {
+    this.isTuneLooping = false;
+    if (this.tuneTimeoutId) {
+      clearTimeout(this.tuneTimeoutId);
+      this.tuneTimeoutId = null;
+    }
+  }
+
+  public toggleTuneLoop(): boolean {
+    if (this.isTuneLooping) {
+      this.stopBolNaHalkeHalkeTuneLoop();
+      return false;
+    } else {
+      this.startBolNaHalkeHalkeTuneLoop();
+      return true;
+    }
+  }
+
+  public isTunePlaying(): boolean {
+    return this.isTuneLooping;
   }
 }
 

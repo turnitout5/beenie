@@ -15,6 +15,7 @@ interface ExpeditionContextType {
   reachVerdict: () => void;
   stampBureau: () => void;
   unlockGarden: () => void;
+  setPuzzleState: (updates: Partial<ExpeditionState>) => void;
   toggleMute: () => void;
   resetExpedition: () => void;
 }
@@ -24,7 +25,16 @@ const STORAGE_KEY = 'beenish_expedition_save_v1';
 const defaultState: ExpeditionState = {
   currentLocation: 'boot',
   starsRecovered: 0,
-  unlockedLocations: ['boot', 'hub'],
+  unlockedLocations: [
+    'boot', 
+    'hub', 
+    'dream_estates', 
+    'castle_realm', 
+    'mafia_realm', 
+    'islamabad_realm', 
+    'bakery_realm', 
+    'haveli_realm'
+  ],
   visitedLocations: ['boot'],
   recoveredStarIds: [],
   inventory: [],
@@ -36,6 +46,13 @@ const defaultState: ExpeditionState = {
   secretGardenUnlocked: false,
   courtVerdictReached: false,
   bureauStamped: false,
+  bureauChargesSolved: false,
+  museumJetCodeSolved: false,
+  drawer07Unlocked: false,
+  courtScalesBalanced: false,
+  archiveChronologySolved: false,
+  observatoryConstellationConnected: false,
+  gardenLanternsLit: 0,
   journal: INITIAL_JOURNAL,
   isMuted: soundEngine.getMuted(),
 };
@@ -188,6 +205,10 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
     }));
   };
 
+  const setPuzzleState = (updates: Partial<ExpeditionState>) => {
+    setState(prev => ({ ...prev, ...updates }));
+  };
+
   const toggleMute = () => {
     const isMuted = soundEngine.toggleMute();
     setState(prev => ({ ...prev, isMuted }));
@@ -214,6 +235,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         reachVerdict,
         stampBureau,
         unlockGarden,
+        setPuzzleState,
         toggleMute,
         resetExpedition,
       }}

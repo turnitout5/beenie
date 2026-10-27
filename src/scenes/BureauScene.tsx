@@ -63,7 +63,7 @@ export const BureauScene: React.FC = () => {
               OFFICIAL GOVERNMENT DIVISION // SECTOR 01
             </div>
             <h1 className="font-display" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.4rem)', color: 'var(--color-warm-peach)', margin: '4px 0' }}>
-              THE BUREAU OF UNREASONABLE BOYFRIENDS
+              THE BUREAU OF UNREASONABLE PAGLU
             </h1>
             <p className="font-mono" style={{ fontSize: '0.85rem', color: 'var(--color-moon-cream)' }}>
               "One Investigator. Zero Objectivity. Mountains of Paperwork."
@@ -212,10 +212,10 @@ export const BureauScene: React.FC = () => {
           >
             <CompanionBoyfriend
               pose="thumbsup"
-              initialQuote="Oh, you're Beenish? We've been expecting you. Another report has been filed!"
+              initialQuote="Oh, meri Paaaari! We've been expecting you, Beghum G. Another dossier has been filed!"
             />
             <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
-              <div><strong style={{ color: 'var(--color-warm-peach)' }}>Desk Investigator:</strong> Ted</div>
+              <div><strong style={{ color: 'var(--color-warm-peach)' }}>Desk Investigator:</strong> Ahmad (Aapka Pagluu)</div>
               <div><strong style={{ color: 'var(--color-warm-peach)' }}>Case Status:</strong> {bureauStamped ? 'Officially Closed' : 'Under Investigation'}</div>
               <div style={{ color: 'var(--color-dusty-lavender)', marginTop: '4px' }}>
                 "Review the reports, then stamp the folder to close the case!"
@@ -348,10 +348,10 @@ export const BureauScene: React.FC = () => {
             {activeReport.id === '11_out_of_10_baddie' && (
               <div style={{ textAlign: 'center', marginBottom: '16px', backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', border: '1px solid var(--color-twilight-blue)' }}>
                 <div style={{ display: 'inline-block', transform: 'rotate(-15deg) translateY(4px)', transition: 'transform 0.4s ease' }}>
-                  <CompanionBoyfriend pose="blush" initialQuote="I am permanently incapacitated by her 11/10 baddie energy!" />
+                  <CompanionBoyfriend pose="blush" initialQuote="ufff kitu sundar hain meri Beghum G... 11/10 baddie!" />
                 </div>
                 <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginTop: '8px' }}>
-                  [INVESTIGATOR HAS COLLAPSED FROM OVERWHELMING ADORATION]
+                  [PAGLUU HAS COLLAPSED FROM OVERWHELMING ADORATION]
                 </div>
               </div>
             )}
@@ -417,7 +417,7 @@ export const BureauScene: React.FC = () => {
                 Inside rests the <strong>Overgrown Botanical Map</strong> to the concealed ivy gate, surrounded by an emergency sweet hoard: heaps of Dark, Milk, and Meethi chocolates (dhayeeeer saari!), Kinder Joys, and a jar of Nutella.
               </p>
               <p style={{ fontStyle: 'italic', color: 'var(--color-warm-peach)', borderLeft: '3px solid var(--color-lantern-gold)', paddingLeft: '10px', margin: 0 }}>
-                "Note from Ted: For my 11/10 baddie when she needs sugar or when she hits me with 3hm. Now take this map to the ivy gate in the south valley!"
+                "Note from Pagluu: For my 11/10 baddie (meri Paaaari) when she needs sugar or when she hits me with hm hm hm. Now take this map to the ivy gate in the south valley!"
               </p>
             </div>
 

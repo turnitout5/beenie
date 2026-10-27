@@ -209,7 +209,7 @@ export const GardenScene: React.FC = () => {
             {/* Letter Header */}
             <div style={{ textAlign: 'center', marginBottom: '28px', borderBottom: '1px dashed var(--color-twilight-blue)', paddingBottom: '16px' }}>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
-                October 27 &bull; For Beenish
+                October 31 &bull; For Paaaari (Beenish)
               </div>
               <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', marginBottom: '4px' }}>
                 {BIRTHDAY_LETTER.title}
@@ -257,7 +257,7 @@ export const GardenScene: React.FC = () => {
                   letterSpacing: '0.05em',
                 }}
               >
-                Ted ♡
+                Forever aapka Pagluu, Ahmad
               </div>
               <div
                 className="font-mono"

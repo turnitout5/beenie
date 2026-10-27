@@ -9,19 +9,20 @@ interface CompanionProps {
 
 export const CompanionBoyfriend: React.FC<CompanionProps> = ({
   pose = 'idle',
-  initialQuote = "I have been standing here for eleven minutes. Is that normal? No. Anyway, moving on.",
+  initialQuote = "ufff kitu sundar hain meri Paaaari... Happy birthday, meri Beghum G!",
 }) => {
   const [currentQuote, setCurrentQuote] = useState(initialQuote);
   const [showSpeech, setShowSpeech] = useState(true);
   const [clickCount, setClickCount] = useState(0);
 
   const quotes = [
-    "I have been standing here for eleven minutes. Is that normal? No. Anyway, moving on.",
-    "CASE FILE #001: The boyfriend's objectivity was officially measured at 0%.",
-    "Bas meri Beenish hain. Samajh nahi aata, bas hain.",
-    "Did you know every star in this sky was stolen because I wrote too much about you?",
-    "I promised no generic templates. Everything here belongs only to us.",
-    "Are you enjoying the expedition so far, Beenie? ♡",
+    "Bas meri Paaaari hain. Samajh nahi aata, bas hain.",
+    "ufff kitu sundar hain meri Beghum G...",
+    "yummm yumm kha jaun ga apko!",
+    "CASE FILE #001: Pagluu ka dil officially Paaaari ke paas confiscated hai.",
+    "aryyyy.....sunyen tooo! Kahan bhagi ja rahi hain?",
+    "Did you know every single star in this sky was placed here just for my Paaaari?",
+    "11/10 baddie energy, Pagluu is permanently incapacitated.",
   ];
 
   const handleClick = () => {
@@ -43,7 +44,7 @@ export const CompanionBoyfriend: React.FC<CompanionProps> = ({
         userSelect: 'none',
       }}
       onClick={handleClick}
-      title="Click your boyfriend for commentary"
+      title="Click Pagluu for commentary"
     >
       {/* Pixel Speech Bubble */}
       {showSpeech && (
