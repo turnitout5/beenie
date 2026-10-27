@@ -13,14 +13,14 @@ export const HeaderNav: React.FC = () => {
 
   const getLocationLabel = () => {
     switch (currentLocation) {
-      case 'hub': return 'Expedition Hub';
+      case 'hub': return 'Valley of the Stars';
       case 'bureau': return 'Bureau of Unreasonable Boyfriends';
       case 'museum': return 'Museum of Beenish';
       case 'court': return 'Court of Absolutely No Flaws';
       case 'archive': return 'Archive of Things That Happened';
       case 'observatory': return 'Observatory of Future Stars';
-      case 'garden': return 'Secret Garden (Final Resting Place)';
-      default: return 'Unknown Coordinate';
+      case 'garden': return 'The Secret Hidden Garden';
+      default: return 'The Valley';
     }
   };
 
@@ -96,16 +96,16 @@ export const HeaderNav: React.FC = () => {
             <span style={{ display: 'inline' }}>JOURNAL</span>
           </button>
 
-          {/* Return to Hub button if inside a world */}
+          {/* Return to Valley button if inside a room */}
           {currentLocation !== 'hub' && (
             <button
               onClick={() => navigateTo('hub')}
               className="pixel-btn font-display"
               style={{ padding: '6px 12px', fontSize: '0.75rem' }}
-              title="Return to Hub"
+              title="Return to Valley of the Stars"
             >
               <span>🧭</span>
-              <span>HUB</span>
+              <span>VALLEY</span>
             </button>
           )}
 
