@@ -1,0 +1,2336 @@
+# THE BEENISH EXPEDITION
+## Complete Visual Design System, Art Direction & Graphics Production Brief
+
+**Project type:** Personal interactive birthday adventure  
+**Visual genre:** Premium indie pixel-art adventure × cozy fantasy × playful retro-computer interface  
+**Emotional direction:** Wonder, curiosity, affection, humor, nostalgia, and quiet intimacy  
+**Primary subject:** Beenish  
+**Core concept:** An entire little universe has been created for one person. It begins incomplete, mysterious, and almost asleep. As Beenish explores it, she discovers places, artifacts, jokes, memories, and small pieces of a world that gradually becomes brighter, warmer, and more alive.
+
+---
+
+# 01. THE CREATIVE VISION
+
+## 1.1 What we are creating
+
+We are not creating a conventional birthday website, a romantic scrapbook, a generic visual novel, or a standard retro game landing page.
+
+We are creating **a small, explorable fictional world dedicated to Beenish**.
+
+The website should feel like a playable memory: part indie game, part interactive storybook, part secret world, and part love letter.
+
+The visitor should feel that she has discovered something unusual rather than simply opened a webpage.
+
+The experience begins in a mysterious, nighttime world. The player encounters an unusual mission, discovers that the world has somehow lost its stars, and begins exploring different places to recover the things that make the universe beautiful.
+
+Each location has a distinct personality. Some are funny. Some are visually spectacular. Some reveal real photographs or memories. Some contain little interactive surprises. One eventually leads to a peaceful garden where the adventure becomes quieter and more personal.
+
+The world itself should communicate the story without requiring paragraphs of explanation.
+
+**The central visual idea: the more Beenish discovers, the more beautiful the world becomes.**
+
+At first, the world is dark, quiet, and incomplete. As she explores, lights turn on, flowers bloom, stars return, and small creatures appear. By the end, the same world feels alive, warm, and full of color.
+
+This transformation must be visible, gradual, and satisfying.
+
+## 1.2 The intended reaction
+
+We want the experience to produce a sequence of reactions:
+
+1. **Curiosity:** "What is this?"
+2. **Surprise:** "Wait, someone actually made this?"
+3. **Amusement:** "What is wrong with this website?"
+4. **Recognition:** "This is so specifically about me."
+5. **Wonder:** "There is actually more to discover."
+6. **Affection:** "He put so much thought into this."
+7. **Emotional intimacy:** "This feels like something that belongs to us."
+
+These reactions must come from the visual experience, not simply from romantic text.
+
+A tiny character waving from a distant hill, a ridiculous official document about Beenish's beauty, a secret room containing an actual memory, or a flower that blooms when she approaches can communicate more personality than another generic heart animation.
+
+## 1.3 The most important design principle
+
+**Every visual should either build the world, reveal personality, support exploration, or strengthen the emotional connection.**
+
+Avoid adding decorations merely because they are conventionally associated with romance.
+
+A pink heart can be appropriate. Fifty floating pink hearts are not a design system.
+
+A star can represent a recovered memory. A star that floats around the screen for no reason is visual clutter.
+
+A pixel character can make the experience feel personal. A random collection of generic pixel characters will make it feel like a template.
+
+The website must feel deliberately art-directed from beginning to end.
+
+---
+
+# 02. THE MASTER AESTHETIC
+
+## 2.1 The visual identity
+
+The overall aesthetic is:
+
+**Midnight pixel-art fantasy with soft atmospheric lighting, cozy environments, tiny playful details, and a carefully designed retro-computer interface.**
+
+Imagine the visual craftsmanship of a small independent adventure game, combined with the intimacy of an illustrated storybook.
+
+The world should be pixelated, but not harsh, ugly, or excessively blocky.
+
+It should be detailed enough to feel handcrafted while remaining visually calm and readable.
+
+Use deliberate pixel clusters, carefully shaped silhouettes, layered scenery, atmospheric depth, and restrained lighting effects.
+
+The interface should feel like an artifact from the same fictional universe rather than a modern website placed on top of a game background.
+
+### The five visual pillars
+
+**A. Midnight atmosphere**
+
+Deep blue night skies, indigo shadows, distant mountains, tiny windows glowing in the distance, scattered stars, quiet clouds, and soft pools of light.
+
+**B. Handcrafted pixel art**
+
+Distinctive environments, recognizable silhouettes, expressive characters, detailed little objects, and intentional pixel placement.
+
+**C. Warmth hidden inside darkness**
+
+The night should never feel threatening or depressing. Warm lights, lavender clouds, peach-colored windows, tiny flowers, and glowing objects should create a sense of safety.
+
+**D. Playful absurdity**
+
+Official-looking documents for ridiculous subjects, tiny bureaucratic creatures, impossible museums, absurd warning signs, and characters that react dramatically to ordinary events.
+
+**E. Emotional restraint**
+
+The most sentimental moments should be visually quieter than the funny ones. Use space, lighting, stillness, and a carefully composed scene instead of overwhelming the screen with hearts and effects.
+
+## 2.2 Visual references and interpretation
+
+Use the following references as **directional inspiration, not templates to copy**.
+
+- Stardew Valley — approachable environments, charming environmental details, expressive pixel characters, and a world that feels inhabited.
+- Celeste — atmospheric backgrounds, expressive environments, and the ability to communicate emotion through scenery.
+- Eastward — richly layered pixel-art locations, cinematic compositions, and a carefully controlled palette.
+- Undertale — personality-driven interactions, unexpected humor, and characters whose behavior makes the world memorable.
+- To the Moon — intimate storytelling, nostalgic atmosphere, and emotional meaning attached to small details.
+
+Do not imitate any one game's characters, recognizable locations, interface, or signature artwork.
+
+The desired result is an original visual identity that combines atmospheric pixel-art environments, cozy nighttime fantasy, playful interactions, and personal storytelling.
+
+---
+
+# 03. COLOR SYSTEM
+
+The palette should be limited and intentional.
+
+Most of the world uses cool midnight colors. Warm colors appear as points of interest: windows, lanterns, flowers, collectibles, personal artifacts, and important interactions.
+
+As the story progresses, the world gradually gains more color.
+
+## 3.1 Primary palette
+
+| Color name | Hex | Purpose |
+|---|---|---|
+| Void Navy | `#101329` | Deepest background, night sky, dark UI surfaces |
+| Midnight Indigo | `#1B2042` | Main environmental shadows and large backgrounds |
+| Twilight Blue | `#30385F` | Mountains, buildings, foreground scenery |
+| Muted Periwinkle | `#666FA0` | Distant structures, outlines, secondary UI details |
+| Dusty Lavender | `#9588BD` | Clouds, flowers, magical elements, soft highlights |
+| Dream Lilac | `#C3A9E8` | Magical objects, important highlights, selected states |
+| Moon Cream | `#F4EBDD` | Main readable text, stars, soft highlights |
+| Warm Peach | `#F3B79C` | Windows, cheeks, flowers, affectionate details |
+| Rose Glow | `#E98FAF` | Selective romantic accents and special discoveries |
+| Lantern Gold | `#F6D78B` | Collectibles, rewards, lights, recovered stars |
+| Moss Green | `#718C83` | Grass, plants, garden scenery |
+| Deep Forest | `#354E50` | Dark vegetation, garden shadows |
+
+These are the master colors, not a requirement that every asset use every color.
+
+Each scene should use a small subset of the palette.
+
+## 3.2 Color distribution
+
+As a starting point, use approximately:
+
+- 50% deep navy and midnight indigo.
+- 20% blue, periwinkle, and muted lavender.
+- 15% dark environmental colors, including forest tones.
+- 10% warm cream and peach.
+- 5% vivid accents such as gold, rose, and bright lilac.
+
+These proportions are guidelines, not strict measurements.
+
+The opening should be predominantly dark. The museum may use more lavender and warm cream. The observatory should emphasize indigo and celestial gold. The final garden should use the richest combination of the palette.
+
+The world should become more colorful through the story without abruptly changing into a completely different visual style.
+
+## 3.3 Color rules
+
+1. Never use pure black as the dominant background when midnight navy can provide more atmosphere.
+2. Avoid large areas of saturated neon pink.
+3. Avoid generic pink-and-red Valentine's Day palettes.
+4. Avoid using gradients everywhere.
+5. Keep important objects brighter than their surroundings.
+6. Use warm light to guide attention.
+7. Use cool shadows to create depth.
+8. Keep text readable against every background.
+9. Reserve the brightest gold for discoveries, important objects, and significant moments.
+10. Let the final garden feel warmer and more colorful than any earlier location.
+
+### Lighting behavior
+
+Lights should appear to come from actual objects.
+
+A lantern illuminates the nearby ground. A window casts a small patch of warm light. A recovered star adds a subtle glow to its surroundings.
+
+Do not apply a uniform glow to every object.
+
+The lighting should make the environment feel physical, even though the artwork is pixel-based.
+
+---
+
+# 04. PIXEL-ART STYLE SPECIFICATION
+
+This section is especially important because inconsistent pixel art can make an otherwise beautiful website look like a collection of unrelated assets.
+
+## 4.1 Pixel density
+
+Use a consistent pixel-art grid.
+
+Recommended approach:
+
+- Design core environment artwork at an internal resolution between approximately 320 × 180 and 480 × 270 for widescreen scenes.
+- Scale artwork up using integer scaling wherever practical.
+- Use a consistent pixel scale within each scene.
+- Use larger pixel clusters for distant scenery.
+- Use smaller, more detailed clusters for foreground objects and characters.
+- Avoid combining extremely coarse sprites with highly detailed sprites in the same visual plane.
+
+The exact internal resolution may vary depending on the complexity of the illustration.
+
+The important requirement is visual consistency.
+
+Do not create one environment with enormous square pixels and another with nearly photographic detail.
+
+## 4.2 Edges and outlines
+
+Use deliberate, clean pixel edges.
+
+Characters and important objects may use dark indigo outlines to remain readable against busy backgrounds.
+
+Background objects should generally have softer contrast and less prominent outlines.
+
+Avoid thick black outlines around every single object.
+
+Not every asset needs an outline. Atmospheric backgrounds may use color separation and lighting instead.
+
+## 4.3 Pixel clusters
+
+Pixel art should be constructed from purposeful clusters rather than random individual pixels.
+
+For example:
+
+- Hair should have a recognizable silhouette and a few deliberate highlight clusters.
+- Flowers should have readable petals, stems, and leaves.
+- Clouds should have distinct stepped silhouettes.
+- Windows should use small, controlled blocks of warm light.
+- Water should use horizontal pixel clusters rather than noisy random dots.
+- Fabric should have simple color groupings instead of excessive texture.
+
+Individual pixels should contribute to shape, texture, lighting, or expression.
+
+Avoid random pixel noise used merely to make an image look more detailed.
+
+## 4.4 Texture
+
+Use texture selectively.
+
+Appropriate textures include:
+
+- Small stars in the sky.
+- Sparse grass clusters.
+- Stepped mountain edges.
+- Tiny flowers.
+- Wooden floorboards.
+- Bookshelves.
+- Stone paths.
+- Pixelated clouds.
+- Small reflections on water.
+- Occasional glowing particles.
+
+Do not cover the entire scene with noise, grain, sparkles, or decorative pixels.
+
+The background must remain visually calm enough for interactive objects and text to stand out.
+
+## 4.5 Atmospheric depth
+
+Build scenes using at least three visual depth layers when the composition benefits from them:
+
+1. **Background:** sky, moon, distant mountains, stars, distant buildings.
+2. **Middle ground:** buildings, trees, paths, platforms, large environmental objects.
+3. **Foreground:** grass, flowers, stones, furniture, small props, and objects the character can approach.
+
+Use darker and less detailed silhouettes for distant elements.
+
+Use greater contrast and more recognizable details for foreground objects.
+
+The resulting environment should feel like a place with depth rather than a flat illustration.
+
+## 4.6 Pixel art versus interface rendering
+
+The environmental artwork should be pixel art.
+
+The website interface may use modern CSS for borders, layout, transitions, and readable typography, but its visual language must remain consistent with the world.
+
+For example, an interactive panel might use a crisp rectangular frame, pixel-style corners, a small pixel icon, and a subtle dark background.
+
+It should not look like a generic modern SaaS dashboard floating over pixel scenery.
+
+Likewise, do not pixelate the actual HTML text until it becomes difficult to read.
+
+**The world is pixelated. The reading experience remains comfortable.**
+
+---
+
+# 05. TYPOGRAPHY
+
+Typography must balance retro personality with readability.
+
+Do not use one pixel font for everything.
+
+## 5.1 Three typography roles
+
+### Role A — Adventure headings
+
+Use a bold, slightly pixel-inspired display font.
+
+It should feel like the title screen of a charming indie game.
+
+Use it for:
+
+- THE BEENISH EXPEDITION.
+- Location names.
+- Major discoveries.
+- Chapter titles.
+- Important mission announcements.
+
+The font should be expressive without looking childish or excessively arcade-like.
+
+### Role B — Computer interface
+
+Use a clean monospaced font for the fictional operating system, logs, status indicators, file names, and mission labels.
+
+Examples include:
+
+- `EXPLORER STATUS: ACTIVE`
+- `LOCATION: UNKNOWN`
+- `RECOVERED STARS: 03 / 07`
+- `MISSION CLASSIFICATION: EXTREMELY PERSONAL`
+
+Keep the interface text compact and organized.
+
+### Role C — Personal writing
+
+Use a highly readable humanist sans-serif or soft serif for letters, memory descriptions, personal messages, and longer passages.
+
+The emotional writing should feel handwritten in spirit, even when it is typeset.
+
+Avoid using pixel fonts for long romantic paragraphs.
+
+## 5.2 Font suggestions
+
+Possible starting points:
+
+- Silkscreen for short pixel-inspired headings.
+- IBM Plex Mono for interface text.
+- Nunito Sans for readable personal content.
+
+These are suggestions, not mandatory dependencies. Choose fonts that can be legally embedded and rendered reliably across browsers.
+
+## 5.3 Typography rules
+
+- Use the display font sparingly.
+- Keep body text at a comfortable reading size.
+- Avoid extremely thin text against dark backgrounds.
+- Avoid excessive uppercase text in emotional passages.
+- Use monospaced typography for intentional interface elements, not every paragraph.
+- Use generous line spacing for personal letters.
+- Avoid decorative typography that makes the interface difficult to use.
+- Ensure long text wraps naturally on mobile screens.
+
+The contrast between playful computer text and warm personal writing is intentional.
+
+It helps distinguish the fictional adventure from the real emotions beneath it.
+
+---
+
+# 06. THE WORLD'S VISUAL GRAMMAR
+
+The entire experience must follow a consistent set of visual rules.
+
+## 6.1 Rectangular geometry
+
+Pixel art naturally favors stepped shapes, rectangular forms, and deliberate right angles.
+
+Use these shapes throughout:
+
+- Stepped window frames.
+- Blocky stone paths.
+- Rectangular interface panels.
+- Pixelated clouds.
+- Layered cliffs.
+- Geometric doors.
+- Small square collectibles.
+- Chunky signboards.
+- Pixel-cornered cards.
+
+Do not round every element into the same pill-shaped modern UI style.
+
+Some soft corners are acceptable in personal letters or selected interface panels, but the overall geometry should remain recognizably pixel-inspired.
+
+## 6.2 The recurring star
+
+A small four-point or pixel-cluster star should serve as the central visual symbol of the adventure.
+
+Create a master star design with:
+
+- A recognizable silhouette.
+- A small palette of gold and cream.
+- One bright highlight.
+- Optional subtle glow.
+- A clearly defined pixel structure.
+
+This symbol should recur in:
+
+- The title screen.
+- Mission indicators.
+- Collectible objects.
+- Environmental decorations.
+- Discovery animations.
+- The expedition journal.
+- The observatory.
+- The final garden.
+
+However, do not stamp the star onto every element.
+
+Its meaning should become stronger as the story progresses.
+
+Initially, stars are missing or dim. Later, the player discovers individual stars. By the end, the sky contains a complete constellation.
+
+## 6.3 Recurring motifs
+
+Use a small family of recognizable motifs:
+
+**The star:** discovery, wonder, and the returning night sky.
+
+**The lantern:** warmth, guidance, and safe places.
+
+**The flower:** the gradual return of life to the world.
+
+**The envelope:** personal messages and memories.
+
+**The tiny key:** secrets and optional discoveries.
+
+**The computer cursor:** playful interaction and the fictional operating system.
+
+**The little companion character:** the creator's presence within the world.
+
+**The constellation:** future dreams and the possibility of new memories.
+
+All these motifs should belong to the same visual language.
+
+---
+
+# 07. CHARACTER ART DIRECTION
+
+Characters are essential because they give the world emotional presence.
+
+## 7.1 Beenish's character
+
+Create a small, charming pixel-art character representing Beenish.
+
+The character should feel like a protagonist in a cozy indie adventure.
+
+Possible design elements:
+
+- A distinctive silhouette.
+- Expressive eyes.
+- A recognizable hairstyle.
+- A simple outfit with a memorable color combination.
+- Small, readable animations.
+- A few expressive poses.
+
+However, **do not invent her exact appearance**.
+
+Before creating a personalized sprite, use actual reference photographs or details provided by the creator.
+
+If no reference is available, begin with a neutral placeholder design and clearly identify it as provisional.
+
+Do not assume her hair length, hair color, skin tone, clothing preferences, or other physical features.
+
+## 7.2 The creator's companion character
+
+Create a second, smaller pixel character representing the person who made the adventure.
+
+This character is not the hero of the story. Beenish is.
+
+The companion should behave like a slightly ridiculous guide who has been trying to prepare this world for her.
+
+Possible behaviors:
+
+- Waving from behind a tree.
+- Running away after saying something embarrassing.
+- Holding a sign with an unnecessarily dramatic message.
+- Looking proud after completing a task.
+- Accidentally dropping a collectible.
+- Appearing in the wrong place.
+- Leaving a note and disappearing.
+- Sitting quietly in the final garden.
+
+The character should be playful and expressive without constantly interrupting the experience.
+
+## 7.3 Character proportions
+
+Use a consistent sprite design.
+
+A practical starting point is a character around 24–40 pixels tall at the native artwork resolution, depending on the internal scene resolution and desired level of detail.
+
+The character should remain recognizable when scaled up.
+
+Avoid excessive detail that becomes unreadable at small sizes.
+
+## 7.4 Character animation set
+
+Prepare the following states where appropriate:
+
+1. Idle.
+2. Walking.
+3. Looking around.
+4. Waving.
+5. Celebrating.
+6. Sitting.
+7. Blushing or hiding the face.
+8. Surprised reaction.
+9. Sad or thoughtful idle.
+10. Reading a letter.
+11. Interacting with an object.
+12. Resting in the final garden.
+
+Not every animation must be used immediately.
+
+Build a reusable character system so additional scenes can use the same character without redesigning it.
+
+## 7.5 Animation principles
+
+Animations should be short, expressive, and readable.
+
+Suggested timings:
+
+- Idle movement: approximately 1–3 seconds per cycle.
+- Walking: approximately 100–180 milliseconds per frame.
+- Small reactions: approximately 200–600 milliseconds.
+- Discovery animation: approximately 500–1,200 milliseconds.
+- Major scene transition: approximately 400–900 milliseconds.
+
+These are starting points rather than strict requirements.
+
+Use timing that suits the scene.
+
+Avoid continuous exaggerated bouncing, spinning, or shaking.
+
+The characters should feel alive, not hyperactive.
+
+---
+
+# 08. THE MAIN WORLD MAP
+
+The website should feel like a collection of connected locations in one fictional world.
+
+The locations may be separate screens, illustrated scenes, or interactive environments. They do not all need to be technically complex games.
+
+What matters is that the visual continuity makes them feel like parts of the same universe.
+
+## 8.1 World geography
+
+The world should have a recognizable overall geography.
+
+Suggested layout:
+
+- A central starting area with a computer and a small signpost.
+- A path leading toward the Bureau of Unreasonable Boyfriends.
+- A museum building farther along the path.
+- A courthouse with an absurdly serious appearance.
+- An archive or library built into a hillside.
+- An observatory on a raised platform or mountain.
+- A quiet, partially hidden path leading toward the final garden.
+
+The exact arrangement can change to suit the final composition.
+
+The world should not resemble a generic game level select screen.
+
+Locations should exist naturally within the environment.
+
+## 8.2 The central hub
+
+The central hub is the main place Beenish returns to between discoveries.
+
+It should contain:
+
+- A small computer or mission terminal.
+- A signpost with the locations.
+- A few buildings visible in the distance.
+- A path or clearing.
+- One or two decorative trees.
+- A small patch of flowers.
+- The recurring companion character.
+- An open night sky with noticeably few stars.
+
+Initially, the hub should feel quiet and incomplete.
+
+As locations are explored, the environment should change:
+
+- More stars appear in the sky.
+- Previously dark windows become illuminated.
+- Flowers gradually bloom.
+- The computer gains new interface details.
+- Small environmental characters become visible.
+- The central path becomes more inviting.
+
+These changes should persist when the visitor returns.
+
+The hub becomes a visual record of progress.
+
+---
+
+# 09. LOCATION-BY-LOCATION VISUAL SPECIFICATION
+
+Each location needs its own identity while remaining consistent with the overall art direction.
+
+## 9.1 Location One: The Bureau of Unreasonable Boyfriends
+
+### Concept
+
+A completely serious government office dedicated to investigating the deeply suspicious phenomenon known as Beenish.
+
+The humor comes from treating absurd romantic observations as official matters of national importance.
+
+### Environment
+
+Create a small pixel-art government office at night.
+
+Visual elements:
+
+- A dark blue exterior.
+- A signboard reading `BUREAU OF UNREASONABLE BOYFRIENDS`.
+- Warm windows.
+- A small entrance.
+- A noticeboard.
+- A desk.
+- Bookshelves and filing cabinets.
+- Stacks of paper.
+- A slightly crooked framed certificate.
+- A tiny desk lamp.
+- An unnecessarily large official stamp.
+- The companion character working very seriously.
+
+The office should feel cozy, cluttered, and faintly ridiculous.
+
+Avoid making it look like a realistic corporate office.
+
+### Palette
+
+Primarily midnight navy, twilight blue, dusty lavender, moon cream, and warm peach.
+
+### Interactive visual details
+
+- A filing cabinet opens when clicked.
+- Documents slide out of folders.
+- A stamp lands with a small pixel animation.
+- A desk lamp turns on.
+- A file briefly displays an exaggerated warning.
+- The companion character looks suspiciously proud of the paperwork.
+
+### Documents and graphics
+
+Prepare reusable document templates:
+
+- `CASE_001: THE HAIR INCIDENT`
+- `CASE_002: UNREASONABLE INTELLIGENCE`
+- `CASE_003: EYES UNDER INVESTIGATION`
+- `CASE_004: EXCESSIVE KINDNESS`
+- `CASE_005: THE SUBJECT IS BEING TOO CUTE`
+- `FINAL_REPORT: OBJECTIVITY COMPROMISED`
+
+These are sample file titles. Use only those that genuinely suit Beenish and the relationship.
+
+The office's humor should reflect real observations, personal jokes, and the creator's affectionate exaggeration.
+
+Do not invent personal habits or inside jokes.
+
+### Visual gag
+
+Include a small framed certificate that reads:
+
+`CERTIFIED: EXTREMELY BIASED`
+
+Underneath it, show the companion character giving a thumbs-up.
+
+The joke should be visible even before the document is opened.
+
+---
+
+## 9.2 Location Two: The Museum of Beenish
+
+### Concept
+
+A museum dedicated to a person who is, according to its extremely unreliable curators, a phenomenon that science cannot adequately explain.
+
+This location combines personal photographs, real achievements, meaningful qualities, and playful exaggeration.
+
+### Environment
+
+Create a beautiful, slightly surreal museum.
+
+Visual elements:
+
+- A grand entrance with stepped architecture.
+- Tall windows.
+- A dark blue and lavender exterior.
+- Warm interior lighting.
+- A central exhibition hall.
+- Small display stands.
+- Pixel-art picture frames.
+- A star-shaped chandelier.
+- A staircase or upper gallery.
+- A few decorative plants.
+- A quiet, spacious layout.
+
+The building should feel special without becoming a royal palace.
+
+### Palette
+
+Deep indigo, dusty lavender, moon cream, dream lilac, warm peach, and restrained gold.
+
+### Exhibits
+
+Each exhibit should look like a real museum display.
+
+Possible examples:
+
+**The Portrait Hall**
+
+Actual photographs of Beenish presented inside carefully designed frames.
+
+**The Achievement Wing**
+
+Real accomplishments presented as miniature exhibits, certificates, medals, books, or display cases.
+
+**The Soft Heart Exhibit**
+
+A display representing her kindness, care for others, and meaningful personal qualities.
+
+**The Unexplainable Phenomenon**
+
+A deliberately ridiculous exhibit suggesting that ordinary laws of reality do not adequately explain her existence.
+
+Use actual facts and creator-provided details.
+
+### Photograph presentation
+
+Photographs should be treated as important objects, not generic image thumbnails.
+
+Each image should have:
+
+- A carefully designed frame.
+- A short, personal caption.
+- Adequate breathing room.
+- A subtle reveal or hover effect.
+- A readable full-size view when opened.
+
+Use real photographs wherever possible.
+
+Do not generate artificial substitutes for real photographs.
+
+Do not use AI-generated images pretending to be genuine memories.
+
+### Visual gag
+
+One exhibit should be conspicuously overengineered.
+
+For example, a large display case with warning signs, measuring instruments, and a ridiculous official label:
+
+`SUBJECT EXCEEDS CURRENT UNDERSTANDING`
+
+The exhibit should feel like a loving joke rather than a generic compliment.
+
+---
+
+## 9.3 Location Three: The Court of Absolutely No Flaws
+
+### Concept
+
+A fictional courtroom where the creator attempts to prove that Beenish has flaws.
+
+The court eventually determines that the investigation is hopelessly biased.
+
+### Environment
+
+Create a small, dramatic courtroom.
+
+Visual elements:
+
+- A raised judge's bench.
+- Wooden or dark indigo furniture.
+- A large central desk.
+- A witness stand.
+- Tall windows.
+- A small flag or official emblem.
+- A ridiculous stack of evidence folders.
+- A large wall clock.
+- A tiny gavel.
+- A sign reading `COURT OF ABSOLUTELY NO FLAWS`.
+
+Use a palette of midnight navy, muted lavender, warm cream, and restrained peach.
+
+The environment should feel theatrical rather than realistic.
+
+### Interactive details
+
+- A gavel makes a short pixel animation.
+- A document is presented as evidence.
+- A fictional objection appears.
+- The judge looks at the evidence.
+- The companion character becomes increasingly embarrassed.
+- The final verdict appears as a stamped document.
+
+### Visual humor
+
+Make the court look excessively serious about an inherently ridiculous case.
+
+A large stack of empty evidence folders can communicate the joke before the player reads anything.
+
+The visual punchline should be simple and immediately understandable.
+
+Do not create a long, complicated courtroom minigame unless it genuinely improves the experience.
+
+---
+
+## 9.4 Location Four: The Archive of Things That Happened
+
+### Concept
+
+A quiet archive containing actual memories from the relationship.
+
+This location is the bridge between the fictional adventure and the real relationship.
+
+It should be noticeably more intimate than the earlier locations.
+
+### Environment
+
+Create a nighttime archive or library.
+
+Visual elements:
+
+- Tall bookshelves.
+- A narrow central aisle.
+- Warm reading lamps.
+- Small tables.
+- A window showing the night sky.
+- A few plants.
+- Books and labeled boxes.
+- A central memory cabinet.
+- Tiny glowing dust particles, used sparingly.
+- A comfortable reading chair.
+
+The room should feel peaceful and private.
+
+### Palette
+
+Midnight indigo, dusty lavender, warm cream, muted peach, and small gold accents.
+
+### Memory artifacts
+
+Each real memory should appear as a physical object.
+
+Possible forms:
+
+- A photograph inside a frame.
+- A folded letter.
+- A small box containing an image.
+- A message displayed on an old computer.
+- A ticket or note.
+- A small illustrated scene based on an actual event.
+- A book containing a particular conversation.
+
+Only use memories supplied by the creator.
+
+Do not invent conversations, dates, events, or shared experiences.
+
+If a real photograph or screenshot is used, preserve its authenticity.
+
+### Visual treatment
+
+When a memory is opened:
+
+1. The selected object becomes the visual focus.
+2. The background becomes slightly quieter.
+3. The memory appears in a readable panel or carefully composed scene.
+4. A short caption explains why it matters.
+5. The visitor can close it and return to the archive.
+
+Do not turn every memory into a full-screen dramatic presentation.
+
+Some memories should be small and ordinary.
+
+An ordinary conversation can be meaningful without requiring a cinematic treatment.
+
+### Emotional direction
+
+This location should feel like opening a box of things that someone carefully kept because they mattered.
+
+It must not feel like a generic gallery.
+
+---
+
+## 9.5 Location Five: The Observatory of Things We Haven't Done Yet
+
+### Concept
+
+A beautiful observatory dedicated to future experiences the couple hopes to share.
+
+These are possibilities, not promises or obligations.
+
+### Environment
+
+Create an observatory on a hill overlooking the world.
+
+Visual elements:
+
+- A large telescope.
+- A rounded observatory dome.
+- A wooden platform.
+- A small staircase.
+- A star map.
+- A few glowing instruments.
+- A clear view of the night sky.
+- Distant mountains.
+- A tiny bench.
+- A constellation with several missing stars.
+
+The scene should feel expansive, quiet, and hopeful.
+
+### Palette
+
+Midnight navy, deep indigo, dream lilac, moon cream, and lantern gold.
+
+### Interactive details
+
+Each selected star reveals a future experience.
+
+Possible categories include:
+
+- A photoshoot together.
+- Making couple reels.
+- Going on dates.
+- Taking nighttime walks.
+- Visiting places together.
+- Creating new memories.
+
+Only include dreams that genuinely reflect the creator's hopes and Beenish's interests.
+
+### Visual representation
+
+Each future experience should have a distinct visual symbol.
+
+For example:
+
+- A small camera for a photoshoot.
+- Two tiny figures walking beneath a moon.
+- A film frame for making videos.
+- A pair of chairs at a café.
+- A small road leading toward distant mountains.
+
+These should be original illustrations in the established pixel-art style.
+
+### The unnamed constellation
+
+Include a small constellation that has no name yet.
+
+The interface should invite Beenish to name it herself.
+
+This should be a genuine optional interaction, not a required form.
+
+The visual should communicate that some parts of the story are still unwritten.
+
+---
+
+## 9.6 The hidden garden
+
+### Concept
+
+The most emotionally intimate location in the entire experience.
+
+The garden should feel like a place that was always part of the world but remained hidden until the visitor discovered it.
+
+### Environment
+
+Create a peaceful pixel-art garden at night.
+
+Visual elements:
+
+- A narrow stone path.
+- Soft grass.
+- Small flowers.
+- A few trees.
+- A pond or small reflective water feature.
+- Warm lanterns.
+- A wooden bench.
+- Lavender and peach flowers.
+- A few fireflies.
+- A deep blue sky.
+- A constellation above the garden.
+- The two characters sitting or standing together.
+
+The environment should feel secluded, safe, and quiet.
+
+It should not look like a grand fantasy kingdom or a generic romantic castle.
+
+### Palette
+
+This is the location where the palette reaches its warmest expression.
+
+Use:
+
+- Deep forest green.
+- Moss green.
+- Midnight navy.
+- Dusty lavender.
+- Dream lilac.
+- Warm peach.
+- Moon cream.
+- Lantern gold.
+
+Allow the warm colors to appear more frequently than in earlier locations.
+
+### Lighting
+
+Lanterns should illuminate the path and nearby flowers.
+
+Fireflies should appear as a few small, moving points of light.
+
+The water may reflect the moon or nearby lights.
+
+Flowers may have subtle highlights.
+
+The sky should contain a fuller constellation than the opening scene.
+
+Avoid intense bloom effects, excessive particles, and giant glowing hearts.
+
+### Character composition
+
+The two characters should be positioned together naturally.
+
+Possible compositions:
+
+- Sitting on a bench beneath a tree.
+- Standing near a pond.
+- Looking at the constellation.
+- Sitting quietly beside a lantern.
+- Standing on a small hill overlooking the world.
+
+Choose one strong composition rather than filling the scene with multiple competing focal points.
+
+### The letter
+
+The final letter should be presented as a real reading experience.
+
+Possible treatments:
+
+- A letter inside a small envelope.
+- A note resting on the bench.
+- A softly illuminated book.
+- A paper object held by the companion character.
+
+The text itself should remain readable and should not be baked into the illustration.
+
+The artwork should frame the letter rather than compete with it.
+
+### The emotional rule
+
+Do not make the garden visually loud.
+
+The most important moment should feel like the world has finally stopped rushing.
+
+The visitor has explored, laughed, and discovered things. Now she can simply sit in the world and read.
+
+---
+
+# 10. OPENING SCREEN AND BOOT SEQUENCE
+
+The opening is the first impression. It must establish the entire visual identity within a few seconds.
+
+## 10.1 Initial composition
+
+Start with a dark, full-screen scene.
+
+The background should contain:
+
+- A midnight blue sky.
+- A distant mountain silhouette.
+- A few dim stars.
+- A tiny building or computer terminal.
+- A small amount of foreground grass.
+- One warm light source.
+- The protagonist's small pixel character.
+
+The composition should feel like the opening of a quiet adventure game.
+
+Do not immediately display a large paragraph of romantic text.
+
+Let the visitor look at the scene first.
+
+## 10.2 Boot sequence
+
+A small interface panel appears, styled like an old computer terminal.
+
+Possible sequence:
+
+- `INITIALIZING EXPEDITION...`
+- `RESTORING WORLD MAP...`
+- `SEARCHING FOR STARS...`
+- `ERROR: WORLD INCOMPLETE`
+- `UNUSUAL ENTITY DETECTED`
+- `EXPLORER IDENTIFIED: BEENISH`
+
+The wording can be adjusted to the actual story.
+
+The animation should feel playful rather than technically realistic.
+
+Use short typing or status updates, not a long fake loading sequence.
+
+## 10.3 Title reveal
+
+The title appears:
+
+`THE BEENISH EXPEDITION`
+
+Use the display font, with a small pixel star integrated into the composition.
+
+The title should feel like a game title screen, not a corporate logo.
+
+A small subtitle can introduce the mission.
+
+The primary button should resemble a physical game interface element.
+
+For example:
+
+`[ BEGIN EXPEDITION ]`
+
+A secondary option can contain a joke, such as:
+
+`[ GO BACK TO SLEEP ]`
+
+If the visitor selects the joke option, show a brief playful reaction rather than blocking her from proceeding.
+
+## 10.4 Opening animation
+
+Suggested sequence:
+
+1. The dark environment fades in.
+2. One or two stars flicker.
+3. A small warm light turns on.
+4. The computer terminal activates.
+5. The title appears.
+6. The protagonist's character performs a tiny idle animation.
+7. The visitor chooses to begin.
+
+Keep the complete sequence short enough that it does not become frustrating.
+
+Provide a way to skip or reduce animation.
+
+---
+
+# 11. THE FICTIONAL OPERATING SYSTEM
+
+The website can include a small fictional computer interface as a recurring element.
+
+This is a secondary visual layer, not the entire website.
+
+It should look like a machine from the same pixel-art universe.
+
+## 11.1 Appearance
+
+Use:
+
+- Dark indigo panels.
+- Crisp rectangular borders.
+- Pixel-inspired icons.
+- Monospaced interface text.
+- Small status indicators.
+- Muted lavender highlights.
+- Warm cream text.
+- Gold for discoveries.
+- Occasional pixel-art illustrations.
+
+Avoid:
+
+- Modern glassmorphism.
+- Generic SaaS dashboards.
+- Oversized rounded cards.
+- Excessive gradients.
+- Random neon colors.
+- Large glowing buttons.
+- Unrelated modern desktop UI conventions.
+
+## 11.2 Interface elements
+
+Create reusable components for:
+
+- Mission panel.
+- Location status.
+- Discovery notification.
+- Inventory.
+- Expedition journal.
+- Memory viewer.
+- Photo viewer.
+- Personal letter.
+- Confirmation dialog.
+- Optional settings.
+- Navigation map.
+
+Each component should share the same border, spacing, typography, and color rules.
+
+## 11.3 Example mission panel
+
+The panel might contain:
+
+`EXPEDITION STATUS`
+
+`EXPLORER: BEENISH`
+
+`WORLD STATE: RECOVERING`
+
+`LOCATIONS DISCOVERED: 02`
+
+`STARS RECOVERED: 03`
+
+`CURRENT OBJECTIVE: CONTINUE EXPLORING`
+
+This is fictional UI, not a real system dashboard.
+
+It should be charming and easy to understand.
+
+---
+
+# 12. INTERACTION DESIGN
+
+Every interaction should have visual feedback.
+
+The user should understand what is clickable, what has changed, and what has been discovered.
+
+## 12.1 Interactive objects
+
+Potential interactive objects include:
+
+- Doors.
+- Signs.
+- Books.
+- Photographs.
+- Cabinets.
+- Stars.
+- Flowers.
+- Letters.
+- Computer terminals.
+- Small creatures.
+- Hidden keys.
+- Collectible artifacts.
+
+Objects should not all behave identically.
+
+A door opens. A book reveals a memory. A star produces a discovery animation. A creature reacts. A letter opens a reading view.
+
+## 12.2 Hover behavior
+
+On desktop, hovering over an interactive object may cause:
+
+- A small brightness change.
+- A subtle outline.
+- A slight vertical movement.
+- A tiny sparkle.
+- A short tooltip.
+- A character reaction.
+
+Do not combine every effect on every object.
+
+Choose the effect that best communicates the interaction.
+
+## 12.3 Click behavior
+
+When an object is selected:
+
+1. Provide immediate visual feedback.
+2. Show the result clearly.
+3. Preserve the environment where practical.
+4. Offer an obvious way to close or return.
+5. Avoid unexpected navigation.
+6. Avoid making the user wait for unnecessary animation.
+
+## 12.4 Discovery animations
+
+When a collectible star is found:
+
+- The star briefly brightens.
+- It rises or moves toward the inventory.
+- A small sound may play if sound is enabled.
+- The discovery counter updates.
+- A subtle visual change occurs in the world.
+
+The animation should be satisfying but brief.
+
+Do not turn each discovery into a long celebration.
+
+## 12.5 Optional secrets
+
+Hide a small number of optional discoveries throughout the world.
+
+Examples:
+
+- A tiny key behind a tree.
+- A strange note inside a filing cabinet.
+- A small flower that reacts when clicked.
+- A companion character hiding behind a building.
+- An unusual object in the museum.
+- A secret path toward the garden.
+
+Secrets should reward curiosity.
+
+They should never prevent the visitor from reaching the important emotional content.
+
+**The love letter must not be locked behind difficult puzzles or a completion requirement.**
+
+---
+
+# 13. MOTION AND ANIMATION SYSTEM
+
+Motion should make the world feel alive without making it exhausting.
+
+## 13.1 Environmental motion
+
+Appropriate ambient animations include:
+
+- Stars twinkling occasionally.
+- Clouds moving slowly.
+- Grass moving slightly.
+- Fireflies drifting.
+- Water reflections shifting.
+- Lanterns flickering subtly.
+- Leaves moving gently.
+- A character blinking.
+- A window light turning on.
+- Flowers swaying.
+
+These should be subtle and staggered.
+
+Not every element should move at once.
+
+## 13.2 Motion hierarchy
+
+Use three levels of animation.
+
+### Level 1: Ambient
+
+Very subtle and continuous.
+
+Examples: distant clouds, occasional stars, gentle lantern flicker.
+
+### Level 2: Interactive
+
+Triggered by a user action.
+
+Examples: opening a door, selecting a photograph, clicking a star.
+
+### Level 3: Story events
+
+Used sparingly for significant moments.
+
+Examples: the first recovered star, the return of color to a location, or the reveal of the final garden.
+
+The largest animations should correspond to meaningful events.
+
+## 13.3 Transition style
+
+Prefer transitions that resemble movement through an illustrated world.
+
+Examples:
+
+- A short fade to midnight blue.
+- A scene sliding gently into view.
+- A door opening to reveal another location.
+- A star moving toward the sky.
+- A lantern illuminating the next area.
+
+Avoid generic spinning loaders and excessive zooming.
+
+## 13.4 Accessibility
+
+Respect reduced-motion preferences.
+
+When reduced motion is enabled:
+
+- Remove unnecessary parallax.
+- Replace large transitions with simple fades.
+- Reduce continuous particle effects.
+- Avoid flashing.
+- Keep interaction feedback clear.
+
+The website should remain complete and enjoyable without animations.
+
+---
+
+# 14. SOUND AND AUDIO DIRECTION
+
+Audio is optional, but it can significantly strengthen the atmosphere if handled carefully.
+
+## 14.1 Overall sound
+
+The soundscape should be quiet and restrained.
+
+Potential elements:
+
+- Soft nighttime ambience.
+- Gentle wind.
+- Occasional distant birds or crickets.
+- Small interface clicks.
+- A quiet chime when discovering a star.
+- A soft page-turn sound.
+- A subtle door-opening sound.
+- A warm musical cue in the garden.
+
+Use original or properly licensed audio.
+
+Do not use recognizable copyrighted game music without permission.
+
+## 14.2 Audio rules
+
+- Never autoplay loud music.
+- Provide an obvious mute control.
+- Make sound optional.
+- Keep interface sounds short.
+- Avoid repetitive notification sounds.
+- Do not use sound as the only indication of success.
+- Ensure the experience works perfectly without audio.
+
+If background music is included, use a gentle, original ambient composition with a nostalgic, intimate atmosphere.
+
+---
+
+# 15. GRAPHICS PRODUCTION REQUIREMENTS
+
+The agent should generate a coordinated asset library rather than a collection of unrelated pictures.
+
+## 15.1 Asset categories
+
+Organize the artwork into the following categories.
+
+### A. Brand assets
+
+- Main title artwork.
+- Small expedition emblem.
+- Master pixel star.
+- Secondary symbols.
+- Optional loading icon.
+- Small browser favicon.
+
+### B. Environment backgrounds
+
+- Opening scene.
+- Central hub.
+- Bureau exterior and interior.
+- Museum exterior and interior.
+- Courtroom.
+- Archive.
+- Observatory.
+- Hidden garden.
+- Optional transitional scenes.
+
+### C. Character assets
+
+- Beenish placeholder sprite.
+- Final Beenish sprite.
+- Companion character.
+- Idle animations.
+- Walking animations.
+- Interaction poses.
+- Reaction poses.
+- Final garden pose.
+
+### D. Environmental props
+
+- Computer terminal.
+- Desk.
+- Bookshelves.
+- Filing cabinets.
+- Museum display cases.
+- Picture frames.
+- Courtroom furniture.
+- Telescope.
+- Lanterns.
+- Flowers.
+- Trees.
+- Stone paths.
+- Bench.
+- Pond.
+- Doors.
+- Signs.
+- Collectible stars.
+- Keys.
+- Letters and envelopes.
+
+### E. Interface graphics
+
+- Buttons.
+- Icons.
+- Panels.
+- Borders.
+- Tabs.
+- Status indicators.
+- Mission markers.
+- Journal icons.
+- Discovery notifications.
+- Dialogue frames.
+- Memory cards.
+- Photo frames.
+- Loading indicators.
+
+### F. Story-specific graphics
+
+- Bureau case files.
+- Museum exhibits.
+- Court verdict.
+- Archive artifacts.
+- Constellation map.
+- Final letter illustration.
+- Hidden notes.
+- Collectible inventory items.
+
+## 15.2 Asset consistency
+
+Every generated asset should follow the same master art direction.
+
+The agent should not generate each scene from scratch using a different interpretation of pixel art.
+
+Maintain a shared reference sheet containing:
+
+- Master palette.
+- Pixel density.
+- Character designs.
+- Outline style.
+- Lighting rules.
+- Material textures.
+- Interface conventions.
+- Recurring symbols.
+- Environmental proportions.
+
+Every subsequent asset should be checked against this sheet.
+
+## 15.3 Reusability
+
+Generate modular artwork whenever possible.
+
+For example, a tree should be reusable in multiple scenes.
+
+A lantern should have a standard version and an illuminated version.
+
+A character should be available in several poses without changing its design.
+
+A picture frame should support different photographs.
+
+A dialogue panel should work across several locations.
+
+This reduces visual inconsistency and makes later revisions easier.
+
+## 15.4 Transparency and file formats
+
+Use:
+
+- PNG with transparency for sprites, icons, foreground props, and isolated objects.
+- PNG or WebP for raster backgrounds, depending on quality and performance.
+- SVG for suitable interface icons and scalable symbols when the style remains consistent.
+- Sprite sheets for animations where appropriate.
+- WebP or AVIF for photographic assets where browser support and quality permit.
+
+Do not force pixel art into a lossy format that creates compression artifacts around edges.
+
+Keep original source assets available for revisions.
+
+---
+
+# 16. IMAGE-GENERATION RULES
+
+The image-generation process must preserve consistency.
+
+## 16.1 Master reference first
+
+Before generating the full environment, establish the visual system with a small reference pack:
+
+1. One sample landscape.
+2. One sample interior.
+3. One sample character.
+4. One sample environmental prop.
+5. One sample interface panel.
+6. One sample warm-light scene.
+7. One sample final-garden composition.
+
+Review these before producing dozens of assets.
+
+If the style is wrong, correct the reference pack first.
+
+Do not generate the entire world and attempt to repair inconsistent artwork afterward.
+
+## 16.2 Scene generation
+
+For each scene, specify:
+
+- The location.
+- The time of day.
+- The camera angle.
+- The foreground.
+- The middle ground.
+- The background.
+- The dominant colors.
+- The light sources.
+- The intended mood.
+- The approximate pixel density.
+- The intended use in the website.
+- The objects that must remain unobstructed.
+
+Avoid prompts that merely say "beautiful pixel-art scene."
+
+That instruction is too vague to produce consistent results.
+
+## 16.3 Camera consistency
+
+Use a consistent perspective across environments.
+
+The primary world should favor a side-view or slightly elevated two-dimensional perspective suitable for a cozy adventure.
+
+Buildings, paths, props, and characters should share compatible proportions.
+
+Interior scenes can use a more frontal composition when necessary, but the overall perspective should remain coherent.
+
+Do not combine:
+
+- Isometric buildings.
+- Top-down characters.
+- Side-view furniture.
+- Three-dimensional photorealistic objects.
+
+These styles do not naturally belong together without deliberate art direction.
+
+## 16.4 Background and foreground separation
+
+When possible, generate environment artwork in separate layers.
+
+For example:
+
+- Sky and distant scenery.
+- Buildings and large environmental objects.
+- Foreground trees and vegetation.
+- Interactive props.
+- Character sprites.
+
+This allows the website to create small amounts of parallax and interaction without requiring the entire illustration to move as one image.
+
+However, do not split every scene into dozens of layers unnecessarily.
+
+Use layers where they improve composition or interaction.
+
+## 16.5 Text inside generated artwork
+
+**Do not ask the image generator to produce important readable text.**
+
+Image generators may misspell labels, produce inconsistent typography, or distort words.
+
+Generate clean signboards, empty documents, blank display panels, and interface backgrounds.
+
+Render all important text separately in HTML or SVG.
+
+This includes:
+
+- Location names.
+- Case-file titles.
+- Interface labels.
+- Personal letters.
+- Museum captions.
+- Mission text.
+- Buttons.
+- Status indicators.
+
+The artwork supplies the visual object. The website supplies the actual text.
+
+This separation is essential.
+
+## 16.6 Real photographs
+
+Use authentic photographs supplied by the creator.
+
+Do not generate AI portraits and present them as real photographs of Beenish.
+
+Do not modify the appearance of her actual photographs unless explicitly requested.
+
+Photographs can be framed or placed within pixel-art environments, but their content should remain authentic.
+
+---
+
+# 17. MASTER IMAGE-GENERATION PROMPT
+
+Use the following as the shared style reference for all environment and prop generation.
+
+Append the location-specific instructions to this prompt when creating individual assets.
+
+**MASTER ART-DIRECTION PROMPT**
+
+Create original artwork for "THE BEENISH EXPEDITION", a deeply personal, cozy nighttime pixel-art adventure world.
+
+The visual style is premium handcrafted indie-game pixel art with atmospheric fantasy environments, expressive silhouettes, deliberate pixel clusters, layered scenery, and soft environmental lighting.
+
+The world is built around midnight navy, deep indigo, twilight blue, muted periwinkle, dusty lavender, dream lilac, warm peach, moon cream, restrained rose, lantern gold, moss green, and deep forest green.
+
+Use a consistent pixel grid, deliberate stepped edges, recognizable silhouettes, clean pixel clusters, controlled outlines, and carefully grouped colors.
+
+Create depth using distant silhouettes, middle-ground structures, and detailed foreground objects. Use small, believable sources of warm light against the cool nighttime environment.
+
+The atmosphere should feel mysterious but safe, playful but not childish, romantic but not generic, and emotionally intimate without becoming overly sentimental.
+
+The world should look handcrafted, as though an independent game artist designed every environment specifically for this story.
+
+Include charming environmental details, small visual jokes where appropriate, and a restrained amount of magical atmosphere.
+
+Keep the composition clean and readable. Important objects should be immediately recognizable. Leave sufficient negative space for website interface elements and readable text.
+
+Maintain consistency with the established character designs, palette, pixel density, perspective, and lighting.
+
+**Do not imitate any existing game's recognizable artwork, characters, or environments.**
+
+Avoid photorealism, 3D-rendered objects, generic AI fantasy art, random pixel noise, excessive bloom, overwhelming particle effects, neon cyberpunk colors, excessive hearts, generic Valentine's Day decorations, inconsistent pixel scales, blurry pixel edges, and unnecessary visual clutter.
+
+Do not generate readable text, logos, UI labels, or personal photographs inside the artwork. Leave text areas blank so the website can render them separately.
+
+The final image must look like a coherent asset from the same original pixel-art universe as all the other assets in THE BEENISH EXPEDITION.
+
+---
+
+# 18. LOCATION-SPECIFIC IMAGE PROMPTS
+
+Use the master prompt above with one of the following additions.
+
+## 18.1 Opening landscape
+
+Create a widescreen opening environment for a cozy nighttime pixel-art adventure.
+
+Show a quiet clearing beneath a deep midnight-blue sky, distant stepped mountains, sparse dim stars, a small mysterious building or computer terminal, a few foreground grass clusters, and one warm light source.
+
+The composition should be atmospheric and spacious, with the main visual interest slightly below the center and sufficient clean sky for the title interface.
+
+The world should feel incomplete, as if something beautiful is missing.
+
+Use very few bright elements. The warm light and any visible stars should stand out naturally against the dark environment.
+
+No characters larger than the surrounding scenery, no large decorative hearts, no readable text, no UI panels, and no dramatic fantasy explosions.
+
+## 18.2 Central hub
+
+Create a small nighttime pixel-art adventure hub containing a central clearing, a modest computer terminal, a signpost, a path leading toward several distant buildings, a few trees, foreground grass, and a small patch of flowers.
+
+Make the geography easy to understand at a glance.
+
+The scene should have multiple potential paths, but the composition should remain uncluttered.
+
+Use dark blue scenery, muted lavender accents, and a few warm windows.
+
+Leave enough room for a small player character to move or stand naturally within the environment.
+
+The world should feel quiet, curious, and slightly unfinished.
+
+## 18.3 Bureau
+
+Create a charming, slightly ridiculous government office at night, built in a handcrafted pixel-art style.
+
+Show a small dark-blue building with warm windows, an official signboard with an empty text area, a modest entrance, a noticeboard, a desk visible through one window, filing cabinets, stacked papers, and a tiny desk lamp.
+
+The building should look unnecessarily official for the absurd subject it represents.
+
+Use midnight blue, muted lavender, warm cream, and peach lighting.
+
+The atmosphere should be cozy, humorous, and slightly mysterious.
+
+Avoid realistic corporate architecture, sterile office interiors, and overly complex furniture.
+
+## 18.4 Museum
+
+Create a small but beautiful pixel-art museum at night, with elegant stepped architecture, tall windows, warm interior lighting, a central exhibition hall, small display stands, picture frames, and a star-shaped chandelier.
+
+The composition should suggest a place dedicated to something unusually important.
+
+Use deep indigo, dusty lavender, warm cream, dream lilac, and restrained gold.
+
+Make the architecture distinctive without turning it into a palace.
+
+Leave exhibition surfaces clean and suitable for adding real photographs and readable captions later.
+
+## 18.5 Courtroom
+
+Create a theatrical pixel-art courtroom designed for an absurdly serious fictional trial.
+
+Include a raised judge's bench, a central desk, a witness stand, tall windows, a large wall clock, small stacks of documents, and a tiny gavel.
+
+Use dark indigo furniture, muted lavender shadows, warm cream highlights, and restrained peach lighting.
+
+The environment should look official enough to make the absurd premise funny.
+
+Keep the layout readable and avoid realistic legal imagery that would make the scene feel severe or intimidating.
+
+## 18.6 Archive
+
+Create a peaceful nighttime pixel-art library and memory archive.
+
+Show tall bookshelves, warm reading lamps, a central table, a comfortable chair, a window overlooking the night sky, small plants, labeled storage boxes with blank labels, and a subtle glow from a few carefully placed objects.
+
+Use midnight indigo, dusty lavender, moon cream, and warm peach.
+
+The environment should feel private, safe, nostalgic, and full of things worth remembering.
+
+Avoid dramatic lighting, excessive magical effects, and cluttered shelves that compete with the interactive objects.
+
+## 18.7 Observatory
+
+Create a beautiful pixel-art observatory on a hill at night.
+
+Include a telescope, a rounded observatory dome, a small wooden platform, a star map, a few subtle glowing instruments, distant mountains, and a large open sky.
+
+Use deep indigo, midnight navy, dream lilac, moon cream, and lantern gold.
+
+The sky should be the main visual focus.
+
+Leave enough uncluttered sky for interactive constellation elements.
+
+The atmosphere should feel expansive, quiet, hopeful, and slightly magical.
+
+## 18.8 Hidden garden
+
+Create an intimate, peaceful pixel-art garden at night, designed as the emotional conclusion of a personal adventure.
+
+Show a narrow stone path, lush but controlled vegetation, small lavender and peach flowers, a wooden bench, a reflective pond, a few warm lanterns, several fireflies, and a deep indigo sky containing a beautiful constellation.
+
+Use a richer and warmer expression of the established palette: deep forest, moss green, midnight navy, dusty lavender, dream lilac, warm peach, moon cream, and lantern gold.
+
+Create a strong visual composition with one clear focal point and enough negative space for two small characters and a personal letter interface.
+
+The garden should feel secluded, safe, and quietly extraordinary.
+
+The beauty should come from the composition, lighting, flowers, and small details—not giant glowing hearts or excessive magical effects.
+
+No text, no logos, no interface panels, and no photorealism.
+
+---
+
+# 19. UI COMPONENT DESIGN SYSTEM
+
+The interface should look like it belongs to the same fictional universe.
+
+## 19.1 Buttons
+
+Buttons should resemble small physical interface objects.
+
+Use:
+
+- Rectangular shapes.
+- Crisp borders.
+- Pixel-inspired corner details.
+- A dark indigo background.
+- Cream text.
+- A lavender hover state.
+- Gold for important actions.
+
+The primary button should be visually prominent without being enormous.
+
+Hover states may include a slight upward movement or a small color shift.
+
+Pressed states should move the button down slightly or darken its surface.
+
+Avoid oversized pill buttons and excessive shadows.
+
+## 19.2 Panels
+
+Panels should feel like paper, a computer window, or a framed display within the fictional world.
+
+Use a consistent border system:
+
+- A dark outer border.
+- A slightly lighter inner surface.
+- A thin highlight where appropriate.
+- Minimal shadow.
+- A small decorative corner treatment.
+
+Not every panel needs a double border.
+
+Use stronger framing for important story moments and simpler panels for routine interface elements.
+
+## 19.3 Dialogues
+
+Dialogue panels should be compact and readable.
+
+They may include:
+
+- A small character portrait.
+- The speaker's name.
+- One short message.
+- An optional response.
+- A clear close or continue control.
+
+Avoid giant dialogue boxes that cover most of the scene.
+
+## 19.4 Icons
+
+Create a coherent icon family.
+
+Icons should share:
+
+- A consistent grid.
+- Similar visual weight.
+- A limited palette.
+- Recognizable silhouettes.
+- Consistent outline treatment.
+
+Potential icons include:
+
+- Star.
+- Envelope.
+- Book.
+- Camera.
+- Telescope.
+- Flower.
+- Key.
+- Computer.
+- Map.
+- Archive box.
+- Lantern.
+- Photograph.
+
+Do not mix detailed pixel icons with unrelated thin-line icons from a modern icon library.
+
+If a standard icon library is used for functional interface elements, style it carefully to fit the overall system.
+
+## 19.5 Borders and dividers
+
+Use restrained pixel-inspired separators.
+
+Suitable treatments include:
+
+- Thin lavender rules.
+- Small repeating pixel motifs.
+- Tiny star symbols.
+- Stepped corners.
+- Subtle dashed dividers.
+
+Avoid elaborate decorative borders around every paragraph.
+
+The interface should remain easy to scan.
+
+---
+
+# 20. PHOTOGRAPHY AND REAL-WORLD CONTENT
+
+The website needs a clear distinction between the fictional world and the real relationship.
+
+The environments, characters, and fantasy elements may be illustrated.
+
+The actual memories should remain authentic.
+
+## 20.1 Photographs
+
+Use the creator's real photographs of Beenish or the couple.
+
+Place them inside:
+
+- Museum frames.
+- Archive displays.
+- Small memory cards.
+- A photo album.
+- A framed object within a scene.
+
+The frame can be pixel art while the photograph itself remains photographic.
+
+This contrast is intentional.
+
+It visually communicates that the fictional world is a way of presenting real experiences.
+
+## 20.2 Captions
+
+Captions should feel personal rather than promotional.
+
+Avoid generic descriptions such as "Our beautiful memories" or "Forever together."
+
+Use specific details provided by the creator.
+
+If a caption needs more context, keep it short and let the photograph do most of the work.
+
+## 20.3 Personal information
+
+Do not add identifying personal information to public-facing artwork unless the creator explicitly intends to include it.
+
+Do not place private photographs, relationship details, or sensitive information in externally hosted assets without considering access and privacy.
+
+If the site is intended to remain private, treat deployment and asset hosting as part of the privacy design.
+
+---
+
+# 21. RESPONSIVE DESIGN
+
+The experience must work on desktop and mobile.
+
+The visual system should adapt without losing its identity.
+
+## 21.1 Desktop
+
+On larger screens:
+
+- Show the full environment.
+- Keep the player character visible.
+- Allow a comfortable amount of scenery.
+- Place interface panels where they do not obscure important artwork.
+- Use subtle parallax where it genuinely improves depth.
+- Support keyboard interaction where appropriate.
+
+The world should feel spacious.
+
+## 21.2 Mobile
+
+On mobile:
+
+- Keep the main character and important objects visible.
+- Recompose scenes rather than merely shrinking them.
+- Move interface panels into suitable positions.
+- Make interactive objects large enough to tap.
+- Avoid relying on hover.
+- Reduce unnecessary background movement.
+- Ensure personal letters remain easy to read.
+- Prevent horizontal overflow.
+
+A landscape scene may require a different crop or a specially composed portrait version.
+
+Do not assume that the center of a desktop image will always be the correct mobile composition.
+
+## 21.3 Touch interactions
+
+Interactive targets should generally be at least 44 × 44 CSS pixels where practical.
+
+If an object is visually tiny, provide a larger invisible hit area or a clear contextual control.
+
+Do not require precise tapping on individual pixels.
+
+## 21.4 Mobile art direction
+
+The mobile version should feel intentionally designed, not like a compromised desktop version.
+
+It can use:
+
+- Closer framing.
+- Simplified background layers.
+- Larger characters.
+- More compact navigation.
+- Separate scene crops.
+- Simplified ambient effects.
+
+Preserve the mood, colors, character identity, and important visual details.
+
+---
+
+# 22. PERFORMANCE AND VISUAL QUALITY
+
+Pixel art can be visually rich without making the website slow.
+
+## 22.1 Asset optimization
+
+- Use appropriately sized backgrounds.
+- Compress photographs carefully.
+- Avoid loading every scene at the beginning.
+- Load detailed environments when needed.
+- Reuse common sprites and interface assets.
+- Avoid oversized transparent images containing mostly empty space.
+- Use sprite sheets where they are beneficial.
+- Keep animation work modest.
+- Avoid unnecessary real-time rendering.
+
+## 22.2 Rendering quality
+
+Pixel artwork must remain crisp.
+
+Where integer scaling is practical, use it.
+
+When CSS scaling is used, ensure the intended pixel-art rendering is preserved.
+
+Do not allow accidental blur caused by fractional scaling.
+
+Photographs and typography should remain sharp and natural.
+
+## 22.3 Visual stability
+
+Reserve space for backgrounds, characters, and panels so that loading assets does not cause major layout shifts.
+
+The page should not jump around as the scene loads.
+
+A short, designed transition is preferable to showing broken images or a blank screen.
+
+---
+
+# 23. WHAT TO AVOID
+
+The following are explicit design restrictions.
+
+## 23.1 Avoid generic romance
+
+Do not fill the website with:
+
+- Hundreds of floating hearts.
+- Generic pink gradients.
+- Rose petals on every screen.
+- Repetitive "I love you" decorations.
+- Standard scrapbook layouts.
+- Generic romantic stock illustrations.
+- Generic couple silhouettes.
+- Identical heart-shaped cards.
+
+Romance should emerge through the personal details and the experience itself.
+
+## 23.2 Avoid generic game design
+
+Do not use:
+
+- Generic RPG inventory screens without a story purpose.
+- Random coins and gems.
+- Unrelated fantasy weapons.
+- Generic level-selection maps.
+- Arbitrary health bars.
+- Combat mechanics.
+- Point systems that trivialize emotional content.
+- Unnecessary difficulty.
+- Repetitive collectible animations.
+
+The experience is an adventure, but it is not a conventional combat game.
+
+## 23.3 Avoid inconsistent artwork
+
+Do not mix:
+
+- Pixel art with photorealistic generated backgrounds.
+- Different pixel densities without a clear reason.
+- Multiple incompatible character designs.
+- Random visual styles from different prompts.
+- Unrelated color palettes.
+- Excessive gradients and bloom.
+- Detailed 3D objects inside flat pixel-art environments.
+
+## 23.4 Avoid emotional overproduction
+
+Do not make every scene dramatic.
+
+Do not use cinematic lighting for every interaction.
+
+Do not make every memory a major revelation.
+
+Do not force the visitor to complete every objective.
+
+Do not make affection conditional on collecting all the stars.
+
+The most meaningful moments should have room to breathe.
+
+---
+
+# 24. FINAL ART-DIRECTION CHECKLIST
+
+Before accepting any generated asset, evaluate it against the following criteria.
+
+### Style consistency
+
+- Does it look like it belongs to THE BEENISH EXPEDITION?
+- Does it use the established palette?
+- Is the pixel density consistent?
+- Are the edges deliberate and crisp?
+- Does the perspective match the rest of the world?
+- Does the lighting follow the established rules?
+
+### Composition
+
+- Is the main subject immediately recognizable?
+- Is there a clear focal point?
+- Is there enough negative space?
+- Can interactive objects be identified?
+- Will the scene still work when interface elements are added?
+- Can the composition be adapted for mobile?
+
+### Atmosphere
+
+- Does the scene feel mysterious but safe?
+- Does it feel handcrafted?
+- Is the visual detail controlled?
+- Are warm and cool colors balanced?
+- Does the scene have a distinct personality?
+
+### Story relevance
+
+- Does the asset serve a specific purpose?
+- Does it support the location's identity?
+- Does it contribute to exploration, humor, memory, or emotional connection?
+- Does it avoid introducing unrelated fantasy elements?
+
+### Technical quality
+
+- Are edges clean?
+- Are important details readable at the intended size?
+- Is text kept separate from generated artwork?
+- Is transparency correct where required?
+- Is the image appropriately sized?
+- Can the asset be reused or revised?
+
+If an asset fails several of these checks, revise it rather than accepting it simply because the image looks attractive in isolation.
+
+---
+
+# 25. REQUIRED DELIVERABLES FROM THE DESIGN AGENT
+
+The agent should produce the following deliverables in order.
+
+## Phase 1 — Visual foundation
+
+1. Master color palette.
+2. Typography pairing.
+3. Pixel-art style reference sheet.
+4. Master star design.
+5. Character design sheet.
+6. Environment perspective reference.
+7. UI component reference.
+8. Lighting reference.
+9. Sample landscape.
+10. Sample interior.
+
+**Approval gate:** Do not generate the complete asset library until the visual foundation is consistent.
+
+## Phase 2 — Core environments
+
+1. Opening landscape.
+2. Central hub.
+3. Bureau exterior.
+4. Bureau interior.
+5. Museum exterior.
+6. Museum interior.
+7. Courtroom.
+8. Archive.
+9. Observatory.
+10. Hidden garden.
+
+Provide separate foreground and background layers where useful.
+
+## Phase 3 — Character assets
+
+1. Beenish character.
+2. Companion character.
+3. Idle sprites.
+4. Walking sprites.
+5. Interaction poses.
+6. Reaction poses.
+7. Final garden composition.
+
+Character appearance should be finalized only after suitable reference information is available.
+
+## Phase 4 — Props and collectibles
+
+1. Computer terminal.
+2. Filing cabinet.
+3. Official documents.
+4. Museum frames.
+5. Museum display cases.
+6. Courtroom props.
+7. Books and archive boxes.
+8. Telescope.
+9. Lanterns.
+10. Flowers.
+11. Trees.
+12. Stone paths.
+13. Bench.
+14. Pond elements.
+15. Star collectibles.
+16. Hidden key.
+17. Envelopes and letters.
+
+## Phase 5 — Interface assets
+
+1. Primary and secondary buttons.
+2. Dialog panels.
+3. Mission status panel.
+4. Location markers.
+5. Expedition journal.
+6. Discovery notifications.
+7. Inventory icons.
+8. Photograph frames.
+9. Memory-viewer frame.
+10. Final letter presentation.
+11. Optional settings panel.
+12. Browser favicon.
+
+## Phase 6 — Animation assets
+
+1. Character idle animations.
+2. Character walking animations.
+3. Character reaction animations.
+4. Star discovery animation.
+5. Door-opening animation where needed.
+6. Flower-bloom animation.
+7. Lantern animation.
+8. Small environmental animations.
+9. Final garden ambient animation.
+
+## Phase 7 — Integration and quality control
+
+1. Check all scenes against the master reference.
+2. Test all assets at their intended display sizes.
+3. Verify mobile compositions.
+4. Check typography and contrast.
+5. Remove inconsistent artwork.
+6. Optimize image sizes.
+7. Confirm that the same characters remain recognizable throughout.
+8. Confirm that no important text has been baked into generated images.
+9. Confirm that all personal photographs and memories are authentic.
+10. Confirm that the final garden is visually distinct from the earlier locations.
+
+---
+
+# 26. THE FINAL DESIGN RULE
+
+The most important thing to understand is that this website should not look like someone asked an AI to generate a collection of cute pixel-art images.
+
+It should look like **one artist imagined an entire little universe, established its rules, and then designed every location, object, character, and interface element to belong to that universe**.
+
+The Bureau should look like the Bureau.
+
+The Museum should look like a museum within the same world.
+
+The Archive should feel quieter than the Bureau.
+
+The Observatory should open the world up visually.
+
+The Garden should feel like the natural emotional destination of the entire adventure.
+
+The same star, characters, colors, lighting principles, and visual language should connect everything.
+
+The humor should be specific to Beenish.
+
+The memories should be real.
+
+The future should feel inviting rather than demanding.
+
+And the final scene should feel different from everything that came before it—not because it uses an entirely different art style, but because the world has finally become complete.
+
+**The visitor should leave feeling that she did not simply browse a birthday website. She explored a little world that someone made for her, and nowhere else.**

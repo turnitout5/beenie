@@ -1,0 +1,358 @@
+/* THE BEENISH EXPEDITION - MASTER DESIGN SYSTEM */
+/* Strict adherence to asthetics.txt and Plan.txt */
+
+:root {
+  /* Master 12-Color Palette */
+  --color-void-navy: #101329;
+  --color-midnight-indigo: #1B2042;
+  --color-twilight-blue: #30385F;
+  --color-muted-periwinkle: #666FA0;
+  --color-dusty-lavender: #9588BD;
+  --color-dream-lilac: #C3A9E8;
+  --color-moon-cream: #F4EBDD;
+  --color-warm-peach: #F3B79C;
+  --color-rose-glow: #E98FAF;
+  --color-lantern-gold: #F6D78B;
+  --color-moss-green: #718C83;
+  --color-deep-forest: #354E50;
+
+  /* Typography Stacks */
+  --font-display: 'Silkscreen', 'Courier New', monospace;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Custom Pixel Shadows & Stepped Borders */
+  --pixel-border-base: 
+    0 -3px 0 0 var(--color-midnight-indigo),
+    0 3px 0 0 var(--color-midnight-indigo),
+    -3px 0 0 0 var(--color-midnight-indigo),
+    3px 0 0 0 var(--color-midnight-indigo);
+
+  --pixel-border-gold: 
+    0 -3px 0 0 var(--color-lantern-gold),
+    0 3px 0 0 var(--color-lantern-gold),
+    -3px 0 0 0 var(--color-lantern-gold),
+    3px 0 0 0 var(--color-lantern-gold);
+
+  --pixel-border-peach: 
+    0 -3px 0 0 var(--color-warm-peach),
+    0 3px 0 0 var(--color-warm-peach),
+    -3px 0 0 0 var(--color-warm-peach),
+    3px 0 0 0 var(--color-warm-peach);
+
+  --pixel-border-lilac: 
+    0 -3px 0 0 var(--color-dream-lilac),
+    0 3px 0 0 var(--color-dream-lilac),
+    -3px 0 0 0 var(--color-dream-lilac),
+    3px 0 0 0 var(--color-dream-lilac);
+
+  --pixel-border-inner: inset 0 0 0 2px var(--color-twilight-blue);
+  --pixel-shadow-subtle: 0 4px 16px rgba(16, 19, 41, 0.7);
+
+  /* Animation Timings */
+  --anim-quick: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-gentle: 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-void-navy);
+  color: var(--color-moon-cream);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Crisp Pixel Art Rendering */
+.pixelated,
+img.pixel-art,
+canvas.pixel-canvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-void-navy);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-twilight-blue);
+  box-shadow: inset 1px 1px 0 var(--color-muted-periwinkle);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dusty-lavender);
+}
+
+/* Selection Color */
+::selection {
+  background: var(--color-dream-lilac);
+  color: var(--color-void-navy);
+}
+
+/* Typography Utilities */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Pixel Buttons */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  min-height: 44px;
+  min-width: 44px;
+  background-color: var(--color-midnight-indigo);
+  color: var(--color-moon-cream);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  box-shadow: var(--pixel-border-base);
+  transition: transform var(--anim-quick), background-color var(--anim-quick), box-shadow var(--anim-quick);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.pixel-btn::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  background: rgba(244, 235, 221, 0.15);
+  pointer-events: none;
+}
+
+.pixel-btn:hover {
+  background-color: var(--color-twilight-blue);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 -3px 0 0 var(--color-dream-lilac),
+    0 3px 0 0 var(--color-dream-lilac),
+    -3px 0 0 0 var(--color-dream-lilac),
+    3px 0 0 0 var(--color-dream-lilac),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.pixel-btn:active {
+  transform: translateY(1px);
+  box-shadow: var(--pixel-border-base);
+}
+
+.pixel-btn-primary {
+  background-color: var(--color-twilight-blue);
+  color: var(--color-lantern-gold);
+  box-shadow: var(--pixel-border-gold);
+}
+
+.pixel-btn-primary:hover {
+  background-color: var(--color-lantern-gold);
+  color: var(--color-void-navy);
+  box-shadow: 
+    0 -3px 0 0 var(--color-moon-cream),
+    0 3px 0 0 var(--color-moon-cream),
+    -3px 0 0 0 var(--color-moon-cream),
+    3px 0 0 0 var(--color-moon-cream);
+}
+
+.pixel-btn-peach {
+  background-color: var(--color-midnight-indigo);
+  color: var(--color-warm-peach);
+  box-shadow: var(--pixel-border-peach);
+}
+
+.pixel-btn-peach:hover {
+  background-color: var(--color-warm-peach);
+  color: var(--color-void-navy);
+}
+
+.pixel-btn-ghost {
+  background-color: transparent;
+  color: var(--color-dusty-lavender);
+  box-shadow: 
+    0 -2px 0 0 var(--color-twilight-blue),
+    0 2px 0 0 var(--color-twilight-blue),
+    -2px 0 0 0 var(--color-twilight-blue),
+    2px 0 0 0 var(--color-twilight-blue);
+}
+
+.pixel-btn-ghost:hover {
+  background-color: rgba(96, 111, 160, 0.15);
+  color: var(--color-moon-cream);
+}
+
+/* Pixel Card & Panel Containers */
+.pixel-panel {
+  background-color: var(--color-midnight-indigo);
+  box-shadow: var(--pixel-border-base), var(--pixel-shadow-subtle);
+  padding: 24px;
+  position: relative;
+  border-radius: 0;
+}
+
+.pixel-panel-header {
+  border-bottom: 2px dashed var(--color-twilight-blue);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pixel-panel-gold {
+  box-shadow: var(--pixel-border-gold), var(--pixel-shadow-subtle);
+}
+
+.pixel-panel-lilac {
+  box-shadow: var(--pixel-border-lilac), var(--pixel-shadow-subtle);
+}
+
+/* Pixel Badges and Chips */
+.pixel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background-color: var(--color-twilight-blue);
+  color: var(--color-moon-cream);
+  border: 1px solid var(--color-muted-periwinkle);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pixel-badge-gold {
+  background-color: rgba(246, 215, 139, 0.12);
+  border-color: var(--color-lantern-gold);
+  color: var(--color-lantern-gold);
+}
+
+.pixel-badge-peach {
+  background-color: rgba(243, 183, 156, 0.12);
+  border-color: var(--color-warm-peach);
+  color: var(--color-warm-peach);
+}
+
+/* Modal Overlay */
+.pixel-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(16, 19, 41, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 200ms ease;
+}
+
+.pixel-modal-content {
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: scaleUp 250ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 6px var(--color-lantern-gold)); }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 2px var(--color-lantern-gold)); }
+  50% { filter: drop-shadow(0 0 10px var(--color-lantern-gold)); }
+}
+
+.animate-float {
+  animation: floatGentle 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+/* Scanline Overlay (Subtle Vintage Monitor Effect, Toggleable) */
+.scanlines::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+/* Mobile Media Query Rules per asthetics.txt Section 21 */
+@media (max-width: 768px) {
+  html, body {
+    font-size: 15px;
+  }
+  .pixel-panel {
+    padding: 16px;
+  }
+  .pixel-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+}
