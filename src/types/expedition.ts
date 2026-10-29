@@ -1,11 +1,11 @@
-export type LocationId = 
+export type LocationId =
   | 'boot'
-  | 'hub' 
-  | 'bureau' 
-  | 'museum' 
-  | 'court' 
-  | 'archive' 
-  | 'observatory' 
+  | 'hub'
+  | 'bureau'
+  | 'museum'
+  | 'court'
+  | 'archive'
+  | 'observatory'
   | 'garden'
   | 'dream_estates'
   | 'castle_realm'
@@ -63,15 +63,15 @@ export interface FutureVignette {
   title: string;
   category: string;
   description: string;
-  sceneVisual: 
-    | 'family_house' 
-    | 'mafia_base' 
-    | 'bakery' 
-    | 'mountain_castle' 
-    | 'gaon_haveli' 
-    | 'photoshoot' 
-    | 'walk' 
-    | 'reels' 
+  sceneVisual:
+    | 'family_house'
+    | 'mafia_base'
+    | 'bakery'
+    | 'mountain_castle'
+    | 'gaon_haveli'
+    | 'photoshoot'
+    | 'walk'
+    | 'reels'
     | 'date';
   unlockedNote: string;
 }
@@ -98,6 +98,7 @@ export interface ExpeditionState {
   archiveChronologySolved?: boolean;
   observatoryConstellationConnected?: boolean;
   gardenLanternsLit?: number;
+  candlesBlown?: boolean;
   journal: JournalEntry[];
   isMuted: boolean;
 }

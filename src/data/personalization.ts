@@ -239,7 +239,7 @@ export const BIRTHDAY_LETTER = {
 export const OBJECT_PROXIMITY_BARKS: Record<string, string> = {
   // Overworld Landmarks
   overworld_garage: "yae dekhyen apky liye... aap ki green Ninja H2R aur Dodge Challenger! jab ap kahein, long drive par nikal parenge!",
-  overworld_jet: "yae dekhyen apky liye... humara private jet! white dress may ap utrein gi to may to munh khol kar dekhta hi reh jaon ga!",
+  overworld_jet: "yae dekhyen apky liye... humara private jet! white dress may ap 4 steps say utrein gi to may to munh khol kar dekhta hi reh jaon ga!",
   central_birthday_cake: "yae dekhyen apky liye... birthday cake aur white pasta! pehly wish mangye meri paaaari!",
   overworld_feast: "yae dekhyen apky liye... taaza white pasta, chocolates, nutella aur kinder joy! 2 AM midnight craving solved!",
   overworld_paisay: "yae dekhyen apky liye... DHAYYERRRR SARYYYYYYYYYY paisay! dunya ki saari daulat aap k kadmon may!",
@@ -251,12 +251,16 @@ export const OBJECT_PROXIMITY_BARKS: Record<string, string> = {
   note_bureau: "yae dekhyen complaints box wala note! saray unreasonable boyfriends k cases dismissed!",
   note_museum: "official record note! meri genius topper paaaari k baray may!",
   note_court: "court wala note parhien! zero flaws verdict hamesha k liye final hai!",
+  pond: "galli geeli beenie, mmxmmMmXMm! paani k paas aaram say chalen meri paaaari!",
+  pond_bench: "aajaen baithiye mere paas... lotus k phool aur chaand ka aks dekhein!",
   // Overworld Pathways & Directional Signs
   path_to_castle: "yae dekhyen apky liye... Queen Beenish ka mountain castle pass! chalien qasre sultanat may qadam rakhein meri jaan!",
   path_to_mafia: "yae dekhyen apky liye... dark brutalist mansion aur Batmobile highway! chalien humary stealth compound may!",
   path_to_islamabad: "yae dekhyen apky liye... Islamabad 5-marla family house ka rasta! Margalla hills ki thandi hawa aa rahi hai!",
   path_to_bakery: "yae dekhyen apky liye... Sweet Dreams Bakery ki meethi khushboo! taaza croissants aur strawberry cake khayen!",
   path_to_haveli: "yae dekhyen apky liye... desi 12-marla haveli aur tubewell! thandi chhaon aur meethay aam!",
+  path_to_estates: "yae dekhyen... 5 Dream Estates Plaza ka grand gateway! andar humary saaray 5 ghar aik sath hain!",
+  estates_signpost: "yae dekhyen humary 5 dream estates boulevard ka map! har ghar aap k liye sajaya hai!",
   world_signpost: "yae dekhyen apky liye... humary saray 5 dream houses ka map! batayein pehly kahan chalna hai meri paaaari?",
 
   // Dream Estates Houses & Realm Landmarks
@@ -274,10 +278,16 @@ export const OBJECT_PROXIMITY_BARKS: Record<string, string> = {
   batmobile_tumbler: "yae dekhyen humara Batman Tumbler! carbon armor plates aur jet turbine ready hai! long drive par chalein?",
   haveli_tubewell: "yae dekhyen tubewell ka thanda paani aur desi aam! aajaen munh haath dho lein meri pyari paaaari!",
   haveli_charpai: "baithiye charpai par neem k darakht k neechay... sukoon hi sukoon!",
+  haveli_jharoka: "upar dekhein... carved Sheesham jharoka balcony! poora gaon nazar aata hai!",
   islamabad_sofa_bay: "yae dekhen khirki say... apka baraaa sofa! jis par meri chooti si beenie araam say phail kar baith sakti hai!",
   islamabad_kids_rooms: "yae dekhyen upar 3 kamray! Samurai Jack blue room, starry purple room, aur bara sa teddy bear wala pink room!",
+  islamabad_lawn_sign: "Sector F-7 Margalla Hills! humara 5-marla dream sanctuary!",
   castle_balcony: "yae dekhyen paharon ka nazaara! is poori saltanat ki sirf aap hi rani hain!",
+  castle_torches: "shahi mashalain roshan hain meri Queen Beenish k istaqbal may!",
+  castle_banners: "dekhien purple shahi banners! aap k naam ka sitara chamak rha hai!",
   bakery_display: "itnay saray cakes aur pastries! jo bhi pasand ho, sab aap ka hai!",
+  bakery_cafe_table: "Parisian cafe table! taaza cappuccino aur macarons aap k liye!",
+  bakery_pretzel_sign: "Sweet Dreams Boulangerie! meri meethi Paaaari ki apni bakery!",
   bat_computer: "yae dekhyen Bat-Computer! screen par aap ka 11/10 baddie dossier open hai meri jaan!",
   mafia_garage: "yae dekhyen apky liye... aap ki Kawasaki Ninja H2R aur pitch-black Dodge Challenger! kis par drive karein?",
   mafia_armory: "yae dekhyen Batsuit aur 11/10 baddie dress display pod! full high-tech security!",
@@ -287,26 +297,33 @@ export const OBJECT_PROXIMITY_BARKS: Record<string, string> = {
   // Bureau Interiors
   bureau_filing: "saari case files khol kar dekhein! investigator nay likha hai k aap kitni unreasonably pyari hain!",
   bureau_desk_talk: "mery say baat karein! may to 24 ghantay aap ki tareefain karnay k liye hazir hun!",
-  bureau_drawer_secret: "secret drawer #07! yahan meri Paaaari ki secret candies chupi hain!",
+  bureau_drawer_secret: "secret drawer #07! yahan meri Paaaari ki secret candies aur botanical map chupa hai!",
   bureau_exit: "chalein wapis bahar valley ki hawa may chalain!",
 
   // Museum Exhibits
-  museum_portrait_1: "yae dekhyen... dunya ki sab say khoobsurat larki ki portrait! mashallah 11/10!",
-  museum_portrait_2: "is portrait ko ghaur say dekhein meri paaaari... is k peechay antique key chupi hai!",
+  museum_portrait_1: "yae dekhyen... dunya ki sab say khoobsurat larki ki machines! mashallah 11/10!",
+  museum_portrait_2: "is portrait ko ghaur say dekhein meri paaaari... 4 airstair steps aur white dress! peechay antique key chupi hai!",
   museum_achievements: "har field may position holder, talented tareen meri Beenish Tasaffar!",
   museum_phenomenon: "Sialkot say Islamabad tak, dunya may sirf aik hi Beenish Tasaffar hain!",
+  museum_p1: "yae dekhyen... aap ki Kawasaki Ninja H2R aur Dodge Challenger! 11/10 baddie speed!",
+  museum_p2_key: "is White Jet painting ko ghaur say dekhein meri paaaari... 4 airstair steps aur white dress! peechay antique key chupi hai!",
+  museum_achieve: "har field may position holder, cricket aur badminton ki undefeated champion meri Beenish Tasaffar!",
+  museum_phenom: "Sialkot say Islamabad tak, dunya may sirf aik hi Beenish Tasaffar hain!",
   museum_exit: "museum k baad ab kahan chalna hai meri sweetie?",
 
   // Court Interior
   court_judge: "judge sahab nay pehly hi case dismiss kar diya! Paaaari is 100% innocent & perfect!",
+  judge_action: "judge sahab nay pehly hi case dismiss kar diya! Paaaari is 100% innocent & perfect!",
   court_defense: "defence lawyer nay poori kitab paish kar di hai aap ki khoobiyon ki!",
-  court_bench_secret: "is court bench k neechay dekhein... koi secret chupa hai!",
+  prosecution_files: "prosecution k paas koi saboot nahi, sirf 'hm hm hm' aur paisay ki baat hai!",
+  court_bench_secret: "is court bench k neechay dekhein... koi secret note chupa hai!",
+  judge_secret_note: "judge sahab ki desk k peechay secret note chupa hai!",
   court_exit: "court nay faisla day diya: Paaaari is strictly flawless!",
 
   // Archive Interior
   memory_crystal_1: "yae dekhyen humary 3 anthems! 'Bol Na Halke Halke' jo hum dono ki jaan hai!",
   memory_crystal_2: "yae dekhyen 2 AM white pasta aur chocolates ki pyari midnight memories!",
-  memory_crystal_3: "binishieeees@gmail.com log... meri Beghum G k saaray favourites!",
+  memory_crystal_3: "binishieeees@gmail.com log... jahan say humari pyari kahani shuru hui thi!",
   archive_exit: "archive say wapis valley ki taraf chalein!",
 
   // Observatory Interior

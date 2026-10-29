@@ -11,10 +11,21 @@ import { OBJECT_PROXIMITY_BARKS } from '../data/personalization';
 
 interface RPGAdventureEngineProps {
   onTriggerInteraction: (interactable: InteractableObject) => void;
+  isModalOpen?: boolean;
+  onCloseModal?: () => void;
 }
+
+const getRoomZoom = (vw: number, vh: number, targetRoom: { id: RoomId; width: number; height: number }, userZoom = 1.0): number => {
+  const scaleX = vw / targetRoom.width;
+  const scaleY = vh / targetRoom.height;
+  const baseZoom = Math.max(scaleX, scaleY, targetRoom.id === 'overworld' ? 1.25 : 1.5);
+  return baseZoom * userZoom;
+};
 
 export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   onTriggerInteraction,
+  isModalOpen = false,
+  onCloseModal,
 }) => {
   const { state, navigateTo, toggleMute } = useExpedition();
   const { 
@@ -145,9 +156,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     // Snap camera smoothly to new room
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const scaleX = vw / targetRoom.width;
-    const scaleY = vh / targetRoom.height;
-    const zoom = Math.max(scaleX, scaleY, newRoomId === 'overworld' ? 1.35 : 1.55);
+    const zoom = getRoomZoom(vw, vh, targetRoom, userZoomRef.current);
 
     let initCamX = newSpawn.x + 12 - vw / (2 * zoom);
     let initCamY = newSpawn.y + 16 - vh / (2 * zoom);
@@ -202,6 +211,24 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   // Keyboard Listeners
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isJournalOpen) {
+          setIsJournalOpen(false);
+          return;
+        }
+        if (isModalOpen && onCloseModal) {
+          onCloseModal();
+          return;
+        }
+      }
+
+      // Suspend movement & action hotkeys when a modal/Journal is open or an input field is focused
+      const activeTag = document.activeElement?.tagName.toLowerCase();
+      if (isModalOpen || isJournalOpen || activeTag === 'input' || activeTag === 'textarea') {
+        keysPressed.current = {};
+        return;
+      }
+
       const key = e.key.toLowerCase();
       keysPressed.current[key] = true;
 
@@ -225,7 +252,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [handleAction]);
+  }, [handleAction, isModalOpen, isJournalOpen, onCloseModal]);
 
   // 60fps Game & Camera Loop
   useEffect(() => {
@@ -264,10 +291,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       const vh = canvas.height;
 
       // Dynamic Full-Screen Wide Zoom with user mouse wheel adjustment
-      const scaleX = vw / currentRoom.width;
-      const scaleY = vh / currentRoom.height;
-      const baseZoom = Math.max(scaleX, scaleY, currentRoom.id === 'overworld' ? 1.05 : 1.45);
-      const zoom = baseZoom * userZoomRef.current;
+      const zoom = getRoomZoom(vw, vh, currentRoom, userZoomRef.current);
 
       // Handle Movement Input & Sprint Speed
       let dx = 0;
@@ -275,21 +299,25 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       const isRunning = keysPressed.current['shift'] || isVirtualRunning;
       const speed = isRunning ? 3.8 : 2.4;
 
-      if (keysPressed.current['w'] || keysPressed.current['arrowup']) {
-        dy -= speed;
-        playerDirRef.current = 'up';
-      }
-      if (keysPressed.current['s'] || keysPressed.current['arrowdown']) {
-        dy += speed;
-        playerDirRef.current = 'down';
-      }
-      if (keysPressed.current['a'] || keysPressed.current['arrowleft']) {
-        dx -= speed;
-        playerDirRef.current = 'left';
-      }
-      if (keysPressed.current['d'] || keysPressed.current['arrowright']) {
-        dx += speed;
-        playerDirRef.current = 'right';
+      if (!isModalOpen && !isJournalOpen) {
+        if (keysPressed.current['w'] || keysPressed.current['arrowup']) {
+          dy -= speed;
+          playerDirRef.current = 'up';
+        }
+        if (keysPressed.current['s'] || keysPressed.current['arrowdown']) {
+          dy += speed;
+          playerDirRef.current = 'down';
+        }
+        if (keysPressed.current['a'] || keysPressed.current['arrowleft']) {
+          dx -= speed;
+          playerDirRef.current = 'left';
+        }
+        if (keysPressed.current['d'] || keysPressed.current['arrowright']) {
+          dx += speed;
+          playerDirRef.current = 'right';
+        }
+      } else {
+        targetPosRef.current = null;
       }
 
       // Tap-to-move handling
@@ -377,6 +405,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           pagluFaintStateRef.current.timer--;
           if (pagluFaintStateRef.current.timer <= 0) {
             // Stage 2: Springs up vibrating with shock scream!
+            soundEngine.playEmote();
             pagluFaintStateRef.current = { stage: 'screaming', timer: 75 };
             pagluBarkRef.current = { text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", timer: 75 };
             pagluEmoteRef.current = 'exclamation';
@@ -433,8 +462,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
         // --- POND PROXIMITY DIALOGUES FOR PAAARI ---
         if (currentRoom.id === 'overworld') {
-          const pondCenterX = 160;
-          const pondCenterY = 420;
+          const pondCenterX = 310;
+          const pondCenterY = 835;
           const distToPond = Math.hypot(playerPosRef.current.x - pondCenterX, playerPosRef.current.y - pondCenterY);
 
           // Right at the pond / water edge
@@ -488,6 +517,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             const shouldFaint = Math.random() < 0.25;
 
             if (shouldFaint && pagluFaintStateRef.current.stage === 'none') {
+              soundEngine.playEmote();
               pagluFaintStateRef.current = { stage: 'fainted', timer: 150 };
               pagluBarkRef.current = { text: "uffffff, itaaa hussssnn, may to bayhosh ho gya", timer: 150 };
               pagluEmoteRef.current = 'heart';
@@ -579,8 +609,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         };
       }
 
+      if (activeInteractableRef.current?.id !== closest?.id) {
+        setActiveInteractable(closest);
+      }
       activeInteractableRef.current = closest;
-      setActiveInteractable(closest);
 
       // --- DYNAMIC DIALOGUE REACTION FOR PAGLUU ("Yae dekhyen, apky liye...") ---
       // When Paaaari gets near any landmark, house, car, feast table, or door,
@@ -789,18 +821,58 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         SpriteRenderer.drawDustPuff(ctx, playerPosRef.current.x, playerPosRef.current.y, frameCount);
       }
 
-      // Draw Companion (Paglu / Ahmad) with fainting and sprint support
-      SpriteRenderer.drawTed(
+      // --- Y-SORTED CHARACTER PASS (Pagluu & Beenish sorted by vertical foot Y) ---
+      const drawPagluChar = () => {
+        SpriteRenderer.drawTed(
+          ctx,
+          pagluPosRef.current,
+          pagluDirRef.current,
+          isMoving || pagluFaintStateRef.current.stage === 'sprinting_back',
+          walkFrameRef.current,
+          pagluFaintStateRef.current.stage,
+          frameCount
+        );
+      };
+      const drawBeenishChar = () => {
+        SpriteRenderer.drawBeenish(
+          ctx,
+          playerPosRef.current,
+          playerDirRef.current,
+          isMoving,
+          walkFrameRef.current
+        );
+      };
+
+      if (pagluPosRef.current.y <= playerPosRef.current.y) {
+        drawPagluChar();
+        drawBeenishChar();
+      } else {
+        drawBeenishChar();
+        drawPagluChar();
+      }
+
+      // --- FOREGROUND OCCLUSION PASS (Overhead Archways, Pergolas & Tree Canopies) ---
+      EnvironmentRenderer.renderForeground(
         ctx,
-        pagluPosRef.current,
-        pagluDirRef.current,
-        isMoving || pagluFaintStateRef.current.stage === 'sprinting_back',
-        walkFrameRef.current,
-        pagluFaintStateRef.current.stage,
-        frameCount
+        currentRoom.id,
+        currentRoom.width,
+        currentRoom.height,
+        frameCount,
+        playerPosRef.current,
+        pagluPosRef.current
       );
 
-      // Draw Paglu's dynamic speech bubble or emote balloon
+      // --- DYNAMIC NIGHT LIGHTING PASS ---
+      EnvironmentRenderer.renderLightingPass(
+        ctx,
+        currentRoom.width,
+        currentRoom.height,
+        lights,
+        playerPosRef.current,
+        currentRoom.theme
+      );
+
+      // --- UN-DARKENED DIEGETIC UI PASS (Speech Bubbles, Emotes & [ E ] Prompts) ---
       if (pagluBarkRef.current) {
         SpriteRenderer.drawSpeechBubble(
           ctx,
@@ -818,34 +890,14 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         );
       }
 
-      // Draw Beenish Protagonist
-      SpriteRenderer.drawBeenish(
-        ctx,
-        playerPosRef.current,
-        playerDirRef.current,
-        isMoving,
-        walkFrameRef.current
-      );
-
-      // Draw Proximity Action Prompt [ E ]
-      if (activeInteractable) {
+      if (activeInteractableRef.current && !isModalOpen && !isJournalOpen) {
         SpriteRenderer.drawPromptBubble(
           ctx,
           playerPosRef.current.x + 12,
           playerPosRef.current.y,
-          activeInteractable.promptLabel
+          activeInteractableRef.current.promptLabel
         );
       }
-
-      // --- DYNAMIC NIGHT LIGHTING PASS ---
-      EnvironmentRenderer.renderLightingPass(
-        ctx,
-        currentRoom.width,
-        currentRoom.height,
-        lights,
-        playerPosRef.current,
-        currentRoom.theme
-      );
 
       ctx.restore();
 
@@ -862,7 +914,11 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     courtVerdictReached, 
     namedConstellation, 
     inventory, 
-    isVirtualRunning
+    isVirtualRunning,
+    isModalOpen,
+    isJournalOpen,
+    changeRoom,
+    onTriggerInteraction
   ]);
 
   // Mouse Drag Panning & Screen-to-World Click/Tap-to-Move Projection
@@ -879,9 +935,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         const currentRoom = ROOMS[currentRoomId] || ROOMS['overworld'];
         const canvas = canvasRef.current;
         if (canvas) {
-          const scaleX = canvas.width / currentRoom.width;
-          const scaleY = canvas.height / currentRoom.height;
-          const zoom = Math.max(scaleX, scaleY, currentRoom.id === 'overworld' ? 1.35 : 1.55) * userZoomRef.current;
+          const zoom = getRoomZoom(canvas.width, canvas.height, currentRoom, userZoomRef.current);
           panOffsetRef.current.x -= e.movementX / zoom;
           panOffsetRef.current.y -= e.movementY / zoom;
           setIsPannedAway(true);
@@ -915,9 +969,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     const screenY = e.clientY - rect.top;
 
     const currentRoom = ROOMS[currentRoomId] || ROOMS['overworld'];
-    const scaleX = canvas.width / currentRoom.width;
-    const scaleY = canvas.height / currentRoom.height;
-    const zoom = Math.max(scaleX, scaleY, currentRoom.id === 'overworld' ? 1.35 : 1.55) * userZoomRef.current;
+    const zoom = getRoomZoom(canvas.width, canvas.height, currentRoom, userZoomRef.current);
 
     const worldX = screenX / zoom + camPosRef.current.x;
     const worldY = screenY / zoom + camPosRef.current.y;

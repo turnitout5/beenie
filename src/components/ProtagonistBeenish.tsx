@@ -27,16 +27,18 @@ export const ProtagonistBeenish: React.FC<ProtagonistProps> = ({
           filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5))',
         }}
       >
-        {/* Beenish's Hair - Voluminous, beautiful dark hair with soft dusty lavender highlights */}
+        {/* Beenish's Hair - Voluminous dark indigo hair with lavender highlights & signature White Hair Streak */}
         <rect x="6" y="2" width="12" height="4" fill="#101329" />
         <rect x="5" y="3" width="14" height="6" fill="#1B2042" />
         <rect x="4" y="5" width="4" height="8" fill="#1B2042" />
         <rect x="16" y="5" width="4" height="8" fill="#1B2042" />
         {/* Soft highlight clusters */}
-        <rect x="7" y="3" width="3" height="1" fill="#9588BD" />
+        <rect x="8" y="3" width="3" height="1" fill="#9588BD" />
         <rect x="14" y="3" width="3" height="1" fill="#9588BD" />
-        <rect x="4" y="8" width="1" height="4" fill="#9588BD" />
         <rect x="19" y="8" width="1" height="4" fill="#9588BD" />
+        {/* Beenish's Signature White Hair Streak that Ahmad loves so much */}
+        <rect x="6" y="3" width="2" height="5" fill="#FFFFFF" />
+        <rect x="5" y="7" width="2" height="5" fill="#E0E7FF" />
 
         {/* Face - Warm Peach */}
         <rect x="7" y="7" width="10" height="7" fill="#F3B79C" />

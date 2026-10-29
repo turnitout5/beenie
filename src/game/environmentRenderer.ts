@@ -143,11 +143,11 @@ export class EnvironmentRenderer {
 
     // Tufts of emerald grass blades with warm golden-green tips
     ctx.fillStyle = '#396D5B';
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 180; i++) {
       const gx = Math.floor(this.seededRandom(i * 17) * (width - 40)) + 20;
       const gy = Math.floor(this.seededRandom(i * 31) * (height - 80)) + 60;
-      // Skip over main road intersections
-      if ((gx > 340 && gx < 440) || (gy > 140 && gy < 220)) continue;
+      // Skip over main road intersections (Vertical: 745..855, Horizontal: 545..645)
+      if ((gx > 745 && gx < 855) || (gy > 545 && gy < 645)) continue;
       ctx.fillRect(gx, gy, 1, 4);
       ctx.fillRect(gx + 1, gy + 1, 1, 3);
       ctx.fillRect(gx - 1, gy + 2, 1, 2);
@@ -372,13 +372,13 @@ export class EnvironmentRenderer {
     ctx.fillStyle = '#F6D78B';
     ctx.fillRect(pondX + pondW - 4, pondY + 30, 5, 3);
 
-    // Romantic Lakeside Bench & Weeping Willow Retreat
+    // Romantic Lakeside Bench & Weeping Willow Retreat (Placed on northern grassy bank at y=742)
     ctx.fillStyle = '#5A3828';
-    ctx.fillRect(380, 760, 36, 14);
+    ctx.fillRect(380, 742, 36, 14);
     ctx.fillStyle = '#7C4F38';
-    ctx.fillRect(380, 762, 36, 3);
+    ctx.fillRect(380, 744, 36, 3);
     ctx.fillStyle = '#A78BFA';
-    ctx.fillRect(388, 760, 20, 2); // Violet silk cushion
+    ctx.fillRect(388, 742, 20, 2); // Violet silk cushion
 
     // --- AMBIENT OCCLUSION GROUND CONTACT SHADOWS ---
     ctx.fillStyle = 'rgba(12, 18, 32, 0.45)';
@@ -407,16 +407,16 @@ export class EnvironmentRenderer {
     ctx.ellipse(800, 655, 45, 11, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Ambient drop shadows beneath decorative trees
+    // Ambient drop shadows beneath decorative trees (centered at trunk base x+21, y+50)
     const treeShadows = [
-      { x: 160, y: 268, rx: 24, ry: 8 },
-      { x: 440, y: 348, rx: 28, ry: 9 },
-      { x: 1140, y: 348, rx: 28, ry: 9 },
-      { x: 1480, y: 268, rx: 24, ry: 8 },
-      { x: 440, y: 888, rx: 28, ry: 9 },
-      { x: 1140, y: 888, rx: 28, ry: 9 },
-      { x: 1480, y: 928, rx: 24, ry: 8 },
-      { x: 230, y: 728, rx: 30, ry: 10 },
+      { x: 181, y: 310, rx: 24, ry: 8 },
+      { x: 461, y: 390, rx: 28, ry: 9 },
+      { x: 1161, y: 390, rx: 28, ry: 9 },
+      { x: 1501, y: 310, rx: 24, ry: 8 },
+      { x: 461, y: 930, rx: 28, ry: 9 },
+      { x: 1161, y: 930, rx: 28, ry: 9 },
+      { x: 1501, y: 970, rx: 24, ry: 8 },
+      { x: 258, y: 772, rx: 30, ry: 10 },
     ];
     treeShadows.forEach(ts => {
       ctx.beginPath();
@@ -442,17 +442,17 @@ export class EnvironmentRenderer {
     lights.push({ x: 235, y: 440, radius: 60, intensity: 0.9, color: '#F3B79C' });
 
     // 2. THE MUSEUM OF BEENISH (NORTH-CENTER TERRACE)
-    this.drawMuseumBuilding(ctx, 690, 210, frame);
+    this.drawMuseumBuilding(ctx, 690, 210);
     lights.push({ x: 720, y: 280, radius: 45, intensity: 0.85, color: '#F4EBDD' });
     lights.push({ x: 860, y: 280, radius: 45, intensity: 0.85, color: '#F4EBDD' });
     lights.push({ x: 790, y: 295, radius: 65, intensity: 0.95, color: '#C3A9E8' });
 
     // 3. COURT OF ABSOLUTELY NO FLAWS (EAST PRECINCT)
-    this.drawCourtBuilding(ctx, 1230, 390, frame);
+    this.drawCourtBuilding(ctx, 1230, 390);
     lights.push({ x: 1310, y: 465, radius: 55, intensity: 0.9, color: '#F6D78B' });
 
     // 4. ARCHIVE OF THINGS THAT HAPPENED (SOUTHEAST GLADE)
-    this.drawArchiveBuilding(ctx, 1240, 750, frame);
+    this.drawArchiveBuilding(ctx, 1240, 750);
     lights.push({ x: 1315, y: 825, radius: 60, intensity: 0.85, color: '#C3A9E8' });
 
     // 5. SECRET GARDEN IVY GATE (SOUTHEAST BOUNDARY)
@@ -462,7 +462,7 @@ export class EnvironmentRenderer {
     }
 
     // 6. HILLTOP OBSERVATORY (NORTH MOUNTAIN CREST)
-    this.drawObservatoryMountainTrail(ctx, 750, 0, frame);
+    this.drawObservatoryMountainTrail(ctx, 750, 0);
     lights.push({ x: 790, y: 35, radius: 60, intensity: 0.9, color: '#F6D78B' });
 
     // 7. THE 5 PROMINENT DREAM ESTATE PATHWAY PORTALS
@@ -522,24 +522,45 @@ export class EnvironmentRenderer {
       lights.push({ x: pos.x + 4, y: pos.y - 14, radius: 48, intensity: 0.88, color: '#F6D78B' });
     });
 
-    // The lawn and avenues are now pristine, majestic, and spacious!
+    // --- RESTORED LANDMARK DIORAMAS & STICKY NOTES ---
+    // Private Jet Tarmac & Red Carpet Vision (NW-Center Clearing)
+    this.drawPrivateJet(ctx, 470, 190, frame);
+    lights.push({ x: 530, y: 225, radius: 60, intensity: 0.85, color: '#F6D78B' });
 
-    // --- BLOOMING FLOWERS & FIREFLIES ---
-    const flowerCount = starsRecovered >= 5 ? 18 : starsRecovered >= 2 ? 10 : 5;
+    // Championship Sports Arena: Cricket & Badminton (NE-Center Clearing)
+    this.drawSportsArena(ctx, 960, 195, frame);
+    lights.push({ x: 1012, y: 230, radius: 60, intensity: 0.85, color: '#FEF08A' });
+
+    // Dream Estates Master Boulevard Gateway (SW-Center Avenue)
+    this.drawDreamEstatesPortal(ctx, 490, 1020, frame);
+    lights.push({ x: 517, y: 1040, radius: 55, intensity: 0.88, color: '#C084FC' });
+
+    // 5 Handwritten Sticky Notes from Ahmad scattered across the expedition
+    this.drawStickyNote(ctx, 743, 700, 'NOTE #1', frame);
+    this.drawStickyNote(ctx, 248, 748, 'NOTE #2', frame);
+    this.drawStickyNote(ctx, 348, 455, 'NOTE #3', frame);
+    this.drawStickyNote(ctx, 665, 280, 'NOTE #4', frame);
+    this.drawStickyNote(ctx, 1205, 455, 'NOTE #5', frame);
+
+    // --- BLOOMING FLOWERS & FIREFLIES (ACROSS FULL 1600x1200 OVERWORLD) ---
+    const flowerCount = starsRecovered >= 5 ? 32 : starsRecovered >= 2 ? 20 : 12;
     for (let i = 0; i < flowerCount; i++) {
-      const fx = 140 + (i * 37) % 520;
-      const fy = 210 + ((i * 47) % 260);
-      if ((fx > 350 && fx < 430) || (fy > 150 && fy < 210)) continue;
+      const fx = 120 + (i * 137) % (width - 240);
+      const fy = 140 + ((i * 193) % (height - 260));
+      if ((fx > 730 && fx < 870) || (fy > 535 && fy < 655)) continue;
+      if (fx > 180 && fx < 450 && fy > 745 && fy < 925) continue; // Skip pond water
       this.drawLuminescentFlower(ctx, fx, fy, frame + i * 15);
       if (starsRecovered >= 3) {
         lights.push({ x: fx + 4, y: fy + 4, radius: 18, intensity: 0.5, color: '#E98FAF' });
       }
     }
 
-    // Floating Fireflies in the night air
-    for (let f = 0; f < 8; f++) {
-      const flyX = 100 + (Math.sin(frame * 0.02 + f * 1.5) * 80) + f * 70;
-      const flyY = 220 + (Math.cos(frame * 0.03 + f * 2.1) * 60) + (f % 3) * 80;
+    // Floating Fireflies in the night air across the entire meadow
+    for (let f = 0; f < 18; f++) {
+      const baseX = 120 + (f * 173) % (width - 240);
+      const baseY = 140 + (f * 211) % (height - 260);
+      const flyX = baseX + Math.sin(frame * 0.02 + f * 1.5) * 45;
+      const flyY = baseY + Math.cos(frame * 0.03 + f * 2.1) * 35;
       const glow = Math.sin(frame * 0.1 + f) * 0.5 + 0.5;
       if (glow > 0.2) {
         ctx.fillStyle = `rgba(246, 215, 139, ${glow})`;
@@ -665,6 +686,34 @@ export class EnvironmentRenderer {
       ctx.fillRect(84, 71 + row * 19, 12, 3); // Brass label frame
     }
 
+    // Secure Mahogany Side Cabinet & Locked Drawer #07 (East Wall: x=370, y=70, w=80, h=45)
+    ctx.fillStyle = '#26140D';
+    ctx.fillRect(370, 70, 80, 45);
+    ctx.strokeStyle = '#7C4F38';
+    ctx.strokeRect(370, 70, 80, 45);
+    // Top shelf books & ledger
+    ctx.fillStyle = '#1E140E';
+    ctx.fillRect(374, 74, 72, 16);
+    ctx.fillStyle = '#991B1B';
+    ctx.fillRect(378, 77, 6, 12);
+    ctx.fillStyle = '#1E3A8A';
+    ctx.fillRect(386, 76, 7, 13);
+    ctx.fillStyle = '#065F46';
+    ctx.fillRect(395, 78, 6, 11);
+    // Bottom Locked Drawer #07 with Gleaming Brass Keyhole Plate
+    ctx.fillStyle = '#3E2417';
+    ctx.fillRect(374, 94, 72, 17);
+    ctx.strokeStyle = '#F6D78B';
+    ctx.strokeRect(374, 94, 72, 17);
+    ctx.fillStyle = '#F6D78B';
+    ctx.fillRect(404, 99, 12, 6); // Brass keyhole escutcheon
+    ctx.fillStyle = '#101329';
+    ctx.fillRect(409, 101, 2, 3); // Keyhole slot
+    ctx.fillStyle = '#F4EBDD';
+    ctx.font = '6px monospace';
+    ctx.fillText('DRAWER #07', 388, 67);
+    lights.push({ x: 410, y: 102, radius: 38, intensity: 0.75, color: '#F6D78B' });
+
     // Pendulum Wall Clock (North Wall)
     ctx.fillStyle = '#5A3828';
     ctx.fillRect(235, 10, 24, 34);
@@ -742,8 +791,29 @@ export class EnvironmentRenderer {
     this.drawGildedFrame(ctx, 95, 42, 60, 44, 'PORTRAIT 1', '#C3A9E8');
     lights.push({ x: 125, y: 64, radius: 55, intensity: 0.9, color: '#C3A9E8' });
 
-    // Gilded Frame 2 (Portrait 2: Elegant Gaze)
+    // Gilded Frame 2 (Portrait 2: Elegant Gaze & The Private Jet Vision)
     this.drawGildedFrame(ctx, 215, 42, 60, 44, 'PORTRAIT 2', '#F3B79C');
+    // Mini-scene inside Portrait 2: Sleek White/Grey Jet, 4 Silver Steps, and Beenish in White Dress
+    ctx.fillStyle = '#1E293B'; // Night tarmac sky inside frame
+    ctx.fillRect(220, 47, 50, 26);
+    ctx.fillStyle = '#F8FAFC'; // White/Grey Jet Fuselage
+    ctx.fillRect(222, 52, 26, 7);
+    ctx.fillStyle = '#94A3B8'; // Grey underbelly & tail
+    ctx.fillRect(222, 58, 24, 2);
+    ctx.fillRect(222, 48, 6, 5);
+    // 4 distinct silver airstair steps descending
+    ctx.fillStyle = '#CBD5E1';
+    for (let st = 0; st < 4; st++) {
+      ctx.fillRect(244 + st * 3, 58 + st * 3, 4, 2);
+    }
+    // Red carpet at base of steps
+    ctx.fillStyle = '#991B1B';
+    ctx.fillRect(254, 69, 14, 3);
+    // Mini Beenish in radiant White Dress on the red carpet
+    ctx.fillStyle = '#1E1B4B';
+    ctx.fillRect(259, 60, 3, 3); // Hair
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(258, 63, 5, 6); // White dress
     lights.push({ x: 245, y: 64, radius: 55, intensity: 0.9, color: '#F3B79C' });
     // Hidden key golden sparkle cue if not yet collected!
     if (!hasBrassKey) {
@@ -828,6 +898,11 @@ export class EnvironmentRenderer {
     ctx.fillRect(240, 83, 16, 6);
     ctx.fillStyle = '#F6D78B';
     ctx.fillRect(244, 80, 8, 4);
+    // Secret Handwritten Note peeking from behind the Judge's Bench (for judge_secret_note)
+    ctx.fillStyle = '#FEF08A';
+    ctx.fillRect(265, 74, 14, 10);
+    ctx.fillStyle = '#F43F5E'; // Tiny wax seal heart on note
+    ctx.fillRect(270, 78, 4, 3);
 
     // Prosecution & Defense Tables
     const drawTable = (tx: number, ty: number, label: string) => {
@@ -1010,6 +1085,30 @@ export class EnvironmentRenderer {
       ctx.fillStyle = `rgba(246, 215, 139, ${twinkle})`;
       ctx.fillRect(sx, sy, 2, 2);
     }
+
+    // Left & Right Celestial Star-Chart Tables (matching collision boxes at 60,120 and 360,120)
+    const drawStarChartTable = (sx: number, sy: number, title: string) => {
+      ctx.fillStyle = '#2A1B14';
+      ctx.fillRect(sx, sy, 80, 40);
+      ctx.strokeStyle = '#F6D78B';
+      ctx.strokeRect(sx + 2, sy + 2, 76, 36);
+      // Unrolled parchment star map
+      ctx.fillStyle = '#1E2542';
+      ctx.fillRect(sx + 10, sy + 7, 42, 26);
+      ctx.fillStyle = '#F6D78B';
+      ctx.fillRect(sx + 18, sy + 14, 2, 2);
+      ctx.fillRect(sx + 30, sy + 11, 2, 2);
+      ctx.fillRect(sx + 38, sy + 22, 2, 2);
+      // Brass astrolabe / compass
+      ctx.beginPath();
+      ctx.arc(sx + 64, sy + 20, 7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#F4EBDD';
+      ctx.font = '5px monospace';
+      ctx.fillText(title, sx + 12, sy + 36);
+    };
+    drawStarChartTable(60, 120, 'OCT 30 CHARTS');
+    drawStarChartTable(360, 120, 'ORBIT LOGS');
 
     // Giant Antique Brass Telescope on Cast-Iron Tripod
     const tx = 175;
@@ -1280,7 +1379,7 @@ export class EnvironmentRenderer {
     ctx.fillText('BUREAU', x + 96, y + 31);
   }
 
-  private static drawMuseumBuilding(ctx: CanvasRenderingContext2D, x: number, y: number, _frame: number): void {
+  private static drawMuseumBuilding(ctx: CanvasRenderingContext2D, x: number, y: number): void {
     // Marble foundation & steps
     ctx.fillStyle = '#484F6E';
     ctx.fillRect(x, y + 68, 170, 16);
@@ -1339,7 +1438,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(x + 86, y + 52, 2, 5);
   }
 
-  private static drawCourtBuilding(ctx: CanvasRenderingContext2D, x: number, y: number, _frame: number): void {
+  private static drawCourtBuilding(ctx: CanvasRenderingContext2D, x: number, y: number): void {
     // Classical Courthouse Wall
     ctx.fillStyle = '#262A40';
     ctx.fillRect(x, y + 10, 140, 68);
@@ -1379,7 +1478,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(x + 71, y + 56, 2, 4);
   }
 
-  private static drawArchiveBuilding(ctx: CanvasRenderingContext2D, x: number, y: number, _frame: number): void {
+  private static drawArchiveBuilding(ctx: CanvasRenderingContext2D, x: number, y: number): void {
     // Ancient Weathered Stone Tower Library
     ctx.fillStyle = '#24283D';
     ctx.fillRect(x, y + 10, 120, 75);
@@ -1477,8 +1576,7 @@ export class EnvironmentRenderer {
   private static drawObservatoryMountainTrail(
     ctx: CanvasRenderingContext2D,
     x: number,
-    y: number,
-    _frame: number
+    y: number
   ): void {
     // Winding stone stairs ascending mountain cliff
     ctx.fillStyle = '#282C44';
@@ -4304,6 +4402,20 @@ export class EnvironmentRenderer {
     drawJasmineBed(vx + 15, vy + vh + 10, 140);
     drawJasmineBed(vx + 270, vy + vh + 10, 160);
 
+    // Sector F-7 Marble & Brass Lawn Plaque at (230, 420) (for islamabad_lawn_sign)
+    ctx.fillStyle = '#1E293B';
+    ctx.fillRect(248, 434, 8, 14); // Post
+    ctx.fillStyle = '#F8FAFC';
+    ctx.fillRect(230, 418, 44, 20); // White marble plaque
+    ctx.strokeStyle = '#F59E0B';
+    ctx.strokeRect(230, 418, 44, 20);
+    ctx.fillStyle = '#064E3B';
+    ctx.font = 'bold 5px monospace';
+    ctx.fillText('SECTOR F-7', 235, 426);
+    ctx.fillStyle = '#B45309';
+    ctx.font = '4px monospace';
+    ctx.fillText('5-MARLA HAVEN', 233, 433);
+
     // Modern Low Concrete Boundary Wall with LED Wall-Washers
     ctx.fillStyle = '#334155';
     ctx.fillRect(vx + 10, vy + vh + 26, vw - 20, 12);
@@ -5987,6 +6099,138 @@ export class EnvironmentRenderer {
     ctx.fillStyle = '#F59E0B';
     ctx.font = '5px monospace';
     ctx.fillText('HIRA KI HAVELI // 12 MARLA', x + 74, y + 117);
+  }
+
+  /**
+   * FOREGROUND OCCLUSION PASS (Drawn AFTER Beenish & Pagluu sprites, BEFORE lighting & UI bubbles)
+   * Ensures characters walk UNDER overhead archways, pergola crossbeams, portal lintels, and upper tree canopies
+   * when standing behind/underneath them.
+   */
+  public static renderForeground(
+    ctx: CanvasRenderingContext2D,
+    roomId: string,
+    _width: number,
+    _height: number,
+    frame: number,
+    playerPos: { x: number; y: number },
+    pagluPos: { x: number; y: number }
+  ): void {
+    const isCharBehind = (trunkBaseY: number, minX: number, maxX: number) => {
+      const pFeetY = playerPos.y + 26;
+      const tFeetY = pagluPos.y + 26;
+      const pBehind = pFeetY < trunkBaseY && playerPos.x + 24 > minX && playerPos.x < maxX;
+      const tBehind = tFeetY < trunkBaseY && pagluPos.x + 24 > minX && pagluPos.x < maxX;
+      return pBehind || tBehind;
+    };
+
+    if (roomId === 'overworld') {
+      // 1. Arrival Pavilion Overhead Pergola Crossbeam, Climbing Vines & Hanging Fairy Lights (x=740, y=680)
+      const px = 740;
+      const py = 680;
+      if (isCharBehind(py + 22, px - 10, px + 120)) {
+        // Pergola Crossbeam Arch
+        ctx.fillStyle = '#3E2417';
+        ctx.fillRect(px + 2, py - 32, 106, 8);
+        ctx.fillStyle = '#5A3828';
+        ctx.fillRect(px + 4, py - 30, 102, 3);
+        ctx.fillStyle = '#1D4537';
+        ctx.fillRect(px + 12, py - 34, 86, 6);
+        // Overhead blossoms
+        const topBlooms = [
+          { bx: px + 24, by: py - 35, color: '#FFFFFF' },
+          { bx: px + 38, by: py - 36, color: '#FDF2F8' },
+          { bx: px + 54, by: py - 35, color: '#FFFFFF' },
+          { bx: px + 70, by: py - 36, color: '#FDF2F8' },
+          { bx: px + 84, by: py - 35, color: '#FFFFFF' },
+        ];
+        topBlooms.forEach(b => {
+          ctx.fillStyle = b.color;
+          ctx.fillRect(b.bx, b.by, 4, 4);
+          ctx.fillStyle = '#FEF08A';
+          ctx.fillRect(b.bx + 1, b.by + 1, 2, 2);
+        });
+        // Hanging Fairy Lights Garland
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(px + 16, py - 24);
+        ctx.quadraticCurveTo(px + 55, py - 14, px + 94, py - 24);
+        ctx.stroke();
+        for (let l = 0; l < 7; l++) {
+          const t = (l + 0.5) / 7;
+          const lx = (px + 16) * (1 - t) + (px + 94) * t;
+          const ly = (py - 24) * (1 - t) * (1 - t) + (py - 14) * 2 * (1 - t) * t + (py - 24) * t * t;
+          const bulbGlow = Math.sin(frame * 0.12 + l * 1.2) * 0.35 + 0.65;
+          ctx.fillStyle = `rgba(254, 240, 138, ${bulbGlow})`;
+          ctx.fillRect(Math.floor(lx - 1), Math.floor(ly), 3, 3);
+        }
+      }
+
+      // 2. Portal Overhead Lintels & Awnings
+      // Mafia Portal top titanium beam (0, 550)
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, 550, 34, 8);
+      ctx.fillStyle = '#64748B';
+      ctx.fillRect(0, 551, 34, 2);
+
+      // Bakery Portal top awning cap (1540, 550)
+      ctx.fillStyle = '#BE185D';
+      ctx.fillRect(1540, 550, 35, 8);
+      ctx.fillStyle = '#EC4899';
+      ctx.fillRect(1542, 550, 31, 4);
+
+      // Haveli Portal top crossbeam (760, 1140)
+      ctx.fillStyle = '#92400E';
+      ctx.fillRect(752, 1146, 80, 6);
+
+      // Dream Estates Portal top archway beam (490, 1020)
+      if (isCharBehind(1058, 480, 555)) {
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(494, 1020, 46, 12);
+        ctx.fillStyle = '#64748B';
+        ctx.fillRect(496, 1022, 42, 2);
+        ctx.fillStyle = '#F59E0B';
+        ctx.font = '6px monospace';
+        ctx.fillText('DREAM ESTATES', 495, 1029);
+      }
+
+      // 3. Overworld Tree Canopies (drawn over characters when character is north of trunk base y+50)
+      const overworldTrees: Array<{ x: number; y: number; type: 'oak' | 'pine' | 'willow' }> = [
+        { x: 160, y: 260, type: 'pine' },
+        { x: 440, y: 340, type: 'oak' },
+        { x: 1140, y: 340, type: 'oak' },
+        { x: 1480, y: 260, type: 'pine' },
+        { x: 440, y: 880, type: 'oak' },
+        { x: 1140, y: 880, type: 'oak' },
+        { x: 1480, y: 920, type: 'pine' },
+        { x: 230, y: 720, type: 'willow' },
+      ];
+      overworldTrees.forEach(t => {
+        if (isCharBehind(t.y + 50, t.x - 16, t.x + 58)) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(t.x - 20, t.y - 10, 90, 42);
+          ctx.clip();
+          this.drawDetailedTree(ctx, t.x, t.y, t.type, frame);
+          ctx.restore();
+        }
+      });
+    } else if (roomId === 'bakery_realm') {
+      // Outdoor Feast Pergola overhead rafters & fairy lights (x: 185..305, y: 340..356)
+      if (isCharBehind(415, 175, 315)) {
+        ctx.fillStyle = '#5C2D12';
+        ctx.fillRect(185, 342, 118, 6);
+        for (let rx = 190; rx <= 298; rx += 18) {
+          ctx.fillStyle = '#78350F';
+          ctx.fillRect(rx, 339, 6, 10);
+        }
+        for (let lx = 196; lx <= 292; lx += 16) {
+          const glow = Math.sin(frame * 0.1 + lx) * 0.3 + 0.7;
+          ctx.fillStyle = `rgba(254, 240, 138, ${glow})`;
+          ctx.fillRect(lx, 348, 3, 3);
+        }
+      }
+    }
   }
 }
 

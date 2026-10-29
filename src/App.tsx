@@ -50,7 +50,11 @@ const ExpeditionAppContent: React.FC = () => {
       <StarfieldCanvas />
 
       {/* Edge-to-Edge Full-Screen 2D RPG Adventure with Camera Glide */}
-      <RPGAdventureEngine onTriggerInteraction={setActiveInteractable} />
+      <RPGAdventureEngine
+        onTriggerInteraction={setActiveInteractable}
+        isModalOpen={Boolean(activeInteractable)}
+        onCloseModal={() => setActiveInteractable(null)}
+      />
 
       {/* Diegetic In-World Modals (Files, Courtroom, Museum, Archive, Letter) */}
       <InteractionModals activeObject={activeInteractable} onClose={() => setActiveInteractable(null)} />

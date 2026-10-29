@@ -22,18 +22,31 @@ interface ExpeditionContextType {
 
 const STORAGE_KEY = 'beenish_expedition_save_v1';
 
+const DREAM_ESTATE_REALMS: LocationId[] = [
+  'castle_realm',
+  'mafia_realm',
+  'islamabad_realm',
+  'bakery_realm',
+  'haveli_realm',
+];
+
 const defaultState: ExpeditionState = {
   currentLocation: 'boot',
   starsRecovered: 0,
   unlockedLocations: [
-    'boot', 
-    'hub', 
-    'dream_estates', 
-    'castle_realm', 
-    'mafia_realm', 
-    'islamabad_realm', 
-    'bakery_realm', 
-    'haveli_realm'
+    'boot',
+    'hub',
+    'bureau',
+    'museum',
+    'court',
+    'archive',
+    'observatory',
+    'dream_estates',
+    'castle_realm',
+    'mafia_realm',
+    'islamabad_realm',
+    'bakery_realm',
+    'haveli_realm',
   ],
   visitedLocations: ['boot'],
   recoveredStarIds: [],
@@ -53,6 +66,7 @@ const defaultState: ExpeditionState = {
   archiveChronologySolved: false,
   observatoryConstellationConnected: false,
   gardenLanternsLit: 0,
+  candlesBlown: false,
   journal: INITIAL_JOURNAL,
   isMuted: soundEngine.getMuted(),
 };
@@ -65,10 +79,16 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        const now = new Date();
+        const oct31Midnight = new Date(now.getFullYear(), 9, 31, 0, 0, 0, 0).getTime();
+        const isBeforeOct31 = now.getTime() < oct31Midnight;
         return {
           ...defaultState,
           ...parsed,
-          // Ensure journal structure retains any newly added journal tasks
+          currentLocation: isBeforeOct31 ? 'boot' : (parsed.currentLocation || 'boot'),
+          unlockedLocations: Array.from(
+            new Set([...defaultState.unlockedLocations, ...(parsed.unlockedLocations || [])])
+          ) as LocationId[],
           journal: defaultState.journal.map(j => {
             const savedJ = parsed.journal?.find((sj: { id: string }) => sj.id === j.id);
             return savedJ ? { ...j, completed: savedJ.completed } : j;
@@ -100,11 +120,19 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         ? prev.visitedLocations
         : [...prev.visitedLocations, location];
 
+      // Auto-complete the 5 Dream Estates milestone when all 5 realms or dream_estates have been toured
+      const visitedRealmsCount = DREAM_ESTATE_REALMS.filter(r => newVisited.includes(r)).length;
+      const estatesCompleted = visitedRealmsCount >= 5 || newVisited.includes('dream_estates');
+      const updatedJournal = estatesCompleted
+        ? prev.journal.map(j => (j.id === 'estates_complete' ? { ...j, completed: true } : j))
+        : prev.journal;
+
       return {
         ...prev,
         currentLocation: location,
         unlockedLocations: newUnlocked,
         visitedLocations: newVisited,
+        journal: updatedJournal,
       };
     });
   };
@@ -116,7 +144,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
       }
       soundEngine.playStarChime();
       const updatedRecovered = [...prev.recoveredStarIds, starId];
-      const updatedJournal = prev.journal.map(j => 
+      const updatedJournal = prev.journal.map(j =>
         j.id === journalId || j.rewardStar === starId ? { ...j, completed: true } : j
       );
 
@@ -129,9 +157,10 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         starsRecovered: updatedRecovered.length,
         journal: updatedJournal,
         secretGardenUnlocked: shouldUnlockGarden,
-        unlockedLocations: shouldUnlockGarden && !prev.unlockedLocations.includes('garden')
-          ? [...prev.unlockedLocations, 'garden']
-          : prev.unlockedLocations,
+        unlockedLocations:
+          shouldUnlockGarden && !prev.unlockedLocations.includes('garden')
+            ? [...prev.unlockedLocations, 'garden']
+            : prev.unlockedLocations,
       };
     });
   };
@@ -164,7 +193,14 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
     setState(prev => {
       if (prev.viewedVignettes.includes(vignetteId)) return prev;
       const updated = [...prev.viewedVignettes, vignetteId];
-      return { ...prev, viewedVignettes: updated };
+      const all5Viewed = updated.length >= 5;
+      return {
+        ...prev,
+        viewedVignettes: updated,
+        journal: all5Viewed
+          ? prev.journal.map(j => (j.id === 'estates_complete' ? { ...j, completed: true } : j))
+          : prev.journal,
+      };
     });
   };
 
@@ -172,7 +208,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
     soundEngine.playStarChime();
     setState(prev => ({
       ...prev,
-      namedConstellation: name.trim() || 'Constellation Beenish',
+      namedConstellation: name.trim() || "Paaaari's Starlight",
     }));
     recoverStar(5, 'observatory_complete');
   };
@@ -199,8 +235,8 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
     setState(prev => ({
       ...prev,
       secretGardenUnlocked: true,
-      unlockedLocations: prev.unlockedLocations.includes('garden') 
-        ? prev.unlockedLocations 
+      unlockedLocations: prev.unlockedLocations.includes('garden')
+        ? prev.unlockedLocations
         : [...prev.unlockedLocations, 'garden'],
     }));
   };
@@ -217,7 +253,9 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
   const resetExpedition = () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+    } catch {
+      // Ignore storage access errors
+    }
     setState({ ...defaultState, isMuted: soundEngine.getMuted() });
   };
 
@@ -245,6 +283,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useExpedition = () => {
   const context = useContext(ExpeditionContext);
   if (!context) {

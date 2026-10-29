@@ -1,11 +1,14 @@
 /**
- * Web Audio API Procedural Sound Engine
- * Synthesizes retro chimes, clicks, stamps, and gavels without relying on external MP3 downloads.
- * Guarantees zero broken audio links and instantaneous playback on GitHub Pages.
+ * Web Audio API Procedural Sound Engine & Studio MP3 Jukebox
+ * Synthesizes retro chimes, clicks, stamps, and gavels via a Master GainNode architecture,
+ * and manages studio MP3 playback ("Bol Na Halke Halke", "Mohabbat Jisko Bakhsh De Zindagi")
+ * with zero melody clashes and instantaneous mute response.
  */
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
+  private masterGain: GainNode | null = null;
+  private melodyGain: GainNode | null = null;
   private isMuted: boolean = false;
   private ambientGain: GainNode | null = null;
   private isAmbientPlaying: boolean = false;
@@ -13,9 +16,12 @@ class SoundEngine {
   private currentSong: 'bol_na_halke_halke' | 'mohabat' | null = null;
   private isSongPlaying: boolean = false;
   private songListeners: Array<(isPlaying: boolean, song: 'bol_na_halke_halke' | 'mohabat' | null) => void> = [];
+  private gardenTimer: number | null = null;
+  private tuneTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private isTuneLooping: boolean = false;
+  private isGardenActive: boolean = false;
 
   constructor() {
-    // Check saved mute state from localStorage
     const savedMute = localStorage.getItem('beenish_expedition_muted');
     this.isMuted = savedMute === 'true';
   }
@@ -25,12 +31,31 @@ class SoundEngine {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 1, this.ctx.currentTime);
+        this.masterGain.connect(this.ctx.destination);
+
+        this.melodyGain = this.ctx.createGain();
+        this.melodyGain.gain.setValueAtTime(1, this.ctx.currentTime);
+        this.melodyGain.connect(this.masterGain);
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      this.ctx.resume().catch(() => {});
     }
     return this.ctx;
+  }
+
+  private getDestination(): AudioNode | null {
+    const ctx = this.initContext();
+    if (!ctx) return null;
+    return this.masterGain || ctx.destination;
+  }
+
+  private getMelodyDestination(): AudioNode | null {
+    const ctx = this.initContext();
+    if (!ctx) return null;
+    return this.melodyGain || this.masterGain || ctx.destination;
   }
 
   public getMuted(): boolean {
@@ -40,8 +65,11 @@ class SoundEngine {
   public toggleMute(): boolean {
     this.isMuted = !this.isMuted;
     localStorage.setItem('beenish_expedition_muted', String(this.isMuted));
-    if (this.ambientGain) {
-      this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.08, this.ctx?.currentTime || 0);
+    if (this.ctx && this.masterGain) {
+      this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 1, this.ctx.currentTime);
+    }
+    if (this.ambientGain && this.ctx) {
+      this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.04, this.ctx.currentTime);
     }
     if (this.musicAudio) {
       this.musicAudio.volume = this.isMuted ? 0 : 0.65;
@@ -70,17 +98,22 @@ class SoundEngine {
 
   /**
    * Plays the authentic studio recording of the couple's favorite songs
+   * Automatically pauses procedural celesta loop to prevent audio clashes.
    */
   public playSong(song: 'bol_na_halke_halke' | 'mohabat' = 'bol_na_halke_halke'): void {
     if (typeof window === 'undefined') return;
 
-    const songFile = song === 'bol_na_halke_halke' 
-      ? '/audio/bol_na_halke_halke.mp3' 
-      : '/audio/mohabat_jisko_baksh_zindagi.mp3';
+    // Silence procedural tune loop while studio track plays
+    this.stopBolNaHalkeHalkeTuneLoop();
+    this.stopGardenMelody();
+
+    const songFile = song === 'bol_na_halke_halke'
+      ? './audio/bol_na_halke_halke.mp3'
+      : './audio/mohabat_jisko_baksh_zindagi.mp3';
 
     if (this.musicAudio) {
       if (this.currentSong === song && !this.musicAudio.paused) {
-        return; // Already playing this song
+        return;
       }
       this.musicAudio.pause();
     }
@@ -102,7 +135,6 @@ class SoundEngine {
             console.log('Audio autoplay prevented by browser. Will resume on first click.', err);
             this.isSongPlaying = false;
             this.notifySongChange();
-            // User interaction unlocker
             const unlock = () => {
               if (this.musicAudio) {
                 this.musicAudio.play().then(() => {
@@ -141,17 +173,118 @@ class SoundEngine {
   }
 
   /**
-   * Plays bike / muscle car horn sound
+   * Plays bike / muscle car / funny celebration horn sound
    */
   public playHorn(variant: 1 | 2 = 1): void {
     if (this.isMuted || typeof window === 'undefined') return;
     try {
-      const horn = new Audio(`/audio/horn${variant}.mp3`);
-      horn.volume = 0.5;
-      horn.play().catch(() => {});
+      const horn = new Audio(`./audio/horn${variant}.mp3`);
+      horn.volume = 0.75;
+      horn.play().catch(() => {
+        const unlockHorn = () => {
+          if (!this.isMuted) {
+            const retryHorn = new Audio(`./audio/horn${variant}.mp3`);
+            retryHorn.volume = 0.75;
+            retryHorn.play().catch(() => {});
+          }
+          window.removeEventListener('click', unlockHorn);
+          window.removeEventListener('touchstart', unlockHorn);
+          window.removeEventListener('keydown', unlockHorn);
+        };
+        window.addEventListener('click', unlockHorn, { once: true });
+        window.addEventListener('touchstart', unlockHorn, { once: true });
+        window.addEventListener('keydown', unlockHorn, { once: true });
+      });
     } catch {
       this.playGavel();
     }
+  }
+
+  /**
+   * Plays the full funny horn celebration sequence (horn1 + horn2 burst) for 00:00:00 Oct 31 unlock
+   */
+  public playBirthdayHornFanfare(): void {
+    if (this.isMuted || typeof window === 'undefined') return;
+    const triggerSequence = () => {
+      if (this.isMuted) return;
+      this.playHorn(1);
+      setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 420);
+      setTimeout(() => { if (!this.isMuted) this.playHorn(1); }, 880);
+      setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 1320);
+    };
+
+    try {
+      const testHorn = new Audio('./audio/horn1.mp3');
+      testHorn.volume = 0.8;
+      const p = testHorn.play();
+      if (p !== undefined) {
+        p.then(() => {
+          setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 420);
+          setTimeout(() => { if (!this.isMuted) this.playHorn(1); }, 880);
+          setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 1320);
+        }).catch(() => {
+          const onFirstInteract = () => {
+            triggerSequence();
+            window.removeEventListener('click', onFirstInteract);
+            window.removeEventListener('touchstart', onFirstInteract);
+            window.removeEventListener('keydown', onFirstInteract);
+          };
+          window.addEventListener('click', onFirstInteract, { once: true });
+          window.addEventListener('touchstart', onFirstInteract, { once: true });
+          window.addEventListener('keydown', onFirstInteract, { once: true });
+        });
+      }
+    } catch {
+      triggerSequence();
+    }
+  }
+
+  /**
+   * Sweet sparkly kiss / heart pop sound
+   */
+  public playKissChime(): void {
+    if (this.isMuted) return;
+    const ctx = this.initContext();
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
+
+    const now = ctx.currentTime;
+    const freqs = [659.25, 830.61, 987.77, 1318.51];
+    freqs.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.055);
+      gain.gain.setValueAtTime(0.001, now + idx * 0.055);
+      gain.gain.linearRampToValueAtTime(0.14, now + idx * 0.055 + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.055 + 0.35);
+      osc.connect(gain);
+      gain.connect(dest);
+      osc.start(now + idx * 0.055);
+      osc.stop(now + idx * 0.055 + 0.38);
+    });
+  }
+
+  /**
+   * Lonely muffled clock tick for the dark pre-birthday countdown
+   */
+  public playSadTick(): void {
+    if (this.isMuted || !this.ctx || this.ctx.state !== 'running') return;
+    const dest = this.getDestination();
+    if (!dest) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(190, now);
+    osc.frequency.exponentialRampToValueAtTime(95, now + 0.045);
+    gain.gain.setValueAtTime(0.03, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+    osc.connect(gain);
+    gain.connect(dest);
+    osc.start(now);
+    osc.stop(now + 0.055);
   }
 
   /**
@@ -160,7 +293,8 @@ class SoundEngine {
   public playStarChime(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const freqs = [523.25, 659.25, 783.99, 1046.50];
     const now = ctx.currentTime;
@@ -177,7 +311,7 @@ class SoundEngine {
       gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.09 + 0.6);
 
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
 
       osc.start(now + idx * 0.09);
       osc.stop(now + idx * 0.09 + 0.65);
@@ -190,7 +324,8 @@ class SoundEngine {
   public playClick(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -204,7 +339,7 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     osc.start(now);
     osc.stop(now + 0.05);
@@ -216,11 +351,10 @@ class SoundEngine {
   public playStamp(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
-
-    // Low pitch impact
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
@@ -232,7 +366,7 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     osc.start(now);
     osc.stop(now + 0.16);
@@ -244,11 +378,10 @@ class SoundEngine {
   public playGavel(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
-
-    // Wooden thud
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'triangle';
@@ -259,7 +392,7 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     osc.start(now);
     osc.stop(now + 0.21);
@@ -271,9 +404,9 @@ class SoundEngine {
   public playPaperRustle(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
-    // White noise burst filtered
     const bufferSize = ctx.sampleRate * 0.08;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -294,7 +427,7 @@ class SoundEngine {
 
     noise.connect(filter);
     filter.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     noise.start();
   }
@@ -305,13 +438,13 @@ class SoundEngine {
   public startNightAmbience(): void {
     if (this.isAmbientPlaying || typeof window === 'undefined') return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     this.ambientGain = ctx.createGain();
     this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.04, ctx.currentTime);
-    this.ambientGain.connect(ctx.destination);
+    this.ambientGain.connect(dest);
 
-    // Filtered pink-like noise generator for gentle wind
     const bufferSize = ctx.sampleRate * 2;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -345,10 +478,10 @@ class SoundEngine {
   public playKeyUnlock(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
-    // Two rapid metallic clicks
     [0, 0.08].forEach((offset) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -360,7 +493,7 @@ class SoundEngine {
       gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.05);
 
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start(now + offset);
       osc.stop(now + offset + 0.06);
     });
@@ -372,7 +505,8 @@ class SoundEngine {
   public playCoin(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
     const freqs = [987.77, 1318.51];
@@ -386,7 +520,7 @@ class SoundEngine {
       gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
 
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
       osc.start(now + idx * 0.08);
       osc.stop(now + idx * 0.08 + 0.38);
     });
@@ -398,7 +532,8 @@ class SoundEngine {
   public playDoorOpen(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -412,23 +547,28 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     osc.start(now);
     osc.stop(now + 0.3);
   }
 
-  private gardenTimer: number | null = null;
-
   /**
    * Serene music box arpeggios for the Secret Garden
+   * Ducks the main celesta tune loop while inside the Garden to prevent clashing keys.
    */
   public startGardenMelody(): void {
-    if (this.isMuted || this.gardenTimer !== null || typeof window === 'undefined') return;
+    this.isGardenActive = true;
+    if (this.isMuted || this.isSongPlaying || this.gardenTimer !== null || typeof window === 'undefined') return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
-    // Gentle chord progression: C - G/B - Am - F (peaceful, nostalgic)
+    // Duck background celesta loop while inside the Secret Garden
+    if (this.melodyGain) {
+      this.melodyGain.gain.setValueAtTime(0, ctx.currentTime);
+    }
+
     const melodyNotes = [
       523.25, 659.25, 783.99, 1046.50, // C chord
       493.88, 587.33, 783.99, 987.77,  // G chord
@@ -438,7 +578,7 @@ class SoundEngine {
 
     let noteIdx = 0;
     const playNextNote = () => {
-      if (this.isMuted || !this.ctx) return;
+      if (this.isMuted || this.isSongPlaying || !this.ctx || !this.masterGain) return;
       const freq = melodyNotes[noteIdx];
       noteIdx = (noteIdx + 1) % melodyNotes.length;
 
@@ -454,7 +594,7 @@ class SoundEngine {
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
 
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(this.masterGain);
 
       osc.start(now);
       osc.stop(now + 1.3);
@@ -465,9 +605,13 @@ class SoundEngine {
   }
 
   public stopGardenMelody(): void {
+    this.isGardenActive = false;
     if (this.gardenTimer !== null) {
       clearInterval(this.gardenTimer);
       this.gardenTimer = null;
+    }
+    if (this.ctx && this.melodyGain && this.isTuneLooping && !this.isSongPlaying) {
+      this.melodyGain.gain.setValueAtTime(1, this.ctx.currentTime);
     }
   }
 
@@ -477,7 +621,8 @@ class SoundEngine {
   public playFootstep(surface: 'grass' | 'wood' | 'stone' = 'grass'): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -492,7 +637,7 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
     osc.start(now);
     osc.stop(now + 0.06);
   }
@@ -503,7 +648,8 @@ class SoundEngine {
   public playEmote(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -517,7 +663,7 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
     osc.start(now);
     osc.stop(now + 0.13);
   }
@@ -528,9 +674,15 @@ class SoundEngine {
   public playBirthdayJingle(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
-    // Happy birthday notes [freq, duration, pause]
+    // Temporarily duck the background celesta loop while the birthday jingle plays
+    if (this.melodyGain) {
+      this.melodyGain.gain.setValueAtTime(0, ctx.currentTime);
+      this.melodyGain.gain.setValueAtTime(this.isGardenActive ? 0 : 1, ctx.currentTime + 6.2);
+    }
+
     const notes: [number, number][] = [
       [392.00, 0.22], // G4
       [392.00, 0.22], // G4
@@ -553,7 +705,6 @@ class SoundEngine {
       const oscHarmonic = ctx.createOscillator();
       const gain = ctx.createGain();
 
-      // Music box bell chime
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, timeOffset);
 
@@ -566,7 +717,7 @@ class SoundEngine {
 
       osc.connect(gain);
       oscHarmonic.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
 
       osc.start(timeOffset);
       oscHarmonic.start(timeOffset);
@@ -583,7 +734,8 @@ class SoundEngine {
   public playBlowCandles(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -597,7 +749,7 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     osc.start(now);
     osc.stop(now + 0.26);
@@ -609,7 +761,8 @@ class SoundEngine {
   public playConfettiPop(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
-    if (!ctx) return;
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
 
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
@@ -623,70 +776,61 @@ class SoundEngine {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(dest);
 
     osc.start(now);
     osc.stop(now + 0.11);
   }
 
-  private tuneTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private isTuneLooping: boolean = false;
-
   /**
    * Official Bollypiano & HitXP Transcription of "Bol Na Halke Halke" (Chorus)
-   * 90 BPM in E Minor (E E F# D E A F# E | E E F# D E A F# E | E E F# D E A | A B A G F# E)
-   * Pure, plain, crystalline autotuned sine tones.
+   * 90 BPM in E Minor (E E F# D E A | E E F# D E A | E E F# D E A | B A G F# F# E)
    */
   public playBolNaHalkeHalkeNotes(): number {
-    if (this.isMuted) return 8000;
+    if (this.isMuted || this.isSongPlaying || this.isGardenActive) return 8000;
     const ctx = this.initContext();
-    if (!ctx) return 8000;
+    const dest = this.getMelodyDestination();
+    if (!ctx || !dest) return 8000;
 
-    // Autotuned exact frequencies (Key of E Minor):
-    const E4  = 329.63; // Sa
-    const Fs4 = 369.99; // Re
-    const G4  = 392.00; // Ga
-    const A4  = 440.00; // Ma
-    const B4  = 493.88; // Pa
-    const D4  = 293.66; // komal Ni
+    const E4  = 329.63;
+    const Fs4 = 369.99;
+    const G4  = 392.00;
+    const A4  = 440.00;
+    const B4  = 493.88;
+    const D4  = 293.66;
 
-    // Exact Score specified by user:
-    // Line 1: Bol Na Halke Halke    -> E E F# D E A
-    // Line 2: Bol Na Halke Halke    -> E E F# D E A
-    // Line 3: Hooth se halke halke  -> E E F# D E A
-    // Line 4: Bol na halke          -> B A G F# E
     const notes: [number, number, number][] = [
       // --- Line 1: booooool na halke halkeeeeeeeee (E E F# D E A) ---
-      [620, E4, 0],    // booooool (elongated)
-      [330, E4, 0],    // na
-      [330, Fs4, 0],   // Hal-
-      [330, D4, 0],    // ke
-      [330, E4, 0],    // Hal-
-      [1300, A4, 380], // halkeeeeeeeee (elongated held) + breath gap
+      [620, E4, 0],
+      [330, E4, 0],
+      [330, Fs4, 0],
+      [330, D4, 0],
+      [330, E4, 0],
+      [1300, A4, 380],
 
       // --- Line 2: boooool na halkee halkeeeeeee (E E F# D E A) ---
-      [600, E4, 0],    // boooool (elongated)
-      [330, E4, 0],    // na
-      [330, Fs4, 0],   // Hal-
-      [420, D4, 0],    // kee (elongated)
-      [330, E4, 0],    // Hal-
-      [1300, A4, 380], // halkeeeeeee (elongated held) + breath gap
+      [600, E4, 0],
+      [330, E4, 0],
+      [330, Fs4, 0],
+      [420, D4, 0],
+      [330, E4, 0],
+      [1300, A4, 380],
 
       // --- Line 3: honthhhh say-hal ke hakeeeeeee (E E F# D E A) ---
-      [620, E4, 0],    // honthhhh (elongated)
-      [220, E4, 0],    // say-
-      [240, Fs4, 0],   // hal
-      [330, D4, 0],    // ke
-      [330, E4, 0],    // hal-
-      [1300, A4, 380], // halkeeeeeee (elongated held) + breath gap
+      [620, E4, 0],
+      [220, E4, 0],
+      [240, Fs4, 0],
+      [330, D4, 0],
+      [330, E4, 0],
+      [1300, A4, 380],
 
       // --- Line 4: booooolllll na halke halkeee (B A G F# F# E) ---
-      [650, B4, 0],    // booooolllll (elongated)
-      [330, A4, 0],    // na
-      [380, G4, 0],    // hal-
-      [330, Fs4, 0],   // ke
-      [350, Fs4, 0],   // hal- (completes the second halke!)
-      [1600, E4, 0],   // keee (long pure root resolution!)
+      [650, B4, 0],
+      [330, A4, 0],
+      [380, G4, 0],
+      [330, Fs4, 0],
+      [350, Fs4, 0],
+      [1600, E4, 0],
     ];
 
     const now = ctx.currentTime + 0.05;
@@ -703,17 +847,15 @@ class SoundEngine {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, noteStart);
 
-      // Clean, pure plain tone envelope
       gain.gain.setValueAtTime(0.0001, noteStart);
       gain.gain.linearRampToValueAtTime(0.20, noteStart + 0.015);
       if (durSec > 0.3) {
-        // Sustains audible volume throughout the full elongated duration
         gain.gain.setValueAtTime(0.18, noteStart + durSec - 0.08);
       }
       gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + durSec + tailSec);
 
       osc.connect(gain);
-      gain.connect(ctx.destination);
+      gain.connect(dest);
 
       osc.start(noteStart);
       osc.stop(noteStart + durSec + tailSec + 0.05);
@@ -725,7 +867,11 @@ class SoundEngine {
   }
 
   public playBolNaHalkeHalke(): void {
-    this.playBolNaHalkeHalkeNotes();
+    if (!this.isTuneLooping) {
+      this.playBolNaHalkeHalkeNotes();
+    } else {
+      this.playStarChime();
+    }
   }
 
   /**
@@ -733,7 +879,12 @@ class SoundEngine {
    */
   public startBolNaHalkeHalkeTuneLoop(): void {
     if (this.isTuneLooping) return;
+    this.pauseSong();
     this.isTuneLooping = true;
+
+    if (this.ctx && this.melodyGain && !this.isGardenActive) {
+      this.melodyGain.gain.setValueAtTime(1, this.ctx.currentTime);
+    }
 
     const playLoop = () => {
       if (!this.isTuneLooping) return;
@@ -749,6 +900,9 @@ class SoundEngine {
     if (this.tuneTimeoutId) {
       clearTimeout(this.tuneTimeoutId);
       this.tuneTimeoutId = null;
+    }
+    if (this.ctx && this.melodyGain) {
+      this.melodyGain.gain.setValueAtTime(0, this.ctx.currentTime);
     }
   }
 
@@ -768,4 +922,3 @@ class SoundEngine {
 }
 
 export const soundEngine = new SoundEngine();
-

@@ -28,33 +28,44 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 1575, y: 0, width: 25, height: 530 },
       { x: 1575, y: 630, width: 25, height: 570 },
 
-      // Spacious Building Footprints:
-      // 1. Bureau of Unreasonable Boyfriends (West Precinct)
-      { x: 200, y: 390, width: 170, height: 90 },
+      // Spacious Building Footprints (Aligned to exact drawn facades):
+      // 1. Bureau of Unreasonable Boyfriends (West Precinct: 200..340, 390..465)
+      { x: 200, y: 390, width: 140, height: 75 },
 
-      // 2. Museum of Beenish (North-Center Terrace)
-      { x: 690, y: 210, width: 220, height: 95 },
+      // 2. Museum of Beenish (North-Center Terrace: 690..860, 210..294)
+      { x: 690, y: 210, width: 170, height: 84 },
 
-      // 3. Court of Absolutely No Flaws (East Precinct)
-      { x: 1230, y: 390, width: 170, height: 90 },
+      // 3. Court of Absolutely No Flaws (East Precinct: 1230..1370, 390..468)
+      { x: 1230, y: 390, width: 140, height: 78 },
 
-      // 4. Archive of Things That Happened (Southeast Glade)
-      { x: 1240, y: 750, width: 160, height: 95 },
+      // 4. Archive of Things That Happened (Southeast Glade: 1240..1360, 750..835)
+      { x: 1240, y: 750, width: 120, height: 85 },
 
       // 5. Secret Garden Ivy Gate (Southeast Boundary)
       // Open passage at x: 1285-1355
       { x: 1200, y: 1040, width: 85, height: 35 },
       { x: 1355, y: 1040, width: 95, height: 35 },
 
-      // 6. South-West Reflecting Water Pond (Natural organic boundary)
-      { x: 190, y: 760, width: 260, height: 160 },
+      // 6. South-West Reflecting Water Pond (Leaves northern grassy bank y=742..772 open for Pond Bench)
+      { x: 190, y: 775, width: 240, height: 135 },
 
-      // Decorative Tree Trunks (Spaced out naturally across meadows)
-      { x: 440, y: 460, width: 24, height: 18 },
-      { x: 1080, y: 460, width: 24, height: 18 },
-      { x: 440, y: 880, width: 24, height: 18 },
-      { x: 1080, y: 880, width: 24, height: 18 },
-      { x: 160, y: 710, width: 26, height: 18 }, // Willow tree trunk
+      // 7. Decorative Tree Trunks (Aligned to exact drawn trunks at x+15, y+36)
+      { x: 175, y: 296, width: 14, height: 18 },
+      { x: 455, y: 376, width: 14, height: 18 },
+      { x: 1155, y: 376, width: 14, height: 18 },
+      { x: 1495, y: 296, width: 14, height: 18 },
+      { x: 455, y: 916, width: 14, height: 18 },
+      { x: 1155, y: 916, width: 14, height: 18 },
+      { x: 1495, y: 956, width: 14, height: 18 },
+      { x: 250, y: 754, width: 18, height: 20 }, // Weeping willow trunk
+
+      // 8. Central Plaza Props & Landmarks
+      { x: 766, y: 632, width: 72, height: 32 },  // Central Birthday Table
+      { x: 742, y: 735, width: 18, height: 18 },  // World Directional Signpost base
+      { x: 746, y: 685, width: 12, height: 55 },  // Arrival Pavilion Left Pillar
+      { x: 832, y: 685, width: 12, height: 55 },  // Arrival Pavilion Right Pillar
+      { x: 480, y: 205, width: 110, height: 45 }, // Private Jet Tarmac footprint
+      { x: 965, y: 205, width: 100, height: 52 }, // Championship Sports Arena turf
     ],
     interactables: [
       // --- THE 5 DREAM ESTATES SCENIC PASSES ---
@@ -67,7 +78,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         promptLabel: '[ E ] Margalla Hills Trail to Islamabad 5-Marla House →',
         type: 'door',
         targetRoom: 'islamabad_realm',
-        targetPos: { x: 388, y: 500 },
+        targetPos: { x: 388, y: 490 },
       },
       {
         id: 'path_to_castle',
@@ -78,7 +89,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         promptLabel: '[ E ] Mountain Pass to Queen Beenish\'s Castle →',
         type: 'door',
         targetRoom: 'castle_realm',
-        targetPos: { x: 100, y: 440 },
+        targetPos: { x: 388, y: 490 },
       },
       {
         id: 'path_to_mafia',
@@ -100,7 +111,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         promptLabel: '[ E ] Pastry Lane to Sweet Dreams Bakery →',
         type: 'door',
         targetRoom: 'bakery_realm',
-        targetPos: { x: 100, y: 440 },
+        targetPos: { x: 110, y: 360 },
       },
       {
         id: 'path_to_haveli',
@@ -111,7 +122,27 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         promptLabel: '↓ [ E ] Desi Gaon Trail to 12-Marla Haveli & Tubewell',
         type: 'door',
         targetRoom: 'haveli_realm',
-        targetPos: { x: 388, y: 120 },
+        targetPos: { x: 388, y: 130 },
+      },
+      {
+        id: 'path_to_estates',
+        x: 490,
+        y: 1020,
+        width: 60,
+        height: 45,
+        promptLabel: '[ E ] Enter Master Boulevard of All 5 Dream Estates',
+        type: 'door',
+        targetRoom: 'dream_estates',
+        targetPos: { x: 450, y: 350 },
+      },
+      {
+        id: 'estates_signpost',
+        x: 555,
+        y: 1030,
+        width: 35,
+        height: 30,
+        promptLabel: '[ E ] Read Master Dream Estates Directory',
+        type: 'signpost',
       },
 
       // --- THE 4 CHAPTER BUILDINGS & OBSERVATORY & GARDEN GATE ---
@@ -202,12 +233,85 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         type: 'signpost',
       },
       {
+        id: 'arrival_plaque',
+        x: 775,
+        y: 735,
+        width: 42,
+        height: 24,
+        promptLabel: '[ E ] Read Brass Welcome Archway Plaque',
+        type: 'signpost',
+      },
+      {
         id: 'pond_bench',
-        x: 390,
-        y: 765,
-        width: 35,
-        height: 25,
+        x: 378,
+        y: 738,
+        width: 40,
+        height: 24,
         promptLabel: '[ E ] Sit by Reflecting Pond & Weeping Willow',
+        type: 'signpost',
+      },
+      {
+        id: 'overworld_jet',
+        x: 475,
+        y: 200,
+        width: 120,
+        height: 65,
+        promptLabel: '[ E ] Inspect Private White/Grey Jet & Red Carpet Vision',
+        type: 'jet_tarmac',
+      },
+      {
+        id: 'overworld_sports',
+        x: 960,
+        y: 200,
+        width: 110,
+        height: 65,
+        promptLabel: '[ E ] Inspect Cricket Pitch & Badminton Court',
+        type: 'sports_arena',
+      },
+      // --- 5 HANDWRITTEN STICKY NOTES ---
+      {
+        id: 'note_pavilion',
+        x: 740,
+        y: 695,
+        width: 28,
+        height: 28,
+        promptLabel: '[ E ] Read Yellow Sticky Note #1 (Arrival Pavilion)',
+        type: 'signpost',
+      },
+      {
+        id: 'note_willow',
+        x: 244,
+        y: 742,
+        width: 28,
+        height: 28,
+        promptLabel: '[ E ] Read Yellow Sticky Note #2 (Weeping Willow)',
+        type: 'signpost',
+      },
+      {
+        id: 'note_bureau',
+        x: 344,
+        y: 450,
+        width: 28,
+        height: 28,
+        promptLabel: '[ E ] Read Yellow Sticky Note #3 (Bureau Wall)',
+        type: 'signpost',
+      },
+      {
+        id: 'note_museum',
+        x: 660,
+        y: 275,
+        width: 28,
+        height: 28,
+        promptLabel: '[ E ] Read Yellow Sticky Note #4 (Museum Steps)',
+        type: 'signpost',
+      },
+      {
+        id: 'note_court',
+        x: 1200,
+        y: 450,
+        width: 28,
+        height: 28,
+        promptLabel: '[ E ] Read Yellow Sticky Note #5 (Court Pillars)',
         type: 'signpost',
       },
     ],
@@ -287,8 +391,8 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 0, y: 0, width: 20, height: 450 },
       { x: 580, y: 0, width: 20, height: 450 },
       // Exhibit Pedestals
-      { x: 350, y: 140, width: 60, height: 45 },
-      { x: 470, y: 140, width: 60, height: 45 },
+      { x: 350, y: 140, width: 50, height: 45 },
+      { x: 470, y: 140, width: 50, height: 45 },
     ],
     interactables: [
       {
@@ -322,30 +426,21 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       },
       {
         id: 'museum_achieve',
-        x: 360,
+        x: 355,
         y: 180,
-        width: 40,
+        width: 45,
         height: 30,
         promptLabel: '[ E ] Cricket & Badminton Arena',
         type: 'museum_achievements',
       },
       {
         id: 'museum_phenom',
-        x: 480,
+        x: 475,
         y: 180,
-        width: 40,
+        width: 45,
         height: 30,
         promptLabel: '[ E ] Sialkot to Islamabad Map',
         type: 'museum_phenomenon',
-      },
-      {
-        id: 'museum_ted_npc',
-        x: 160,
-        y: 180,
-        width: 30,
-        height: 30,
-        promptLabel: '[ E ] Talk to Pagluu',
-        type: 'npc_ted',
       },
     ],
   },
@@ -364,6 +459,8 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 530, y: 0, width: 20, height: 450 },
       // Judge bench
       { x: 190, y: 80, width: 160, height: 50 },
+      // Brass Witness Stand Railing
+      { x: 240, y: 210, width: 60, height: 28 },
       // Tables
       { x: 80, y: 220, width: 100, height: 40 },
       { x: 350, y: 220, width: 100, height: 40 },
@@ -399,12 +496,21 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         type: 'court_prosecution',
       },
       {
+        id: 'defense_files',
+        x: 350,
+        y: 220,
+        width: 100,
+        height: 45,
+        promptLabel: '[ E ] Inspect Pagluu\'s Biased Defense Dossier',
+        type: 'court_defense',
+      },
+      {
         id: 'judge_secret_note',
-        x: 250,
-        y: 65,
-        width: 40,
-        height: 20,
-        promptLabel: '[ E ] Inspect Behind Bench',
+        x: 245,
+        y: 75,
+        width: 55,
+        height: 30,
+        promptLabel: '[ E ] Inspect Secret Note Behind Bench',
         type: 'court_bench_secret',
       },
     ],
@@ -427,7 +533,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 210, y: 60, width: 130, height: 40 },
       { x: 380, y: 60, width: 130, height: 40 },
       // Central reading table
-      { x: 220, y: 240, width: 110, height: 40 },
+      { x: 215, y: 230, width: 120, height: 40 },
     ],
     interactables: [
       {
@@ -486,6 +592,9 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       // Star map tables
       { x: 60, y: 120, width: 80, height: 40 },
       { x: 360, y: 120, width: 80, height: 40 },
+      // Brass Telescope & Constellation Altar
+      { x: 180, y: 125, width: 32, height: 28 },
+      { x: 278, y: 125, width: 40, height: 28 },
     ],
     interactables: [
       {
@@ -583,7 +692,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       // Building 4: Queen Beenish's Mountain Castle
       { x: 660, y: 290, width: 190, height: 130 },
       // Building 5: 12-Marla Gaon Haveli (Hira Ki Haveli)
-      { x: 330, y: 490, width: 240, height: 120 },
+      { x: 330, y: 490, width: 240, height: 65 },
       // Central fountain plaza perimeter
       { x: 420, y: 310, width: 60, height: 50 },
     ],
@@ -597,7 +706,7 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
         promptLabel: '[ E ] Return to Valley of Stars',
         type: 'door',
         targetRoom: 'overworld',
-        targetPos: { x: 800, y: 720 },
+        targetPos: { x: 520, y: 980 },
       },
       {
         id: 'house_islamabad',
@@ -638,9 +747,9 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       {
         id: 'house_haveli',
         x: 420,
-        y: 475,
+        y: 545,
         width: 60,
-        height: 30,
+        height: 35,
         promptLabel: '[ E ] Enter 12-Marla Gaon Haveli (Hira Ki Haveli)',
         type: 'house_haveli',
       },
@@ -696,8 +805,8 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       },
       {
         id: 'castle_balcony',
-        x: 365,
-        y: 190,
+        x: 250,
+        y: 270,
         width: 70,
         height: 35,
         promptLabel: '[ E ] Mountain Vista Balcony (Breathtaking Views)',
@@ -706,18 +815,18 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       {
         id: 'castle_torches',
         x: 310,
-        y: 295,
-        width: 35,
-        height: 30,
+        y: 285,
+        width: 40,
+        height: 35,
         promptLabel: '[ E ] Royal Wall Sconce Torches',
         type: 'signpost',
       },
       {
         id: 'castle_banners',
-        x: 455,
-        y: 295,
-        width: 35,
-        height: 30,
+        x: 595,
+        y: 335,
+        width: 85,
+        height: 35,
         promptLabel: '[ E ] Royal Velvet Banners (Queen Beenish Star)',
         type: 'signpost',
       },
@@ -750,6 +859,9 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 580, y: 180, width: 175, height: 105 },
       // The Paisay Vault Treasury (South-East)
       { x: 530, y: 395, width: 185, height: 105 },
+      // Cantilever Structural Pillar Bases
+      { x: 100, y: 520, width: 30, height: 35 },
+      { x: 670, y: 520, width: 30, height: 35 },
     ],
     interactables: [
       {
@@ -858,26 +970,26 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       },
       {
         id: 'islamabad_sofa_bay',
-        x: 235,
+        x: 470,
         y: 285,
-        width: 70,
-        height: 45,
+        width: 110,
+        height: 40,
         promptLabel: '[ E ] Look through Living Room Window: Baraaa Sofa for Beenie',
         type: 'signpost',
       },
       {
         id: 'islamabad_kids_rooms',
-        x: 350,
-        y: 195,
-        width: 100,
+        x: 255,
+        y: 285,
+        width: 85,
         height: 40,
         promptLabel: "[ E ] Look up at Balconies: 3 Kids' Rooms (Samurai Jack, Starry, Pink Princess & Bear)",
         type: 'signpost',
       },
       {
         id: 'islamabad_lawn_sign',
-        x: 230,
-        y: 420,
+        x: 228,
+        y: 416,
         width: 50,
         height: 35,
         promptLabel: '[ E ] Read Villa Plaque: Islamabad 5-Marla Dream Sanctuary',
@@ -906,9 +1018,10 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 0, y: 410, width: 60, height: 190 },
       // Bakery building structure
       { x: 190, y: 100, width: 490, height: 180 },
-      // Outdoor cafe tables
-      { x: 310, y: 385, width: 65, height: 50 },
-      { x: 500, y: 385, width: 65, height: 50 },
+      // Outdoor Feast Table & Parisian Bistro Tables (Aligned to drawn tables)
+      { x: 195, y: 386, width: 84, height: 32 },
+      { x: 474, y: 388, width: 46, height: 24 },
+      { x: 604, y: 388, width: 46, height: 24 },
     ],
     interactables: [
       {
@@ -942,28 +1055,28 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       },
       {
         id: 'bakery_cafe_table',
-        x: 320,
-        y: 375,
+        x: 470,
+        y: 380,
         width: 55,
-        height: 40,
+        height: 35,
         promptLabel: '[ E ] Sit at Parisian Cafe Table (Taaza Coffee & Macarons)',
         type: 'signpost',
       },
       {
         id: 'feast_terrace',
-        x: 200,
-        y: 375,
-        width: 90,
-        height: 55,
+        x: 190,
+        y: 380,
+        width: 95,
+        height: 45,
         promptLabel: '[ E ] 2 AM Feast Terrace (White Pasta, Chocolates, Nutella & Kinder Joy)',
         type: 'feast_table',
       },
       {
         id: 'bakery_pretzel_sign',
-        x: 530,
-        y: 235,
-        width: 40,
-        height: 35,
+        x: 645,
+        y: 245,
+        width: 45,
+        height: 45,
         promptLabel: '[ E ] Golden Pretzel & Cupcake Emblem',
         type: 'signpost',
       },
@@ -987,12 +1100,15 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       { x: 0, y: 550, width: 800, height: 50 },
       { x: 0, y: 0, width: 60, height: 600 },
       { x: 740, y: 0, width: 60, height: 600 },
-      // Red clay brick haveli building
-      { x: 190, y: 200, width: 420, height: 170 },
+      // Red clay brick haveli building (Aligned to drawn facade y: 150..340)
+      { x: 190, y: 150, width: 420, height: 190 },
       // Shady neem tree
       { x: 110, y: 310, width: 55, height: 55 },
-      // Working tubewell trough basin
-      { x: 575, y: 375, width: 85, height: 65 },
+      // Woven Charpaiyan in Courtyard
+      { x: 215, y: 405, width: 65, height: 40 },
+      { x: 215, y: 468, width: 65, height: 40 },
+      // Working tubewell pump motor & hauzi water trough
+      { x: 555, y: 355, width: 150, height: 88 },
     ],
     interactables: [
       {
@@ -1009,36 +1125,36 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
       {
         id: 'house_haveli',
         x: 360,
-        y: 350,
+        y: 325,
         width: 80,
-        height: 50,
+        height: 35,
         promptLabel: '[ E ] Enter Carved Sheesham Haveli Darwaza',
         type: 'house_haveli',
       },
       {
         id: 'haveli_charpai',
-        x: 220,
-        y: 405,
+        x: 215,
+        y: 400,
         width: 75,
-        height: 45,
+        height: 48,
         promptLabel: '[ E ] Relax on Woven Charpai under Neem Tree',
         type: 'signpost',
       },
       {
         id: 'haveli_tubewell',
-        x: 575,
-        y: 365,
-        width: 85,
-        height: 50,
+        x: 550,
+        y: 350,
+        width: 160,
+        height: 95,
         promptLabel: '[ E ] Splash in Gushing Tubewell Water & Eat Fresh Mangoes',
         type: 'signpost',
       },
       {
         id: 'haveli_jharoka',
-        x: 365,
-        y: 245,
-        width: 70,
-        height: 40,
+        x: 240,
+        y: 325,
+        width: 65,
+        height: 35,
         promptLabel: '[ E ] Look up at Carved Sheesham Jharoka Balcony',
         type: 'signpost',
       },

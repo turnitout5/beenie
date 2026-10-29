@@ -69,10 +69,7 @@ export const StarfieldCanvas: React.FC = () => {
       targetAlpha: Math.random(),
     }));
 
-    let frame = 0;
-
     const render = () => {
-      frame++;
       ctx.clearRect(0, 0, width, height);
 
       // Render background stars (pixel blocks)

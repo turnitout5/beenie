@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useExpedition } from '../state/ExpeditionContext';
 import { LocationId } from '../types/expedition';
+import { soundEngine } from '../audio/soundEngine';
+import { PixelEnvelopeIcon } from './PixelIcons';
 
 interface JournalModalProps {
   onClose: () => void;
 }
 
 export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
-  const { state, navigateTo } = useExpedition();
-  const { journal, starsRecovered, unlockedLocations } = state;
+  const { state, navigateTo, resetExpedition } = useExpedition();
+  const { journal, starsRecovered, unlockedLocations, inventory, drawer07Unlocked, namedConstellation } = state;
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const handleQuickTravel = (loc: LocationId) => {
     navigateTo(loc);
+    onClose();
+  };
+
+  const handleReset = () => {
+    soundEngine.playClick();
+    resetExpedition();
     onClose();
   };
 
@@ -42,24 +51,54 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
           style={{
             backgroundColor: 'var(--color-void-navy)',
             padding: '12px 16px',
-            marginBottom: '20px',
+            marginBottom: '18px',
             border: '2px solid var(--color-twilight-blue)',
-            fontSize: '0.85rem',
+            fontSize: '0.84rem',
             lineHeight: '1.8',
           }}
         >
-          <div><span style={{ color: 'var(--color-dusty-lavender)' }}>EXPLORER:</span> <strong style={{ color: 'var(--color-warm-peach)' }}>Beenish Tasaffar</strong></div>
-          <div><span style={{ color: 'var(--color-dusty-lavender)' }}>EXPEDITION OBJECTIVE:</span> <span style={{ color: 'var(--color-moon-cream)' }}>Restore the Vanished Stars</span></div>
-          <div><span style={{ color: 'var(--color-dusty-lavender)' }}>RECOVERED STARS:</span> <strong style={{ color: 'var(--color-lantern-gold)' }}>0{starsRecovered} / 07</strong> ({Math.round((starsRecovered / 7) * 100)}% Restored)</div>
-          <div><span style={{ color: 'var(--color-dusty-lavender)' }}>WORLD INTEGRITY:</span> <span style={{ color: starsRecovered >= 6 ? 'var(--color-warm-peach)' : 'var(--color-dream-lilac)' }}>{starsRecovered >= 6 ? 'Harmonious & Radiant' : 'Gradually Awakening'}</span></div>
+          <div>
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>EXPLORER:</span>{' '}
+            <strong style={{ color: 'var(--color-warm-peach)' }}>Beenish Tasaffar (Paaaari / Beghum G)</strong>
+          </div>
+          <div>
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>EXPEDITION OBJECTIVE:</span>{' '}
+            <span style={{ color: 'var(--color-moon-cream)' }}>Restore the 7 Vanished Constellation Stars</span>
+          </div>
+          <div>
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>RECOVERED STARS:</span>{' '}
+            <strong style={{ color: 'var(--color-lantern-gold)' }}>0{starsRecovered} / 07</strong> ({Math.round((starsRecovered / 7) * 100)}% Restored)
+          </div>
+          <div>
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>WORLD INTEGRITY:</span>{' '}
+            <span style={{ color: starsRecovered >= 6 ? 'var(--color-warm-peach)' : 'var(--color-dream-lilac)' }}>
+              {starsRecovered >= 6 ? 'Harmonious & Radiant' : 'Gradually Awakening'}
+            </span>
+          </div>
+          {namedConstellation && (
+            <div>
+              <span style={{ color: 'var(--color-dusty-lavender)' }}>NAMED CONSTELLATION:</span>{' '}
+              <strong style={{ color: 'var(--color-lantern-gold)' }}>"{namedConstellation}"</strong>
+            </div>
+          )}
+          {(inventory.includes('brass_key') || drawer07Unlocked) && (
+            <div>
+              <span style={{ color: 'var(--color-dusty-lavender)' }}>KEY ITEMS:</span>{' '}
+              <span style={{ color: 'var(--color-warm-peach)' }}>
+                {inventory.includes('brass_key') ? 'Antique Brass Key #07' : ''}
+                {inventory.includes('brass_key') && drawer07Unlocked ? ' • ' : ''}
+                {drawer07Unlocked ? 'Overgrown Botanical Map & Emergency Chocolates' : ''}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Milestone Checklist */}
         <h3 className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-dream-lilac)', marginBottom: '12px' }}>
-          EXPEDITION MILESTONES:
+          EXPEDITION MILESTONES &amp; QUICK-TRAVEL:
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
           {journal.map((entry) => {
             const isUnlocked = unlockedLocations.includes(entry.location);
             return (
@@ -72,6 +111,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
                   padding: '10px 14px',
                   backgroundColor: entry.completed ? 'rgba(246, 215, 139, 0.08)' : 'rgba(48, 56, 95, 0.3)',
                   border: `2px solid ${entry.completed ? 'var(--color-lantern-gold)' : 'var(--color-twilight-blue)'}`,
+                  gap: '10px',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -89,7 +129,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
                     <div
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '0.9rem',
+                        fontSize: '0.88rem',
                         color: entry.completed ? 'var(--color-moon-cream)' : 'var(--color-muted-periwinkle)',
                         textDecoration: entry.completed ? 'line-through' : 'none',
                       }}
@@ -104,7 +144,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
                   <button
                     onClick={() => handleQuickTravel(entry.location)}
                     className="pixel-btn pixel-btn-ghost font-mono"
-                    style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: '32px' }}
+                    style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: '32px', whiteSpace: 'nowrap' }}
                   >
                     VISIT →
                   </button>
@@ -114,8 +154,8 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
           })}
         </div>
 
-        {/* Close Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        {/* Footer Actions: Resume, View Opening Hug & Kiss Card, & Replay/Reset */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <button
             onClick={onClose}
             className="pixel-btn pixel-btn-primary font-display"
@@ -123,6 +163,55 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
           >
             RESUME EXPEDITION
           </button>
+
+          <button
+            onClick={() => handleQuickTravel('boot')}
+            className="pixel-btn pixel-btn-ghost font-mono"
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              display: 'flex',
+              fontSize: '0.75rem',
+              padding: '7px',
+              minHeight: '34px',
+              borderColor: 'var(--color-rose-glow)',
+              color: 'var(--color-rose-glow)',
+            }}
+          >
+            <PixelEnvelopeIcon size={14} color="var(--color-rose-glow)" />
+            <span>[ VIEW MIDNIGHT HUG &amp; KISS CARD ]</span>
+          </button>
+
+          {!confirmReset ? (
+            <button
+              onClick={() => {
+                soundEngine.playClick();
+                setConfirmReset(true);
+              }}
+              className="pixel-btn pixel-btn-ghost font-mono"
+              style={{ width: '100%', justifyContent: 'center', fontSize: '0.72rem', padding: '6px', minHeight: '32px' }}
+            >
+              [ REPLAY EXPEDITION FROM START ]
+            </button>
+          ) : (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={handleReset}
+                className="pixel-btn pixel-btn-peach font-mono"
+                style={{ flex: 1, justifyContent: 'center', fontSize: '0.75rem', padding: '8px', minHeight: '36px' }}
+              >
+                CONFIRM RESET TO BOOT SCREEN
+              </button>
+              <button
+                onClick={() => setConfirmReset(false)}
+                className="pixel-btn pixel-btn-ghost font-mono"
+                style={{ flex: 1, justifyContent: 'center', fontSize: '0.75rem', padding: '8px', minHeight: '36px' }}
+              >
+                CANCEL
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
