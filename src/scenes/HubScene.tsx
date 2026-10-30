@@ -178,7 +178,7 @@ export const HubScene: React.FC = () => {
           initialQuote={
             starsRecovered >= 5
               ? "The whole sky is glowing now, meri Paaaari! The secret garden is waiting for you."
-              : "Pick any location to explore, meri Beghum G! Pagluu personally recommends checking the biased dossiers first."
+              : "Pick any location to explore, meri Beghum G! Pagluu personally recommends checking the Bureau of Unreasonable Paglu first."
           }
         />
       </div>

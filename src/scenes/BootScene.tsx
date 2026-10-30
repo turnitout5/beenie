@@ -154,7 +154,7 @@ const CoupleVignetteSVG: React.FC<{
             marginTop: '4px',
           }}
         >
-          &ldquo;Abhi 31st October ke 00:00:00 nahi bajay... Pagluu is waiting in the cold dark to hug &amp; kiss his Paaaari...&rdquo;
+          &ldquo;Abhi 31st October ke 12 nai bajay... Pagluu intezar kar raha hai apni Paaaari ka...&rdquo;
         </div>
       </div>
     );
@@ -381,6 +381,21 @@ const CoupleVignetteSVG: React.FC<{
   );
 };
 
+/**
+ * ==============================================================================
+ * DEV FLAG FOR AHMAD'S TESTING
+ * ==============================================================================
+ * • DEV_FLAG = true:
+ *   - Automatically starts a 6-second countdown on launch so Ahmad can test the midnight reveal.
+ *   - Shows the dev testing buttons ("Test 6s Countdown", "Midnight Reveal Dekhein").
+ *
+ * • DEV_FLAG = false (Default for Beenish / Production):
+ *   - Counts down strictly to 00:00:00 of 31st October.
+ *   - Completely hides all dev buttons so Beenish sees zero dev controls.
+ *   - Note: Ahmad can also test anytime in browser by appending "?dev=1" to the URL!
+ */
+export const DEV_FLAG = false;
+
 export const BootScene: React.FC = () => {
   const { navigateTo } = useExpedition();
 
@@ -391,9 +406,17 @@ export const BootScene: React.FC = () => {
     return new Date(year, 9, 31, 0, 0, 0, 0).getTime();
   }, []);
 
+  const isDevActive = DEV_FLAG || (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('dev') === '1');
+
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const [forceUnlocked, setForceUnlocked] = useState<boolean>(false);
-  const [simulatedCountdownEnd, setSimulatedCountdownEnd] = useState<number | null>(null);
+  const [simulatedCountdownEnd, setSimulatedCountdownEnd] = useState<number | null>(() => {
+    // When dev flag is on: automatically start a 6-second countdown on launch to preview what happens!
+    if (DEV_FLAG || (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('dev') === '1')) {
+      return Date.now() + 6000;
+    }
+    return null; // When dev flag is off: strictly ends on 31st October at 00:00:00
+  });
   const [hasCelebrationFired, setHasCelebrationFired] = useState<boolean>(false);
   const [kissActive, setKissActive] = useState<boolean>(true);
   const [floatingParticles, setFloatingParticles] = useState<
@@ -414,10 +437,10 @@ export const BootScene: React.FC = () => {
   const isUnlocked = forceUnlocked || remainingMs <= 0;
 
   const sadQuotes = [
-    'Abhi 31st October ke 00:00:00 nahi bajay... Without my Paaaari’s birthday, the whole sky is dark and lonely.',
-    'Waqt itna ahista kyun chal raha hai... Pagluu is counting every single heartbeat in the cold rain.',
-    'All the hugs, forehead kisses, funny horns, and your starry birthday world are locked behind 00:00:00...',
-    'Sabar meri Beghum G... The moment the clock strikes 00:00:00 on 31st October, this darkness turns into heaven.',
+    'Abhi 31st October ke 12 nai bajay... Meri Paaaari ki birthday k bina andhera aur khamoshi hai.',
+    'Waqt kitna ahista chal raha hai... Apka Pagluu aik aik second ginn raha hai 12 bajnay ka.',
+    'Bas 12 bajnay ki dair hai meri Beghum G... Pagluu nay apkay liye bohot pyara birthday world banaya hai!',
+    'Sabar meri jaan... jese hi 12 bajenge, dunya ki sab say pyari larki ki birthday shuru ho jaye gi!',
   ];
 
   const evadeQuips = [
@@ -431,12 +454,12 @@ export const BootScene: React.FC = () => {
 
   // Ahmad's very sweet birthday wish lines revealed in the Heavenly Pinky Opening
   const noteLines = [
-    'To Meri Paaaari, Meri Beghum G, Meri Jaan 💖,',
-    '00:00:00 • 31st October is finally here! The dark, lonely wait is over because at this exact midnight, the brightest soul in my universe was born.',
-    'Come here first—let your Pagluu pull you into the tightest hug, hold you close, and give you a thousand birthday kisses! (Muaaah! 💋)',
-    'Ufff kitu sundar hain meri Paaaari... From your smile to your nakhray to your signature white-white baal, you make my whole life feel like heaven.',
-    'May Allah bless every step of your life with endless khushiyan, peace, and every dream your heart desires—and may I spend every 31st October holding you just like this.',
-    'I built an entire Valley of the Stars with seven places of our memories waiting just behind this door for you. Happy Birthday, my love! ♥',
+    'Meri Paaaari, Meri Beghum G, Meri Jaan 💖,',
+    '00:00:00 • 31st October aa gaya! Happy Birthday meri sab say pyari Beenish!',
+    'Aajaen pehly foran idhar—apka Pagluu apko zoor say gale lagaye aur dhayeeer saari birthday kissies karay! (Muaaah! 💋)',
+    'Ufff kitu sundar hain meri Paaaari... aapki pyari aankhein, wo chotu si chin, aur aapkay white white baal... sari ki sari malai hain aap!',
+    'Allah pak meri jaan ko dunya ki saari khushiyan day, sehat day, kamyabi day, aur humesha mery sath rakhay... Ameen.',
+    'Apki khushi k liye apky Pagluu nay ye chota sa world banaya hai... chalien andar chaltay hain meri dream wife! ♥',
   ];
 
   // Trigger the celebratory burst of funny horns + birthday melody + floating particles
@@ -555,7 +578,7 @@ export const BootScene: React.FC = () => {
   // - Enter / Space (when unlocked): Reveal all lines or Step Into The Valley
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.shiftKey && (e.key === 'U' || e.key === 'u')) {
+      if (isDevActive && e.shiftKey && (e.key === 'U' || e.key === 'u')) {
         e.preventDefault();
         setForceUnlocked(true);
         return;
@@ -575,7 +598,7 @@ export const BootScene: React.FC = () => {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isUnlocked, bootStep, noteLines.length, navigateTo]);
+  }, [isUnlocked, bootStep, noteLines.length, navigateTo, isDevActive]);
 
   // Breakdown remaining time into DD : HH : MM : SS
   const totalSeconds = Math.ceil(remainingMs / 1000);
@@ -635,7 +658,7 @@ export const BootScene: React.FC = () => {
             }}
           >
             <PixelLockIcon size={14} color="#7A84A8" />
-            <span>Sealed in the Dark &bull; Waiting for 31st October 00:00:00</span>
+            <span>31st October Ka Intezar &bull; 00:00:00</span>
           </div>
           <h1
             className="font-display"
@@ -647,7 +670,7 @@ export const BootScene: React.FC = () => {
               textShadow: '0 2px 18px rgba(0, 0, 0, 0.9)',
             }}
           >
-            NOT YET 00:00:00 ON 31ST OCTOBER...
+            ABHI 31ST OCTOBER KE 12 NAI BAJAY...
           </h1>
           <p
             className="font-mono"
@@ -657,7 +680,7 @@ export const BootScene: React.FC = () => {
               marginTop: '6px',
             }}
           >
-            The world is dark, cold, and sad until my Paaaari&apos;s birthday arrives.
+            Meri Paaaari ke birthday ke 12 bajnay tak Pagluu intezar kar raha hai...
           </p>
         </div>
 
@@ -689,7 +712,7 @@ export const BootScene: React.FC = () => {
               marginBottom: '16px',
             }}
           >
-            Countdown to 00:00:00 &bull; October 31
+            Birthday Shuru Honay Mein Baki Waqt &bull; October 31
           </div>
 
           {/* DD : HH : MM : SS Grid */}
@@ -803,7 +826,7 @@ export const BootScene: React.FC = () => {
               soundEngine.startNightAmbience();
               soundEngine.playClick();
               setEarlyClickMessage(
-                'Audio ready for midnight! Sabar meri Paaaari—at 00:00:00 on 31st October the horns will blow and Pagluu will hug & kiss you! 💖'
+                'Sabar meri Paaaari... 31st October ke 12 bajnay ka intezar karein! Ek bohot pyara surprise apka intezar kar raha hai... koi spoiler nai! 🤫✨'
               );
             }}
             className="pixel-btn pixel-btn-ghost font-mono"
@@ -819,65 +842,67 @@ export const BootScene: React.FC = () => {
             }}
           >
             <PixelLanternIcon size={15} />
-            <span>Sit With Pagluu in the Dark (Ready Sound for 00:00:00)</span>
+            <span>Pagluu Ke Sath Intezar Karein ♥</span>
           </button>
         </div>
 
-        {/* Discreet Preview Controls for Ahmad to test the 00:00:00 Countdown & Unlock right now */}
-        <div
-          style={{
-            marginTop: '24px',
-            display: 'flex',
-            gap: '14px',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            opacity: 0.55,
-            position: 'relative',
-            zIndex: 2,
-          }}
-        >
-          <button
-            onClick={() => {
-              soundEngine.startNightAmbience();
-              soundEngine.playClick();
-              setSimulatedCountdownEnd(Date.now() + 5000);
-              setEarlyClickMessage('Simulating final 5 seconds before 00:00:00 October 31...');
-            }}
-            className="font-mono"
+        {/* Discreet Preview Controls for Ahmad to test the 00:00:00 Countdown & Unlock (Only shown when dev flag is ON) */}
+        {isDevActive && (
+          <div
             style={{
-              background: 'transparent',
-              border: '1px dashed #3A4366',
-              color: '#6E789E',
-              padding: '6px 12px',
-              fontSize: '0.72rem',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
+              marginTop: '24px',
+              display: 'flex',
+              gap: '14px',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              opacity: 0.55,
+              position: 'relative',
+              zIndex: 2,
             }}
           >
-            <PixelHourglassIcon size={12} color="#6E789E" />
-            <span>[Pagluu Test: Simulate Final 5s Countdown to 00:00:00]</span>
-          </button>
-          <button
-            onClick={() => {
-              setForceUnlocked(true);
-            }}
-            className="font-mono"
-            style={{
-              background: 'transparent',
-              border: '1px dashed #3A4366',
-              color: '#6E789E',
-              padding: '6px 12px',
-              fontSize: '0.72rem',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}
-          >
-            <PixelUnlockIcon size={12} color="#6E789E" />
-            <span>[Pagluu Test: Unlock 00:00:00 Immediately]</span>
-          </button>
-        </div>
+            <button
+              onClick={() => {
+                soundEngine.startNightAmbience();
+                soundEngine.playClick();
+                setSimulatedCountdownEnd(Date.now() + 6000);
+                setEarlyClickMessage('Starting 6s countdown to midnight...');
+              }}
+              className="font-mono"
+              style={{
+                background: 'transparent',
+                border: '1px dashed #3A4366',
+                color: '#6E789E',
+                padding: '6px 12px',
+                fontSize: '0.72rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              <PixelHourglassIcon size={12} color="#6E789E" />
+              <span>Test 6s Countdown</span>
+            </button>
+            <button
+              onClick={() => {
+                setForceUnlocked(true);
+              }}
+              className="font-mono"
+              style={{
+                background: 'transparent',
+                border: '1px dashed #3A4366',
+                color: '#6E789E',
+                padding: '6px 12px',
+                fontSize: '0.72rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              <PixelUnlockIcon size={12} color="#6E789E" />
+              <span>Midnight Reveal Dekhein</span>
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -965,7 +990,7 @@ export const BootScene: React.FC = () => {
           }}
         >
           <PixelStarIcon size={14} color="#F6D78B" />
-          <span>00:00:00 &bull; October 31 &bull; The Wait Is Over!</span>
+          <span>00:00:00 &bull; 31st October &bull; Intezar Khatam!</span>
           <PixelStarIcon size={14} color="#F6D78B" />
         </div>
         <h1
@@ -995,7 +1020,7 @@ export const BootScene: React.FC = () => {
             marginTop: '5px',
           }}
         >
-          A heavenly world built for Paaaari (Beenish) by her Pagluu (Ahmad) ♥
+          Meri Pyari Paaaari (Beenish) Ke Liye Pagluu (Ahmad) Ka World ♥
         </p>
       </div>
 
@@ -1040,7 +1065,7 @@ export const BootScene: React.FC = () => {
           }}
         >
           <PixelHornIcon size={16} color="#FFFFFF" />
-          <span>Blow Funny Birthday Horns + Big Kiss!</span>
+          <span>Birthday Horns Bajayein + Big Kiss!</span>
           <PixelHeartIcon size={12} color="#FFFFFF" style={{ marginLeft: '6px' }} />
         </button>
         <button
@@ -1058,7 +1083,7 @@ export const BootScene: React.FC = () => {
           }}
         >
           <PixelEmbraceIcon size={15} color="#FFE6F2" />
-          <span>Hug &amp; Kiss Her Again (Muaaah!)</span>
+          <span>Hug &amp; Kiss (Muaaah!)</span>
         </button>
       </div>
 
@@ -1110,7 +1135,7 @@ export const BootScene: React.FC = () => {
             }}
           >
             <PixelEnvelopeIcon size={14} color="#FFB8D9" />
-            <span>Midnight Birthday Wish &bull; From Pagluu (Ahmad)</span>
+            <span>Happy Birthday Meri Paaaari &bull; From Pagluu (Ahmad)</span>
           </span>
           <span
             className="font-mono"
@@ -1163,7 +1188,7 @@ export const BootScene: React.FC = () => {
 
           {bootStep < noteLines.length && (
             <div style={{ color: '#FFB8D9', animation: 'starTwinkle 0.8s infinite' }}>
-              ♥ _ <span style={{ fontSize: '0.75rem', color: '#FF99C8' }}>[click to read full birthday wish]</span>
+              ♥ _ <span style={{ fontSize: '0.75rem', color: '#FF99C8' }}>(click to read more)</span>
             </div>
           )}
         </div>
@@ -1199,7 +1224,7 @@ export const BootScene: React.FC = () => {
             }}
           >
             <PixelStarIcon size={16} color="#2A0D24" style={{ marginRight: '8px' }} />
-            <span>Step Into Your Birthday Valley</span>
+            <span>Enter Birthday Valley ♥</span>
             <PixelArrowRightIcon size={14} color="#2A0D24" />
           </button>
 
@@ -1224,30 +1249,32 @@ export const BootScene: React.FC = () => {
         </div>
       )}
 
-      {/* Subtle option to preview the Dark & Sad Timer again */}
-      <div style={{ marginTop: '16px', opacity: 0.5, position: 'relative', zIndex: 2 }}>
-        <button
-          onClick={() => {
-            setForceUnlocked(false);
-            setHasCelebrationFired(false);
-            setSimulatedCountdownEnd(Date.now() + 8000);
-          }}
-          className="font-mono"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#FFB8D9',
-            fontSize: '0.72rem',
-            textDecoration: 'underline',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-          }}
-        >
-          <PixelRewindIcon size={12} color="#FFB8D9" />
-          <span>Replay the Dark &amp; Sad Countdown &rarr; 00:00:00 Reveal</span>
-        </button>
-      </div>
+      {/* Subtle option to preview the Dark & Sad Timer again (Only shown when dev flag is ON) */}
+      {isDevActive && (
+        <div style={{ marginTop: '16px', opacity: 0.5, position: 'relative', zIndex: 2 }}>
+          <button
+            onClick={() => {
+              setForceUnlocked(false);
+              setHasCelebrationFired(false);
+              setSimulatedCountdownEnd(Date.now() + 6000);
+            }}
+            className="font-mono"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#FFB8D9',
+              fontSize: '0.72rem',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+          >
+            <PixelRewindIcon size={12} color="#FFB8D9" />
+            <span>Replay Countdown &rarr; 00:00:00 Reveal (Dev)</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

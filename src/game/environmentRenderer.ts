@@ -471,8 +471,8 @@ export class EnvironmentRenderer {
     lights.push({ x: 1420, y: 20, radius: 60, intensity: 0.95, color: '#F59E0B' });
 
     // West: Stealth Highway to Dark Brutalist Mafia Home & Batmobile
-    this.drawMafiaPortal(ctx, 0, 550, frame);
-    lights.push({ x: 30, y: 580, radius: 55, intensity: 0.9, color: '#38BDF8' });
+    this.drawMafiaPortal(ctx, 4, 545, frame);
+    lights.push({ x: 32, y: 580, radius: 75, intensity: 1.0, color: '#38BDF8' });
 
     // North-West: Pine Trail to Islamabad 5-Marla Villa
     this.drawIslamabadPortal(ctx, 100, 0, frame);
@@ -1014,7 +1014,7 @@ export class EnvironmentRenderer {
     const crystalProps = [
       { x: 110, y: 165, color: '#9588BD', label: '01. CHAT' },
       { x: 270, y: 155, color: '#E98FAF', label: '02. LAUGH' },
-      { x: 430, y: 165, color: '#F6D78B', label: '03. DOSSIER' },
+      { x: 430, y: 165, color: '#F6D78B', label: '03. VOW' },
     ];
 
     crystalProps.forEach((c, idx) => {
@@ -2583,33 +2583,60 @@ export class EnvironmentRenderer {
   }
 
   /**
-   * 2. Brutalist Mafia Highway Portal on West Overworld
+   * 2. Brutalist Mafia Highway Portal on West Overworld (High-Tech Obsidian Security Gate)
    */
   public static drawMafiaPortal(ctx: CanvasRenderingContext2D, x: number, y: number, frame: number): void {
-    // Matte Obsidian Security Gate
-    ctx.fillStyle = '#0F172A';
-    ctx.fillRect(x, y, 32, 60);
+    const w = 52;
+    const h = 72;
+
+    // Outer Obsidian Fortress Pylons (Left & Right)
+    ctx.fillStyle = '#090D16';
+    ctx.fillRect(x, y, 14, h);
+    ctx.fillRect(x + w - 14, y, 14, h);
     ctx.fillStyle = '#1E293B';
-    ctx.fillRect(x, y + 2, 28, 56);
+    ctx.fillRect(x + 2, y + 2, 10, h - 4);
+    ctx.fillRect(x + w - 12, y + 2, 10, h - 4);
 
-    // Titanium overhead beam
+    // Glowing Cyan Neon Vertical Light Strips on Pillars
+    const neonPulse = Math.sin(frame * 0.08) * 0.2 + 0.8;
+    ctx.fillStyle = `rgba(56, 189, 248, ${neonPulse})`;
+    ctx.fillRect(x + 5, y + 10, 3, h - 20);
+    ctx.fillRect(x + w - 8, y + 10, 3, h - 20);
+
+    // High-Tech Titanium Overhead Canopy Archway
     ctx.fillStyle = '#334155';
-    ctx.fillRect(x, y, 34, 8);
+    ctx.fillRect(x, y, w, 16);
     ctx.fillStyle = '#64748B';
-    ctx.fillRect(x, y + 1, 34, 2);
+    ctx.fillRect(x, y + 1, w, 3);
+    ctx.fillStyle = '#0F172A';
+    ctx.fillRect(x + 4, y + 4, w - 8, 10);
 
-    // Animated Red Laser Line
-    const laserY = y + 12 + ((frame * 0.7) % 36);
-    ctx.fillStyle = '#EF4444';
-    ctx.fillRect(x + 4, Math.floor(laserY), 24, 2);
-
-    // Cyan Neon Text & Sign
+    // Illuminated Neon Gate Header: 'MAFIA ESTATE'
     ctx.fillStyle = '#38BDF8';
-    ctx.font = 'bold 5px monospace';
-    ctx.fillText('<- MAFIA', x + 2, y + 28);
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = '4px monospace';
-    ctx.fillText('TUMBLER', x + 3, y + 36);
+    ctx.font = 'bold 6px monospace';
+    ctx.fillText('MAFIA ESTATE', x + 4, y + 11);
+
+    // Biometric Security Gate Opening with Holographic Scan
+    ctx.fillStyle = '#0B1120';
+    ctx.fillRect(x + 14, y + 16, w - 28, h - 16);
+
+    // Dual Animated Laser Sweepers
+    const laserY = y + 18 + ((frame * 0.8) % (h - 26));
+    ctx.fillStyle = '#EF4444';
+    ctx.fillRect(x + 14, Math.floor(laserY), w - 28, 2);
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+    ctx.fillRect(x + 14, Math.floor(laserY) - 2, w - 28, 6);
+
+    // Cyan Neon Directional Text
+    const arrowGlow = Math.sin(frame * 0.12) > 0 ? '#38BDF8' : '#0284C7';
+    ctx.fillStyle = arrowGlow;
+    ctx.font = 'bold 6px monospace';
+    ctx.fillText('<- BATMOBILE', x + 5, y + 42);
+
+    // Yellow Highway Asphalt Landing Stripes leading into gate
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillRect(x + 16, y + h - 6, 8, 3);
+    ctx.fillRect(x + 28, y + h - 6, 8, 3);
   }
 
   /**
@@ -3433,7 +3460,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(348, 550, 104, 16);
     ctx.fillStyle = '#F59E0B';
     ctx.font = 'bold 5px monospace';
-    ctx.fillText('v RETURN TO VALLEY OF STARS v', 352, 560);
+    ctx.fillText('v RETURN TO DREAM ESTATES v', 352, 560);
 
     return lights;
   }
@@ -3574,7 +3601,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(252, 28, 286, 14);
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 6px monospace';
-    ctx.fillText('BAT-COMPUTER // TACTICAL SURVEILLANCE & BADDIE DOSSIER', 256, 38);
+    ctx.fillText('BAT-COMPUTER // 11/10 BADDIE STATUS & RADAR', 256, 38);
 
     // Target Profile: Beenish Tasaffar (11/10 Baddie)
     ctx.fillStyle = '#EF4444';
@@ -3631,14 +3658,14 @@ export class EnvironmentRenderer {
     ctx.fillRect(546, 26, 108, 120);
     ctx.fillStyle = '#F59E0B';
     ctx.font = 'bold 5px monospace';
-    ctx.fillText('VEHICLE DIAGNOSTICS', 550, 36);
+    ctx.fillText('VEHICLE STATUS & SPEED', 550, 36);
 
     ctx.fillStyle = '#38BDF8';
     ctx.font = '4px monospace';
     ctx.fillText('TUMBLER: JET TURBINE [READY]', 550, 48);
     ctx.fillText('BOOST PSI: 48.5 BAR', 550, 56);
     ctx.fillStyle = '#4ADE80';
-    ctx.fillText('NINJA H2R: 310 HP BOOST [MAX]', 550, 68);
+    ctx.fillText('KAWASAKI NINJA H2R: SUPERCHARGED', 550, 68);
     ctx.fillText('CHALLENGER: V8 HELLCAT [IDLE]', 550, 76);
 
     // Dials & Tachometer Bars
@@ -3941,7 +3968,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(660, 415, 130, 16);
     ctx.fillStyle = '#38BDF8';
     ctx.font = 'bold 5px monospace';
-    ctx.fillText('> HIGHWAY TUNNEL TO VALLEY >', 664, 426);
+    ctx.fillText('> HIGHWAY TUNNEL TO DREAM ESTATES >', 664, 426);
 
     return lights;
   }
@@ -4449,7 +4476,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(348, 550, 104, 16);
     ctx.fillStyle = '#FEF08A';
     ctx.font = 'bold 5px monospace';
-    ctx.fillText('v RETURN TO VALLEY OF STARS v', 352, 560);
+    ctx.fillText('v RETURN TO DREAM ESTATES v', 352, 560);
 
     return lights;
   }
@@ -4819,7 +4846,7 @@ export class EnvironmentRenderer {
     ctx.fillRect(10, 385, 110, 15);
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 5px monospace';
-    ctx.fillText('< RETURN TO VALLEY OF STARS <', 12, 395);
+    ctx.fillText('< RETURN TO DREAM ESTATES <', 12, 395);
 
     return lights;
   }
@@ -5257,30 +5284,33 @@ export class EnvironmentRenderer {
       ctx.fillStyle = '#FEF08A';
       ctx.fillRect(lx - 2, ly + 5, 8, 8);
     };
-    drawHurricaneLantern(330, hy - 10);
-    drawHurricaneLantern(466, hy - 10);
+    drawHurricaneLantern(330, 520);
+    drawHurricaneLantern(466, 520);
     drawHurricaneLantern(540, twY + 20);
-    lights.push({ x: 332, y: hy - 2, radius: 50, intensity: 0.9, color: '#F59E0B' });
-    lights.push({ x: 468, y: hy - 2, radius: 50, intensity: 0.9, color: '#F59E0B' });
+    lights.push({ x: 332, y: 528, radius: 55, intensity: 0.95, color: '#F59E0B' });
+    lights.push({ x: 468, y: 528, radius: 55, intensity: 0.95, color: '#F59E0B' });
     lights.push({ x: 542, y: twY + 28, radius: 55, intensity: 0.9, color: '#F59E0B' });
 
-    // Top Approach Road leading down from the Valley of Stars
+    // Bottom Approach Road leading out to Dream Estates Boulevard
     ctx.fillStyle = '#543F2B';
-    ctx.fillRect(340, 0, 120, hy + 20);
+    ctx.fillRect(340, 480, 120, height - 480);
     ctx.fillStyle = '#6B4F35';
-    ctx.fillRect(344, 0, 112, hy + 20);
-    for (let dy = 0; dy < hy + 20; dy += 14) {
+    ctx.fillRect(344, 480, 112, height - 480);
+    for (let dy = 480; dy < height; dy += 14) {
       ctx.fillStyle = '#78350F';
       ctx.fillRect(362, dy, 4, 8); // Wheel ruts
       ctx.fillRect(434, dy, 4, 8);
     }
 
-    // Return Plaque at top
+    // Return Plaque at bottom
     ctx.fillStyle = '#3E1C0A';
-    ctx.fillRect(348, 20, 104, 16);
+    ctx.fillRect(348, 560, 104, 16);
+    ctx.strokeStyle = '#F59E0B';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(348, 560, 104, 16);
     ctx.fillStyle = '#F59E0B';
     ctx.font = 'bold 5px monospace';
-    ctx.fillText('^ RETURN TO VALLEY OF STARS ^', 352, 30);
+    ctx.fillText('v RETURN TO DREAM ESTATES v', 352, 570);
 
     return lights;
   }
@@ -5343,6 +5373,12 @@ export class EnvironmentRenderer {
       }
     }
 
+    // --- GRAND ROYAL ARCH GATE TO VALLEY OF STARS (NORTH BOULEVARD) ---
+    this.drawDreamEstatesValleyGate(ctx, 410, 0, frame);
+    lights.push({ x: 400, y: 22, radius: 50, intensity: 0.95, color: '#F6D78B' });
+    lights.push({ x: 500, y: 22, radius: 50, intensity: 0.95, color: '#F6D78B' });
+    lights.push({ x: 450, y: 20, radius: 60, intensity: 0.9, color: '#38BDF8' });
+
     // --- CENTRAL PLAZA FOUNTAIN ---
     this.drawPlazaFountain(ctx, 420, 310, frame);
     lights.push({ x: 450, y: 345, radius: 65, intensity: 0.9, color: '#38BDF8' });
@@ -5363,7 +5399,7 @@ export class EnvironmentRenderer {
 
     // --- DECORATIVE CHERRY BLOSSOM & PINE TREES ---
     this.drawDetailedTree(ctx, 260, 60, 'oak', frame);
-    this.drawDetailedTree(ctx, 610, 60, 'pine', frame);
+    this.drawDetailedTree(ctx, 550, 60, 'pine', frame);
     this.drawDetailedTree(ctx, 250, 420, 'willow', frame);
     this.drawDetailedTree(ctx, 620, 430, 'pine', frame);
     this.drawDetailedTree(ctx, 120, 600, 'oak', frame);
@@ -5415,6 +5451,94 @@ export class EnvironmentRenderer {
   }
 
   /**
+   * Grand Royal Arch Gateway connecting Dream Estates to the Valley of the Stars
+   */
+  private static drawDreamEstatesValleyGate(
+    ctx: CanvasRenderingContext2D,
+    x: number, // 410
+    y: number, // 0
+    frame: number
+  ): void {
+    // Portal energy mist on threshold
+    const portalPulse = Math.sin(frame * 0.08) * 0.15 + 0.35;
+    const grad = ctx.createLinearGradient(x + 4, y, x + 76, y + 36);
+    grad.addColorStop(0, `rgba(56, 189, 248, ${portalPulse * 0.5})`);
+    grad.addColorStop(0.5, `rgba(129, 140, 248, ${portalPulse})`);
+    grad.addColorStop(1, `rgba(244, 114, 182, ${portalPulse * 0.5})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(x + 6, y + 6, 68, 28);
+
+    // Left Stone Pillar (x - 14 .. x + 6)
+    ctx.fillStyle = '#1E293B';
+    ctx.fillRect(x - 14, y, 18, 44);
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(x - 12, y + 2, 14, 40);
+    // Left Pillar Gold Trim & Cap
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillRect(x - 16, y + 40, 22, 4);
+    ctx.fillRect(x - 16, y, 22, 5);
+    ctx.fillRect(x - 14, y - 4, 18, 4);
+    // Left Lantern
+    ctx.fillStyle = '#FBBF24';
+    ctx.fillRect(x - 8, y + 16, 5, 8);
+
+    // Right Stone Pillar (x + 74 .. x + 94)
+    ctx.fillStyle = '#1E293B';
+    ctx.fillRect(x + 76, y, 18, 44);
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(x + 78, y + 2, 14, 40);
+    // Right Pillar Gold Trim & Cap
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillRect(x + 74, y + 40, 22, 4);
+    ctx.fillRect(x + 74, y, 22, 5);
+    ctx.fillRect(x + 76, y - 4, 18, 4);
+    // Right Lantern
+    ctx.fillStyle = '#FBBF24';
+    ctx.fillRect(x + 83, y + 16, 5, 8);
+
+    // Grand Wrought-Iron & Golden Overhead Arch
+    ctx.strokeStyle = '#D97706';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x - 4, y + 10);
+    ctx.quadraticCurveTo(x + 40, y - 16, x + 84, y + 10);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#FDE68A';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y + 14);
+    ctx.quadraticCurveTo(x + 40, y - 10, x + 80, y + 14);
+    ctx.stroke();
+
+    // Filigree scrolls inside arch
+    for (let s = 14; s < 68; s += 12) {
+      ctx.fillStyle = '#FBBF24';
+      ctx.fillRect(x + s, y + 1, 2, 8);
+    }
+
+    // Royal Plaque in center of Arch
+    ctx.fillStyle = '#0F172A';
+    ctx.fillRect(x + 10, y + 12, 60, 16);
+    ctx.strokeStyle = '#F59E0B';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 10, y + 12, 60, 16);
+
+    // Plaque Text
+    ctx.fillStyle = '#FEF08A';
+    ctx.font = 'bold 6px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('^ VALLEY OF STARS ^', x + 40, y + 23);
+    ctx.textAlign = 'left'; // Reset
+
+    // Direction arrow & stars
+    const starBlink = (Math.sin(frame * 0.15) > 0);
+    ctx.fillStyle = starBlink ? '#67E8F9' : '#FDE047';
+    ctx.fillRect(x + 14, y + 19, 2, 2);
+    ctx.fillRect(x + 64, y + 19, 2, 2);
+  }
+
+  /**
    * Central Plaza Marble Fountain in Dream Estates
    */
   private static drawPlazaFountain(
@@ -5454,13 +5578,6 @@ export class EnvironmentRenderer {
     ctx.fillRect(x + 29, y + 8 - jetH, 2, jetH);
     ctx.fillRect(x + 27, y + 9 - jetH + 2, 1, 3);
     ctx.fillRect(x + 32, y + 9 - jetH + 2, 1, 3);
-
-    // Return Portal Signpost
-    ctx.fillStyle = '#475569';
-    ctx.fillRect(x + 22, y + 42, 16, 10);
-    ctx.fillStyle = '#F59E0B';
-    ctx.font = '5px monospace';
-    ctx.fillText('VALLEY', x + 24, y + 49);
   }
 
   /**
@@ -6167,11 +6284,11 @@ export class EnvironmentRenderer {
       }
 
       // 2. Portal Overhead Lintels & Awnings
-      // Mafia Portal top titanium beam (0, 550)
+      // Mafia Portal top titanium beam (4, 545)
       ctx.fillStyle = '#334155';
-      ctx.fillRect(0, 550, 34, 8);
+      ctx.fillRect(4, 545, 52, 16);
       ctx.fillStyle = '#64748B';
-      ctx.fillRect(0, 551, 34, 2);
+      ctx.fillRect(4, 546, 52, 3);
 
       // Bakery Portal top awning cap (1540, 550)
       ctx.fillStyle = '#BE185D';

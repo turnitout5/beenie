@@ -5,18 +5,24 @@ interface CompanionProps {
   pose?: 'idle' | 'wave' | 'thumbsup' | 'blush' | 'reading';
   initialQuote?: string;
   locationContext?: string;
+  size?: 'small' | 'medium' | 'large';
+  speechPosition?: 'top' | 'bottom';
 }
 
 export const CompanionBoyfriend: React.FC<CompanionProps> = ({
   pose = 'idle',
   initialQuote = "ufff kitu sundar hain meri Paaaari... Happy birthday, meri Beghum G!",
+  size = 'medium',
+  speechPosition = 'top',
 }) => {
+  const spriteWidth = size === 'large' ? 84 : size === 'small' ? 36 : 48;
+  const spriteHeight = size === 'large' ? 98 : size === 'small' ? 42 : 56;
   const [currentQuote, setCurrentQuote] = useState(initialQuote);
   const [showSpeech, setShowSpeech] = useState(true);
   const [clickCount, setClickCount] = useState(0);
 
   const quotes = [
-    "Bas meri Paaaari hain. Samajh nahi aata, bas hain.",
+    "Bas meri Paaaari hain. Samajh nai aata, bas hain.",
     "ufff kitu sundar hain meri Beghum G...",
     "yummm yumm kha jaun ga apko!",
     "CASE FILE #001: Pagluu ka dil officially Paaaari ke paas confiscated hai.",
@@ -52,8 +58,9 @@ export const CompanionBoyfriend: React.FC<CompanionProps> = ({
           className="font-mono"
           style={{
             position: 'absolute',
-            bottom: '100%',
-            marginBottom: '12px',
+            ...(speechPosition === 'bottom'
+              ? { top: '100%', marginTop: '12px' }
+              : { bottom: '100%', marginBottom: '12px' }),
             backgroundColor: 'var(--color-midnight-indigo)',
             color: 'var(--color-moon-cream)',
             padding: '8px 12px',
@@ -71,14 +78,27 @@ export const CompanionBoyfriend: React.FC<CompanionProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '100%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 0,
-              height: 0,
-              borderLeft: '6px solid transparent',
-              borderRight: '6px solid transparent',
-              borderTop: '6px solid var(--color-warm-peach)',
+              ...(speechPosition === 'bottom'
+                ? {
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 0,
+                    height: 0,
+                    borderLeft: '6px solid transparent',
+                    borderRight: '6px solid transparent',
+                    borderBottom: '6px solid var(--color-warm-peach)',
+                  }
+                : {
+                    top: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 0,
+                    height: 0,
+                    borderLeft: '6px solid transparent',
+                    borderRight: '6px solid transparent',
+                    borderTop: '6px solid var(--color-warm-peach)',
+                  }),
             }}
           />
         </div>
@@ -86,8 +106,8 @@ export const CompanionBoyfriend: React.FC<CompanionProps> = ({
 
       {/* Handcrafted Pixel Sprite (Boyfriend) */}
       <svg
-        width="48"
-        height="56"
+        width={spriteWidth}
+        height={spriteHeight}
         viewBox="0 0 24 28"
         shapeRendering="crispEdges"
         className="pixel-art"

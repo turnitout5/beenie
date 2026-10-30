@@ -6,9 +6,10 @@ import { PixelEnvelopeIcon } from './PixelIcons';
 
 interface JournalModalProps {
   onClose: () => void;
+  onOpenMap?: () => void;
 }
 
-export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
+export const JournalModal: React.FC<JournalModalProps> = ({ onClose, onOpenMap }) => {
   const { state, navigateTo, resetExpedition } = useExpedition();
   const { journal, starsRecovered, unlockedLocations, inventory, drawer07Unlocked, namedConstellation } = state;
   const [confirmReset, setConfirmReset] = useState(false);
@@ -34,7 +35,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
         {/* Terminal Header */}
         <div className="pixel-panel-header">
           <h2 className="font-display" style={{ fontSize: '1rem', color: 'var(--color-lantern-gold)' }}>
-            BEENISH'S EXPEDITION JOURNAL
+            MERI PYARI PAAARI KA BIRTHDAY JOURNAL ♥
           </h2>
           <button
             onClick={onClose}
@@ -45,7 +46,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
           </button>
         </div>
 
-        {/* Diagnostic Metadata */}
+        {/* Birthday Mission Overview */}
         <div
           className="font-mono"
           style={{
@@ -58,21 +59,21 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
           }}
         >
           <div>
-            <span style={{ color: 'var(--color-dusty-lavender)' }}>EXPLORER:</span>{' '}
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>For:</span>{' '}
             <strong style={{ color: 'var(--color-warm-peach)' }}>Beenish Tasaffar (Paaaari / Beghum G)</strong>
           </div>
           <div>
-            <span style={{ color: 'var(--color-dusty-lavender)' }}>EXPEDITION OBJECTIVE:</span>{' '}
-            <span style={{ color: 'var(--color-moon-cream)' }}>Restore the 7 Vanished Constellation Stars</span>
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>Surprise:</span>{' '}
+            <span style={{ color: 'var(--color-moon-cream)' }}>Pagluu Ke 7 Birthday Stars Dhoondein</span>
           </div>
           <div>
-            <span style={{ color: 'var(--color-dusty-lavender)' }}>RECOVERED STARS:</span>{' '}
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>Stars Found:</span>{' '}
             <strong style={{ color: 'var(--color-lantern-gold)' }}>0{starsRecovered} / 07</strong> ({Math.round((starsRecovered / 7) * 100)}% Restored)
           </div>
           <div>
-            <span style={{ color: 'var(--color-dusty-lavender)' }}>WORLD INTEGRITY:</span>{' '}
+            <span style={{ color: 'var(--color-dusty-lavender)' }}>Valley Atmosphere:</span>{' '}
             <span style={{ color: starsRecovered >= 6 ? 'var(--color-warm-peach)' : 'var(--color-dream-lilac)' }}>
-              {starsRecovered >= 6 ? 'Harmonious & Radiant' : 'Gradually Awakening'}
+              {starsRecovered >= 6 ? 'Full of Stars & Love ♥' : 'Shining for Paaaari ✨'}
             </span>
           </div>
           {namedConstellation && (
@@ -93,9 +94,9 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
           )}
         </div>
 
-        {/* Milestone Checklist */}
+        {/* Places to Visit */}
         <h3 className="font-display" style={{ fontSize: '0.85rem', color: 'var(--color-dream-lilac)', marginBottom: '12px' }}>
-          EXPEDITION MILESTONES &amp; QUICK-TRAVEL:
+          PLACES TO VISIT &amp; EXPLORE:
         </h3>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
@@ -156,6 +157,20 @@ export const JournalModal: React.FC<JournalModalProps> = ({ onClose }) => {
 
         {/* Footer Actions: Resume, View Opening Hug & Kiss Card, & Replay/Reset */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {onOpenMap && (
+            <button
+              onClick={() => {
+                soundEngine.playClick();
+                onClose();
+                onOpenMap();
+              }}
+              className="pixel-btn pixel-btn-peach font-display"
+              style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <span>🗺️ VIEW EXPEDITION WORLD MAP &amp; GUIDE</span>
+            </button>
+          )}
+
           <button
             onClick={onClose}
             className="pixel-btn pixel-btn-primary font-display"

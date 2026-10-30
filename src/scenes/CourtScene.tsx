@@ -206,7 +206,7 @@ export const CourtScene: React.FC = () => {
           >
             <div>
               <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-rose-glow)', marginBottom: '8px' }}>
-                PROSECUTION EVIDENCE DOSSIER
+                PAGLUU KI PYARI SHIKAYATEN FILE
               </div>
               <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-lantern-gold)', marginBottom: '8px' }}>[DOCUMENTS]</div>
               <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginBottom: '12px' }}>

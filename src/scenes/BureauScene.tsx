@@ -212,7 +212,7 @@ export const BureauScene: React.FC = () => {
           >
             <CompanionBoyfriend
               pose="thumbsup"
-              initialQuote="Oh, meri Paaaari! We've been expecting you, Beghum G. Another dossier has been filed!"
+              initialQuote="Oh, meri Paaaari! We've been expecting you, Beghum G. Aap k liye nayi pyari file bani hai!"
             />
             <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)' }}>
               <div><strong style={{ color: 'var(--color-warm-peach)' }}>Desk Investigator:</strong> Ahmad (Aapka Pagluu)</div>
@@ -294,7 +294,7 @@ export const BureauScene: React.FC = () => {
             <div className="pixel-panel-header">
               <div>
                 <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.75rem' }}>
-                  {activeReport.code} // OFFICIAL INCIDENT DOSSIER
+                  {activeReport.code} // OFFICIAL PYARI FILE
                 </span>
                 <h3 className="font-display" style={{ color: 'var(--color-warm-peach)', fontSize: '1rem', marginTop: '4px' }}>
                   {activeReport.title}
@@ -344,7 +344,7 @@ export const BureauScene: React.FC = () => {
               </p>
             </div>
 
-            {/* Special Visual Gag for The 11/10 Baddie Dossier */}
+            {/* Special Visual Gag for The 11/10 Baddie File */}
             {activeReport.id === '11_out_of_10_baddie' && (
               <div style={{ textAlign: 'center', marginBottom: '16px', backgroundColor: 'var(--color-midnight-indigo)', padding: '14px', border: '1px solid var(--color-twilight-blue)' }}>
                 <div style={{ display: 'inline-block', transform: 'rotate(-15deg) translateY(4px)', transition: 'transform 0.4s ease' }}>

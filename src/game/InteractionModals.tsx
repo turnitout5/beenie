@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useExpedition } from '../state/ExpeditionContext';
 import { InteractableObject } from './types';
 import { 
@@ -8,7 +8,6 @@ import {
   FUTURE_VIGNETTES
 } from '../data/personalization';
 import { soundEngine } from '../audio/soundEngine';
-import { CompanionBoyfriend } from '../components/CompanionBoyfriend';
 
 interface InteractionModalsProps {
   activeObject: InteractableObject | null;
@@ -51,6 +50,21 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   const [tumblerRevved, setTumblerRevved] = useState<boolean>(false);
   const [lassiCount, setLassiCount] = useState<number>(2);
   const [activeVignetteId, setActiveVignetteId] = useState<string | null>(null);
+  const [pagluDialogueIndex, setPagluDialogueIndex] = useState<number>(0);
+
+  // Reset transient feedback messages whenever active interactable changes or modal closes
+  useEffect(() => {
+    setSnackMessage(null);
+    setRevvingVehicle(null);
+    setTumblerRevved(false);
+  }, [activeObject?.id]);
+
+  const handleClose = () => {
+    setSnackMessage(null);
+    setRevvingVehicle(null);
+    setTumblerRevved(false);
+    onClose();
+  };
 
   // Engineered Puzzle States (Synced with persisted ExpeditionState so solved puzzles stay solved!)
   // Ch. 1: Bureau Pleadings Match-up
@@ -101,35 +115,35 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     const charges = [
       {
         id: 'charge_hmm',
-        title: "Charge #1: The 'hm hm hm' Protocol",
-        allegation: "Subject hit Investigator with 'hm hm hm' causing immediate panic and confusion.",
+        title: "1. Jab Beghum G 'hm hm hm' bolti hain 😅",
+        allegation: "Pagluu foran confuse ho jata hai aur chocolate hazir karta hai!",
         correctChoice: 'tanz',
         options: [
-          { key: 'tanz', label: "The Tanz Clause: Investigator was thoroughly roasted with sarcasm." },
-          { key: 'typo', label: "Accidental phone typing error without intent." },
-          { key: 'denial', label: "Subject claims she never said anything of the sort." }
+          { key: 'tanz', label: "Pure Tanz & Roast mode: Pagluu ki khair nai!" },
+          { key: 'typo', label: "Galti se type ho gaya phone par." },
+          { key: 'denial', label: "Mainay to aisa kuch nai kaha!" }
         ]
       },
       {
         id: 'charge_baddie',
-        title: "Charge #2: The 11/10 Baddie Phenomenon",
-        allegation: "Subject is an undisputed 11/10 baddie causing permanent jaw drops and fainting.",
+        title: "2. 11/10 Baddie Beenish Tasaffar",
+        allegation: "Itni haseena k Pagluu ka moun permanent khula reh jata hai!",
         correctChoice: 'malai',
         options: [
-          { key: 'light', label: "Lighting in the room was overly flattering." },
-          { key: 'malai', label: "The Malai Principle: White-white baal wali haseena is legally flawless." },
-          { key: 'modest', label: "Subject claims to be merely average." }
+          { key: 'light', label: "Lighting achi thi bas." },
+          { key: 'malai', label: "Sari ki sari aap malai! White-white baal aur chotu si chin 11/10 baddie hain!" },
+          { key: 'modest', label: "Bas aese hi normal hoon." }
         ]
       },
       {
         id: 'charge_sweets',
-        title: "Charge #3: Endless Chocolates & Paisay Demands",
-        allegation: "Subject demands dhayeeer saari chocolates and stacks of paisay at 2 AM.",
+        title: "3. Dhayeeer Saari Chocolates & Paisay",
+        allegation: "Late night chocolates aur endless paisay ki demand!",
         correctChoice: 'reparations',
         options: [
-          { key: 'budget', label: "Expenses were strictly within standard municipal budget." },
-          { key: 'reparations', label: "The Bubu Reparations Act: Subject deserves all rupees and sweets in the cosmos." },
-          { key: 'apples', label: "Subject agreed to eat healthy green apples instead." }
+          { key: 'budget', label: "Monthly budget k andar rehna chahiye." },
+          { key: 'reparations', label: "Meri Paaaari deserves all the chocolates and paisay in the universe!" },
+          { key: 'apples', label: "Green apples kha lenge." }
         ]
       }
     ];
@@ -146,18 +160,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     };
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '680px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
             <div>
               <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.75rem', letterSpacing: '0.08em' }}>
-                BUREAU CASE FILE #001 // THE PAAARI DOSSIERS
+                Meri Pyari Paaaari Ki Pyari Baatein ♥
               </span>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.05rem', marginTop: '2px' }}>
-                REASONS PAAARI IS UNREASONABLY ADORABLE &amp; 11/10 BOLD
+                Reasons Why Beenish Is 11/10 Sundar &amp; Flawless ♥
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Folder tabs */}
@@ -173,24 +187,23 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 className={`pixel-btn ${selectedReportId === r.id ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
                 style={{ fontSize: '0.75rem', padding: '6px 12px' }}
               >
-                {r.title} {readReports.includes(r.id) && '[READ]'}
+                {r.title} {readReports.includes(r.id) && ' ♥'}
               </button>
             ))}
           </div>
 
           {/* Report Body */}
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '18px', marginBottom: '16px', lineHeight: '1.7' }}>
-            <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-dusty-lavender)', marginBottom: '10px' }}>
-              <div><strong>SUBJECT:</strong> {report.subject}</div>
-              <div><strong>INVESTIGATOR:</strong> {report.investigator}</div>
-              <div><strong>OBJECTIVITY:</strong> <span style={{ color: 'var(--color-rose-glow)' }}>{report.objectivity}</span></div>
+            <div className="font-mono" style={{ fontSize: '0.82rem', color: 'var(--color-dusty-lavender)', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(246, 215, 139, 0.2)', paddingBottom: '6px' }}>
+              <span>From: <strong style={{ color: 'var(--color-lantern-gold)' }}>Ahmad (Apka Pagluu ♥)</strong></span>
+              <span>For: <strong style={{ color: 'var(--color-warm-peach)' }}>Meri Paaaari (Beenish)</strong></span>
             </div>
 
-            {/* Special Interactive Render: The "Hmm" Decryption Protocol */}
+            {/* Special Interactive Render: The "Hmm" Dictionary */}
             {report.id === 'hmm_protocol' && (
               <div style={{ backgroundColor: 'var(--color-void-navy)', border: '1px solid var(--color-twilight-blue)', padding: '14px', margin: '14px 0' }}>
                 <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', letterSpacing: '0.08em', marginBottom: '10px', textTransform: 'uppercase' }}>
-                  THE OFFICIAL "HMM" DECODER
+                  THE PAAARI "HMM" DICTIONARY 😅
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }}>
                   <div style={{ padding: '6px 10px', backgroundColor: 'rgba(235, 122, 154, 0.15)', borderLeft: '3px solid var(--color-rose-glow)' }}>
@@ -216,7 +229,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {report.id === 'favorite_personalities' && (
               <div style={{ backgroundColor: 'var(--color-void-navy)', border: '1px solid var(--color-lantern-gold)', padding: '14px', margin: '14px 0', textAlign: 'center' }}>
                 <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', letterSpacing: '0.08em', marginBottom: '8px' }}>
-                  THE OFFICIAL HISTORICAL PODIUM
+                  MERI PAAARI KE SAB SE FAVORITE INSAAN ♥
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', margin: '12px 0' }}>
                   <div style={{ backgroundColor: 'rgba(246, 215, 139, 0.15)', border: '2px solid var(--color-lantern-gold)', padding: '10px 16px', minWidth: '160px' }}>
@@ -235,7 +248,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             )}
 
             <div style={{ margin: '12px 0' }}>
-              <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-warm-peach)', textTransform: 'uppercase' }}>OFFICIAL FINDING:</div>
+              <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--color-warm-peach)', fontWeight: 600 }}>PAGLUU KI SACHI BAAT:</div>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.88rem', color: 'var(--color-moon-cream)', whiteSpace: 'pre-line', marginTop: '6px' }}>
                 {report.finding}
               </p>
@@ -250,10 +263,10 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           {!bureauStamped && (
             <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px solid var(--color-lantern-gold)', padding: '18px', marginBottom: '18px' }}>
               <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.95rem', marginBottom: '4px' }}>
-                DEFENSE PLEADINGS PUZZLE // PLEAD YOUR CASE
+                Meri Paaaari Ki Pyari Defenses ♥
               </div>
               <p className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-moon-cream)', marginBottom: '14px', lineHeight: '1.6' }}>
-                Before the Bureau stamp can be authorized, Paaaari must plead the correct defense to each of Investigator Ahmad's three allegations:
+                Teeno pyari baaton k baray mein batayein k sachi baat kya hai:
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '14px' }}>
@@ -290,13 +303,13 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               {allPleadingsCorrect ? (
                 <div style={{ backgroundColor: 'rgba(246, 215, 139, 0.15)', border: '1px dashed var(--color-lantern-gold)', padding: '10px', textAlign: 'center', marginBottom: '8px' }}>
                   <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.82rem', fontWeight: 'bold' }}>
-                    [ ALL 3 PLEADINGS VALIDATED: DEFENSE IS IRREFUTABLY ADORABLE ]
+                    ♥ Teeno baatein bilkul sach hain! Meri Paaaari 100% adorable hain! ♥
                   </span>
                 </div>
               ) : (
                 <div style={{ textAlign: 'center' }}>
                   <span className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.75rem' }}>
-                    [ Select the authentic defense for all 3 allegations to enable the Official Stamp ]
+                    (Teeno pyari baaton ko choose karein taakay official stamp lag jaye!)
                   </span>
                 </div>
               )}
@@ -312,18 +325,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 </div>
                 <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-lantern-gold)', padding: '14px', maxWidth: '520px', margin: '0 auto 14px auto', textAlign: 'left' }}>
                   <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '4px' }}>
-                    STAGE 2 NEXT // AHMAD'S NOTE:
+                    Ahmad's Note (For Meri Paaaari ♥):
                   </div>
                   <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', lineHeight: '1.7' }}>
                     "Meri jaan Paaaari, I hid the antique brass key to Drawer #07 behind your White Jet painting in the Museum of Beenish! Exit the Bureau and follow the grand promenade North to inspect Portrait #2!"
                   </div>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="pixel-btn pixel-btn-primary font-display"
                   style={{ width: '100%', maxWidth: '520px', justifyContent: 'center', padding: '12px' }}
                 >
-                  CONTINUE TO STAGE 2: THE MUSEUM →
+                  Chalo Museum Chalein Meri Jaan →
                 </button>
               </div>
             ) : (
@@ -333,7 +346,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 className="pixel-btn pixel-btn-primary font-display" 
                 style={{ padding: '12px 28px', opacity: allPleadingsCorrect ? 1 : 0.4, cursor: allPleadingsCorrect ? 'pointer' : 'not-allowed' }}
               >
-                STAMP OFFICIAL CASE FILE
+                STAMP FILE (OFFICIALLY ADORABLE) ♥
               </button>
             )}
           </div>
@@ -345,13 +358,13 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 2. BUREAU DESK DRAWER (SECRET KEY INTERACTION)
   if (activeObject.type === 'bureau_drawer') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '560px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
           <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--color-warm-peach)', letterSpacing: '0.12em', marginBottom: '8px' }}>
-            {hasBrassKey ? '[ KEY MATCHED: DRAWER #07 READY ]' : '[ SECURE DRAWER #07 ]'}
+            {hasBrassKey ? 'Chabi Lag Gayi! Drawer Ready Hai ♥' : 'Drawer #07 Locked Hai'}
           </div>
           <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginBottom: '10px' }}>
-            {hasBrassKey ? 'DESK DRAWER #07 UNLOCKED' : 'LOCKED DESK DRAWER #07'}
+            {hasBrassKey ? 'Desk Drawer #07 Khul Gaya!' : 'Locked Desk Drawer #07'}
           </h2>
 
           {hasBrassKey ? (
@@ -363,14 +376,14 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               </p>
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px dashed var(--color-warm-peach)', padding: '14px', marginBottom: '18px', textAlign: 'left' }}>
                 <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', marginBottom: '4px' }}>
-                  STICKY NOTE FROM TED (AHMAD):
+                  Pyara sa Note (Ahmad ki taraf se):
                 </div>
                 <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', fontStyle: 'italic', lineHeight: '1.7' }}>
                   "For my 11/10 baddie when she needs sugar or when she hits me with hm hm hm. Now take this botanical map, and head East to the Court of Absolutely No Flaws!"
                 </div>
               </div>
               <div className="pixel-badge pixel-badge-gold font-mono" style={{ marginBottom: '20px', padding: '6px 14px' }}>
-                THE BOTANICAL MAP IS SECURED &bull; STAGE 3: THE COURT PROMENADE AWAITS
+                Chocolates &amp; Map Mil Gaya! Chalo Court of No Flaws chaltay hain ♥
               </div>
               <button 
                 onClick={() => {
@@ -384,7 +397,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 className="pixel-btn pixel-btn-peach font-display" 
                 style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
               >
-                POCKET BOTANICAL MAP &amp; CHOCOLATES (PROCEED TO STAGE 3 →)
+                Chocolates Aur Map Uthayein (Chalo Court Chalein ♥)
               </button>
             </div>
           ) : (
@@ -393,7 +406,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 The drawer is sealed with an antique brass cylinder lock. A small brass plaque reads:
                 <br /><em style={{ color: 'var(--color-warm-peach)' }}>"The key is tucked behind her private jet vision in the Museum of Beenish."</em>
               </p>
-              <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+              <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
                 SEARCH THE MUSEUM FOR THE KEY
               </button>
             </div>
@@ -406,85 +419,279 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 3. TALK TO PAGLUU (STAGE-AWARE & ROOM-AWARE DIEGETIC COMPANION GUIDE)
   if (activeObject.type === 'bureau_desk' || activeObject.type === 'npc_ted') {
     const getPagluQuote = () => {
+      // Dream Estates & Realms Guidance
+      if (state.currentLocation === 'dream_estates') {
+        return "Humara dream boulevard! 5 pyare ghar hain meri jaan: Islamabad Villa, Mafia Batcave, Sweet Dreams Bakery, Royal Castle, aur Gaon Haveli! Kahan chalein pehle?";
+      }
+      if (state.currentLocation === 'haveli_realm') {
+        return "Hira Ki Haveli! Neem k darakht k neechay charpai par araam karein, ya tubewell k thanday paani may aam dho kar khayen meri Paaaari!";
+      }
+      if (state.currentLocation === 'castle_realm') {
+        return "Queen Beenish ka royal palace! Balcony say door paharon ka nazaara dekhein, is poori saltanat ki rani sirf aap hain!";
+      }
+      if (state.currentLocation === 'mafia_realm') {
+        return "Batman Tumbler aur 100 billion ka paisay vault! Ninja H2R par drive karein ya Bat-Computer check karein meri 11/10 baddie!";
+      }
+      if (state.currentLocation === 'islamabad_realm') {
+        return "Islamabad F-7 Villa! Living room may apka baraaa sofa aur upar 3 pyare bacchon k rooms hain meri jaan!";
+      }
+      if (state.currentLocation === 'bakery_realm') {
+        return "Sweet Dreams Bakery! Strawberry tarts, chocolate croissants, aur 2 AM white pasta feast terrace apka intezar kar raha hai!";
+      }
+
       // Room-specific contextual guidance first
       if (state.currentLocation === 'bureau') {
         if (!bureauStamped) {
-          return "Stage 1, meri Paaaari! Walk over to the Filing Cabinet on the left wall and plead the 3 true defenses (Tanz, Malai, and Reparations) so we can stamp Case File #001!";
+          return "Aajaen meri Paaaari! Left side par Filing Cabinet dekhein aur teeno pyari baaton ko select karein taakay file par stamp laga dein!";
         }
         if (!hasBrassKey) {
-          return "Case File #001 is stamped! Now we need Antique Brass Key #07 for Drawer #07 on the right wall—I hid it behind your White Jet painting in the Museum to the North!";
+          return "File to stamp ho gayi meri jaan! Ab Museum chalte hain—wahan aap ki White Jet painting k peechay Drawer #07 ki chabi chupi hai!";
         }
         if (!state.drawer07Unlocked) {
-          return "You have Antique Brass Key #07! Walk over to Desk Drawer #07 on the right wall to unlock your emergency chocolates and the Overgrown Botanical Map!";
+          return "Chabi mil gayi! Right side par Desk Drawer #07 khol kar apni emergency chocolates aur Botanical Map nikal lein!";
         }
-        return "Bureau mission complete, Beghum G! Let's head East across the valley to the Court of Absolutely No Flaws!";
+        return "Bureau ka kaam mukammal ho gaya meri Beghum G! Chalo ab East ki taraf Court of Absolutely No Flaws chaltay hain!";
       }
       if (state.currentLocation === 'museum') {
         if (!hasBrassKey) {
-          return "Look at Portrait #2 on the north wall (The White Jet Vision), Paaaari! Count the 4 silver airstair steps and check the color of your dress (White) to unlock Antique Brass Key #07!";
+          return "North wall par White Jet wali painting dekhein meri Paaaari! 4 silver steps aur white dress select karein to secret brass key mil jaye gi!";
         }
-        return "You found Antique Brass Key #07! Let's walk back West to the Bureau and unlock Desk Drawer #07!";
+        return "Key mil gayi meri jaan! Chalo wapis Bureau chalte hain aur Drawer #07 kholte hain!";
       }
       if (state.currentLocation === 'court') {
         if (!state.courtVerdictReached) {
-          return "Step up to the Judge's Bench in the center, Your Honor! Place the three +5 kg tokens of devotion on the Defense Pan to balance the 15 kg Scales of Love and strike the gavel!";
+          return "Aajaen Judge sahab ki chair par Your Honor! Scales of Love par teen pyare tokens rakh kar 15 kg barabar karein aur gavel bajayein!";
         }
-        return "Acquitted of all flaws with full honors! Next stop: follow the Southeast road to the ancient stone Archive of Things That Happened!";
+        return "Zero flaws certify ho gaye meri rani! Ab Southeast ki taraf stone Archive of Memories chalte hain!";
       }
       if (state.currentLocation === 'archive') {
         if (!state.archiveChronologySolved) {
-          return "Inspect any of the 3 glowing Memory Crystals and swap the 4 timeline cards into chronological order: 1. Email Origin -> 2. 2 AM White Pasta -> 3. Three Anthems -> 4. October 31st Vow!";
+          return "Memory crystals ko chhoo kar humari 4 pyari yaadon ko timeline mein lagayein: Email Origin -> Late Night White Pasta -> Teen Gaane -> Birthday Vow!";
         }
-        return "All 4 memory crystals are resonating with Bol Na Halke Halke! Now let's climb the northern mountain trail to the Hilltop Observatory!";
+        return "Saaray crystals Bol Na Halke Halke ke sath resonating hain! Ab pahaar k upar Hilltop Observatory chaltay hain meri Paaaari!";
       }
       if (state.currentLocation === 'observatory') {
         if (!namedConstellation) {
-          return "Gaze through the Brass Telescope or Altar, click all 5 of our Dream Estate star nodes to link the constellation circuit, and inscribe its name in the sky to unlock the Secret Rose Garden Gate!";
+          return "Telescope se dekhein meri jaan, humare 5 dream houses ke sitaron ko link karein aur aasman par humara pyara naam likhein!";
         }
-        return `Our constellation "${namedConstellation}" is shining bright, and the Secret Rose Garden Gate in the Southeast is now wide open! Chalein wahan chalte hain!`;
+        return `Humara sitara "${namedConstellation}" aasman par chamak raha hai! Secret Rose Garden ka rasta khul gaya hai, chalein wahan chalte hain!`;
       }
       if (state.currentLocation === 'garden') {
         if (state.starsRecovered < 7) {
-          return "Come sit beside me on the Garden Bench under the weeping willow, meri Paaaari... Light the 3 Rose Lanterns of Devotion to read the birthday letter I wrote for you.";
+          return "Garden bench par baithiye mere paas meri Paaaari... 3 Rose Lanterns jala kar birthday letter parhiye jo mainay apkay liye likha hai.";
         }
-        return "All 7 Constellation Stars are shining over your valley! Let's return to the Central Birthday Table in the plaza and blow out your birthday candles together!";
+        return "Saaray 7 sitaray valley par chamak rahy hain! Chalein central plaza may chal kar cake ki candles blow kartay hain!";
       }
 
       // Overworld stage-by-stage guidance
       if (!bureauStamped) {
-        return "Stage 1 of 7: Let's walk West along the stone road to the Bureau of Unreasonable Paglu and stamp your official Case File #001, meri Paaaari!";
+        return "Aajaen meri Paaaari! Chalein pehle Bureau of Unreasonable Paglu chalte hain aur apka official case file stamp karte hain!";
       }
       if (!hasBrassKey) {
-        return "Stage 2 of 7: Let's walk North up the grand avenue to the Museum of Beenish! I hid the brass key to Drawer #07 behind your White Jet painting!";
+        return "Chalo meri jaan, ab Museum of Beenish chalte hain! Wahan aap ki White Jet painting k peechay Drawer #07 ki chabi chupi hai!";
       }
       if (!state.drawer07Unlocked) {
-        return "Stage 2 of 7: We have Brass Key #07! Let's head back West into the Bureau and unlock Desk Drawer #07 on the right wall!";
+        return "Key mil gayi! Chalo wapis Bureau chal kar Drawer #07 kholte hain, wahan dhayeeer saari chocolates hain!";
       }
       if (!state.courtVerdictReached) {
-        return "Stage 3 of 7: Now let's walk East along the promenade to the Court of Absolutely No Flaws so you can balance the 15 kg Scales of Love!";
+        return "Chalo meri Beghum G, ab Court of Absolutely No Flaws chalte hain—wahan sab ko batana hai k aap mein ZERO flaws hain!";
       }
       if (!state.archiveChronologySolved) {
-        return "Stage 4 of 7: Let's walk Southeast to the stone Archive of Things That Happened and align our 4 memory crystals in chronological order!";
+        return "Ab Southeast stone Archive of Memories chaltay hain meri Paaaari, humare pyare gaane sunte hain aur yaadein taza karte hain!";
       }
       if (!namedConstellation) {
-        return "Stage 5 of 7: Let's climb the North mountain trail to the Hilltop Observatory to link our 5 Dream Estate stars and unlock the Secret Rose Garden!";
+        return "Pahaar k upar Hilltop Observatory chalte hain meri jaan! Wahan se aasman mein sitaron ko dekh kar humara pyara naam likhenge!";
       }
       if (state.starsRecovered < 7) {
-        return "Stage 6 of 7: The blooming Ivy Rose Gate in the Southeast is now unlocked! Let's walk into the Secret Rose Garden for your birthday letter!";
+        return "Secret Rose Garden ka rasta khul gaya hai meri Paaaari! Wahan chaltay hain, aap k liye mainay aik bohot pyara letter likha hai...";
       }
       if (!state.candlesBlown) {
-        return "Grand Finale (Stage 7 of 7): All 7 stars are restored! Step up to the Central Birthday Table right here in the plaza and blow out the candles with me, meri Paaaari!";
+        return "Saaray 7 sitaray chamak rahy hain meri Paaaari! Central table par aajaen aur mil kar birthday candles blow kartay hain!";
       }
-      return "Happy Birthday, meri Paaaari, meri Beghum G! All 7 stars are shining and your wish is made—now we can freely explore all 5 of our Dream Estates around the valley!";
+      return "Happy Birthday meri Paaaari, meri Beghum G! Saaray 7 sitaray aap k hain... aajaen 5 dream houses ghoomtay hain!";
+    };
+
+    const storyHint = getPagluQuote();
+    const sweetQuotes = [
+      storyHint,
+      "Bas meri Paaaari hain. Samajh nai aata, bas hain.",
+      "ufff kitu sundar hain meri Beghum G...",
+      "yummm yumm chaaki mar leni many! SARI KI SARI AAP MALAIIIII!",
+      "wo chotu si chin to mera permanent all-time crush hay!",
+      "noseeyyyy khaaa jani manyyyyy!",
+      "CASE FILE #001: Pagluu ka dil officially Paaaari ke paas confiscated hai.",
+      "aryyyy.....sunyen tooo! Kahan bhagi ja rahi hain meri jaan?",
+      "Dunya may koi aur Beenish Tasaffar jesi genius aur pyari baddie ho hi nai sakti!",
+      "Did you know every single star in this sky was placed here just for my Paaaari?",
+      "11/10 baddie energy, Pagluu is permanently incapacitated.",
+    ];
+
+    const currentQuote = sweetQuotes[pagluDialogueIndex % sweetQuotes.length];
+
+    const handleNextQuote = () => {
+      soundEngine.playClick();
+      setPagluDialogueIndex(prev => prev + 1);
     };
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
-        <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <CompanionBoyfriend pose="thumbsup" initialQuote={getPagluQuote()} />
-          <div style={{ marginTop: '20px' }}>
-            <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-              KEEP EXPLORING TOGETHER
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
+        <div 
+          className="pixel-modal-content pixel-panel pixel-panel-peach" 
+          onClick={e => e.stopPropagation()} 
+          style={{ 
+            maxWidth: '520px', 
+            backgroundColor: 'var(--color-void-navy)', 
+            padding: '24px',
+            textAlign: 'center' 
+          }}
+        >
+          {/* Header */}
+          <div className="pixel-panel-header" style={{ marginBottom: '16px' }}>
+            <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.85rem', letterSpacing: '0.08em', fontWeight: 'bold' }}>
+              ♥ Pagluu (Ahmad) &bull; Paaaari Ka Boyfriend
+            </span>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono" title="Close">[X]</button>
+          </div>
+
+          {/* Large Full-Sized Pagluu Portrait */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px' }}>
+            <div 
+              style={{
+                width: '100px',
+                height: '116px',
+                padding: '6px',
+                backgroundColor: 'rgba(30, 27, 75, 0.6)',
+                borderRadius: '8px',
+                border: '2px solid var(--color-warm-peach)',
+                boxShadow: '0 0 16px rgba(243, 183, 156, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                animation: 'floatGentle 3s ease-in-out infinite',
+              }}
+            >
+              <svg
+                width="84"
+                height="98"
+                viewBox="0 0 24 28"
+                shapeRendering="crispEdges"
+                className="pixel-art"
+                style={{
+                  filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6))',
+                  transform: 'scale(1.05)',
+                }}
+              >
+                {/* Hair - Dark indigo / navy clusters */}
+                <rect x="7" y="2" width="10" height="3" fill="#101329" />
+                <rect x="6" y="3" width="12" height="4" fill="#1B2042" />
+                <rect x="5" y="4" width="3" height="4" fill="#1B2042" />
+                <rect x="16" y="4" width="3" height="4" fill="#1B2042" />
+                {/* Hair highlights */}
+                <rect x="8" y="3" width="4" height="1" fill="#30385F" />
+
+                {/* Face - Warm Peach */}
+                <rect x="7" y="7" width="10" height="7" fill="#F3B79C" />
+                {/* Eyes */}
+                <rect x="9" y="9" width="2" height="2" fill="#101329" />
+                <rect x="13" y="9" width="2" height="2" fill="#101329" />
+                {/* Eye twinkles */}
+                <rect x="9" y="9" width="1" height="1" fill="#F4EBDD" />
+                <rect x="13" y="9" width="1" height="1" fill="#F4EBDD" />
+                {/* Cheeks / Blush */}
+                <rect x="7" y="11" width="2" height="1" fill="#E98FAF" />
+                <rect x="15" y="11" width="2" height="1" fill="#E98FAF" />
+                {/* Smile */}
+                <rect x="10" y="12" width="4" height="1" fill="#9588BD" />
+
+                {/* Neck */}
+                <rect x="10" y="14" width="4" height="1" fill="#F3B79C" />
+
+                {/* Hoodie / Jacket - Twilight Blue & Dream Lilac accents */}
+                <rect x="6" y="15" width="12" height="7" fill="#30385F" />
+                <rect x="9" y="15" width="6" height="7" fill="#666FA0" />
+                {/* Collar / Strings */}
+                <rect x="10" y="16" width="1" height="3" fill="#F4EBDD" />
+                <rect x="13" y="16" width="1" height="3" fill="#F4EBDD" />
+
+                {/* Arms / Hands - Thumbs-up pose */}
+                <rect x="4" y="16" width="2" height="5" fill="#30385F" />
+                <rect x="4" y="21" width="2" height="2" fill="#F3B79C" />
+                <rect x="18" y="14" width="3" height="3" fill="#F3B79C" />
+                <rect x="19" y="13" width="1" height="2" fill="#F3B79C" />
+                <rect x="17" y="17" width="3" height="4" fill="#30385F" />
+
+                {/* Pants - Dark Void Navy */}
+                <rect x="7" y="22" width="10" height="4" fill="#101329" />
+                <rect x="7" y="23" width="4" height="3" fill="#101329" />
+                <rect x="13" y="23" width="4" height="3" fill="#101329" />
+
+                {/* Shoes - Moon Cream & Lavender */}
+                <rect x="6" y="26" width="5" height="2" fill="#F4EBDD" />
+                <rect x="13" y="26" width="5" height="2" fill="#F4EBDD" />
+              </svg>
+            </div>
+            <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.74rem', marginTop: '6px' }}>
+              &ldquo;Apka Pagluu humesha ap k sath hai ♥&rdquo;
+            </span>
+          </div>
+
+          {/* In-Flow Dedicated Dialogue Speech Box (Never Clipped!) */}
+          <div 
+            style={{
+              position: 'relative',
+              backgroundColor: '#1E1B4B',
+              border: '2px solid var(--color-warm-peach)',
+              borderRadius: '6px',
+              padding: '16px 20px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(243, 183, 156, 0.15)',
+              marginBottom: '20px',
+              textAlign: 'center',
+            }}
+          >
+            {/* Top pointer arrow */}
+            <div 
+              style={{
+                position: 'absolute',
+                top: '-8px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 0,
+                height: 0,
+                borderLeft: '8px solid transparent',
+                borderRight: '8px solid transparent',
+                borderBottom: '8px solid var(--color-warm-peach)',
+              }}
+            />
+            <p 
+              className="font-mono" 
+              style={{ 
+                color: '#FEF08A', 
+                fontSize: '0.98rem', 
+                lineHeight: '1.65', 
+                margin: 0,
+                fontWeight: 500,
+              }}
+            >
+              &ldquo;{currentQuote}&rdquo;
+            </p>
+          </div>
+
+          {/* Modal Action Buttons */}
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button 
+              onClick={handleNextQuote} 
+              className="pixel-btn pixel-btn-ghost font-display" 
+              style={{ flex: 1, justifyContent: 'center', fontSize: '0.85rem' }}
+              title="Ahmad ki aur batain sunein"
+            >
+              ♥ Aur Batain Karein
+            </button>
+            <button 
+              onClick={handleClose} 
+              className="pixel-btn pixel-btn-primary font-display" 
+              style={{ flex: 1.2, justifyContent: 'center', fontSize: '0.88rem' }}
+            >
+              ✦ Keep Exploring
             </button>
           </div>
         </div>
@@ -499,20 +706,20 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     const isPhenom = activeObject.type === 'museum_phenomenon';
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
             <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem', letterSpacing: '0.08em' }}>
-              MUSEUM OF BEENISH // PERSONAL EXHIBITS
+              Museum of Beenish ♥
             </span>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Portrait 1: Kawasaki Ninja H2R & Dodge Challenger */}
           {activeObject.type === 'museum_portrait_1' && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                [ MACHINE GALLERY &bull; ARTIFACT #01 ]
+                Paaaari Ki Speed ♥
               </div>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginBottom: '8px' }}>
                 THE KAWASAKI NINJA H2R &amp; DODGE CHALLENGER
@@ -540,7 +747,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           {isPortrait2 && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                [ THE PROPHECY GALLERY &bull; ARTIFACT #02 ]
+                Paaaari Ki Queen Walk ♥
               </div>
               <h3 className="font-display" style={{ color: 'var(--color-dream-lilac)', fontSize: '1.15rem', marginBottom: '8px' }}>
                 THE WHITE/GREY PRIVATE JET VISION
@@ -599,14 +806,14 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   <rect x="187" y="51" width="10" height="11" fill="#1E3A8A" />
                 </svg>
                 <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--color-lantern-gold)', marginTop: '6px' }}>
-                  EXHIBIT CANVAS #02 // SLEEK WHITE-GREY JET &bull; 4 SILVER AIRSTAIR STEPS &bull; RADIANT WHITE GOWN
+                  Sleek White-Grey Jet &bull; 4 Silver Steps &bull; Radiant White Dress ♥
                 </div>
               </div>
 
               {/* Interactive Observation Cipher Lock */}
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '2px solid var(--color-lantern-gold)', padding: '16px', marginBottom: '20px', textAlign: 'left' }}>
                 <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '6px' }}>
-                  [ THE PROPHECY OBSERVATION CIPHER ]
+                  Painting Ki Pyari Si Puzzle ♥
                 </div>
                 <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', marginBottom: '14px', lineHeight: '1.6' }}>
                   A locked brass plate beneath the canvas poses a challenge:
@@ -661,7 +868,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 {selectedSteps === 4 && selectedColor === 'White' ? (
                   <div style={{ backgroundColor: 'rgba(246, 215, 139, 0.15)', border: '1px dashed var(--color-lantern-gold)', padding: '12px', textAlign: 'center' }}>
                     <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.9rem', marginBottom: '6px' }}>
-                      CIPHER SOLVED: HIDDEN COMPARTMENT CLICKS OPEN!
+                      Wah meri Paaaari! Chota sa box khul gaya!
                     </div>
                     <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.8rem', marginBottom: '10px' }}>
                       {hasBrassKey 
@@ -682,16 +889,16 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                         className="pixel-btn pixel-btn-primary font-display"
                         style={{ width: '100%', justifyContent: 'center' }}
                       >
-                        COLLECT ANTIQUE BRASS KEY #07 &amp; STAR OF BRILLIANCE
+                        Antique Brass Key #07 Aur Star Uthayein ♥
                       </button>
                     )}
                     {hasBrassKey && (
                       <div>
                         <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.82rem', fontWeight: 'bold', marginBottom: '10px' }}>
-                          [ NEXT STEP: Return West to the Bureau to unlock Drawer #07! ]
+                          Ab wapis Bureau chal kar Drawer #07 kholte hain!
                         </div>
                         <button
-                          onClick={onClose}
+                          onClick={handleClose}
                           className="pixel-btn pixel-btn-peach font-display"
                           style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
                         >
@@ -702,7 +909,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   </div>
                 ) : (
                   <div className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.75rem', textAlign: 'center' }}>
-                    [ Brass tumblers locked: Check the airstairs and dress in the painting above ]
+                    (Painting mein dekh kar batayein kitnay steps hain aur dress kis color ki hai!)
                   </div>
                 )}
               </div>
@@ -713,7 +920,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           {isAchieve && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                [ HALL OF HONORS &bull; ARTIFACT #03 ]
+                Meri Champion Paaaari ♥
               </div>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginBottom: '8px' }}>
                 THE CRICKET &amp; BADMINTON CHAMPION ARENA
@@ -741,7 +948,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           {isPhenom && (
             <div style={{ textAlign: 'center', padding: '16px' }}>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                [ HERITAGE RELIEF MAP &bull; ARTIFACT #04 ]
+                Sialkot Se Islamabad Tak ♥
               </div>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginBottom: '8px' }}>
                 THE SIALKOT ROOTS &amp; ISLAMABAD DREAMS
@@ -773,10 +980,10 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   if (activeObject.type.startsWith('court_')) {
     if (activeObject.type === 'court_bench_secret') {
       return (
-        <div className="pixel-modal-backdrop" onClick={onClose}>
+        <div className="pixel-modal-backdrop" onClick={handleClose}>
           <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '440px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
             <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.1em', marginBottom: '8px' }}>
-              [ SECRET BENCH NOTE ]
+              Judge Chair Ke Peechay Note ♥
             </div>
             <h3 className="font-display" style={{ color: 'var(--color-warm-peach)', fontSize: '1rem', marginBottom: '10px' }}>
               NOTE BEHIND THE JUDGE'S BENCH
@@ -784,7 +991,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '20px' }}>
               "P.S. There never were any flaws. You are completely and wonderfully perfect to me, Beenie. Zero flaws forever!"
             </p>
-            <button onClick={onClose} className="pixel-btn pixel-btn-peach font-display" style={{ width: '100%', justifyContent: 'center' }}>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-peach font-display" style={{ width: '100%', justifyContent: 'center' }}>
               KEEP SECRET NOTE
             </button>
           </div>
@@ -794,13 +1001,13 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
     if (activeObject.type === 'court_defense') {
       return (
-        <div className="pixel-modal-backdrop" onClick={onClose}>
+        <div className="pixel-modal-backdrop" onClick={handleClose}>
           <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '540px', backgroundColor: 'var(--color-void-navy)' }}>
             <div className="pixel-panel-header">
               <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
-                DEFENSE TABLE // BIASED LEGAL COUNSEL BRIEF
+                Defense Counsel: Aapka Pagluu ♥
               </span>
-              <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+              <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
             </div>
             <div style={{ padding: '16px', lineHeight: '1.75' }}>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '10px' }}>
@@ -817,7 +1024,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   Place the <strong>three +5 kg tokens of pure devotion</strong> (<em>Forehead Kisses &amp; Elaichi Chai</em>, <em>Kind Heart for Siblings &amp; Mama Baba</em>, and <em>Permanent Best Friend &amp; Future Wife</em>) on the Defense Pan at the Judge's Bench to reach <strong>15 kg</strong>!
                 </div>
               </div>
-              <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+              <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
                 PROCEED TO THE JUDGE'S BENCH
               </button>
             </div>
@@ -828,33 +1035,33 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
     if (activeObject.type === 'court_prosecution') {
       return (
-        <div className="pixel-modal-backdrop" onClick={onClose}>
+        <div className="pixel-modal-backdrop" onClick={handleClose}>
           <div className="pixel-modal-content pixel-panel pixel-panel-rose" onClick={e => e.stopPropagation()} style={{ maxWidth: '560px', backgroundColor: 'var(--color-void-navy)' }}>
             <div className="pixel-panel-header">
               <span className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.75rem' }}>
-                PROSECUTION TABLE // OFFICIAL INDICTMENT BRIEF
+                Pagluu Ka Pyara Sa Shikayat Nama 😅
               </span>
-              <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+              <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
             </div>
             <div style={{ padding: '16px', lineHeight: '1.75' }}>
               <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.1rem', marginBottom: '10px' }}>
-                PROSECUTOR PAGLUU'S 15 KG GRIEVANCE DOCKET
+                PAGLUU KI 15 KG PYARI SHIKAYATEN ♥
               </h3>
               <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.84rem', marginBottom: '12px' }}>
-                "Whereas the Defendant, Beenish Tasaffar (a.k.a. Meri Paaaari, Beghum G, 11/10 Baddie), stands accused of the following three counts totaling <strong>15 kg</strong> on the Left Pan of Justice:"
+                "Meri pyari Paaaari, Beghum G, 11/10 Baddie par Pagluu ki taraf say ye 3 intehayi pyari shikayaten darj hain jo Left Scale par <strong>15 kg</strong> banati hain:"
               </p>
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', borderLeft: '3px solid var(--color-rose-glow)', padding: '12px 16px', marginBottom: '16px' }}>
                 <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.8rem', lineHeight: '1.8' }}>
-                  <div>1. <strong>Count I (5 kg):</strong> Stealing 100% of the blankets at night while looking like an angel.</div>
-                  <div>2. <strong>Count II (5 kg):</strong> Possessing a chotu si chin and noseeyyy that are unconstitutionally cute.</div>
-                  <div>3. <strong>Count III (5 kg):</strong> Winning every single argument effortlessly with <em>"hm hm hm"</em> and spicy <em>tanz</em>.</div>
+                  <div>1. <strong>Shikayat I (5 kg):</strong> Raat ko sote huay saari kambal chura leti hain aur masoom ban jati hain!</div>
+                  <div>2. <strong>Shikayat II (5 kg):</strong> Chotu si chin aur pyari noseeyyy itni sundar hain k dil wahan gir jata hai!</div>
+                  <div>3. <strong>Shikayat III (5 kg):</strong> Har argument <em>"hm hm hm"</em> bol kar aur meethi tanz kar k aasaani se jeet jati hain!</div>
                 </div>
               </div>
-              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', fontStyle: 'italic', marginBottom: '16px' }}>
-                Tip: Walk to the center <strong>Judge's Bench</strong> (`[ E ] Address the Court`) to place your three +5 kg counter-evidence tokens on the Right Pan and strike the gavel!
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.82rem', marginBottom: '16px' }}>
+                ♥ <strong>Ab Kya Karna Hai:</strong> Seedha center may <strong>Judge's Bench</strong> par jayen (`[ Enter ] Address the Court`) aur 3 pyaray jawabaat (+5 kg each) chun kar scale barabar karein!
               </div>
-              <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-                STEP UP TO THE JUDGE'S BENCH
+              <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+                CHALO JUDGE'S BENCH PAR JAYEN →
               </button>
             </div>
           </div>
@@ -885,22 +1092,22 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     };
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
             <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>COURT OF ABSOLUTELY NO FLAWS</span>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ textAlign: 'center', padding: '16px' }}>
             <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', marginBottom: '6px' }}>
-              [ CASE NO. 00-PERFECT &bull; THE SCALES OF LOVE PUZZLE ]
+              The Scales of Love ♥
             </div>
             <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginBottom: '8px' }}>
-              TRIAL PROCEEDINGS: THE "HM HM HM" &amp; PERFECTION INDICTMENT
+              COURT PROCEEDINGS: THE "HM HM HM" &amp; 100% CUTE CASE
             </h3>
-            <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', marginBottom: '16px', lineHeight: '1.6' }}>
-              Prosecutor Pagluu has loaded the Left Pan with 15 kg of affectionate grievances. Paaaari must balance the golden scales with her counter-evidence of true love!
+            <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.84rem', marginBottom: '16px', lineHeight: '1.6' }}>
+              Pagluu nay Left Scale par 15 kg pyari shikayaten rakhi hain. Paaaari ko Right Scale par 3 pyaray jawabaat (+5 kg each) rakh kar scale barabar karna hai!
             </p>
 
             {/* Visual Balance Scale Box */}
@@ -909,22 +1116,22 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 {/* Left Pan */}
                 <div style={{ backgroundColor: 'var(--color-void-navy)', padding: '12px', borderLeft: '3px solid var(--color-rose-glow)' }}>
                   <div className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '6px' }}>
-                    PROSECUTION PAN (15 kg)
+                    PAGLUU KI SHIKAYATEN (15 kg)
                   </div>
                   <ul className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-moon-cream)', margin: 0, paddingLeft: '16px', lineHeight: '1.7' }}>
-                    <li>Steals all the blankets at night (5 kg)</li>
-                    <li>Noseeyyy is unconstitutionally cute (5 kg)</li>
-                    <li>Wins every argument effortlessly (5 kg)</li>
+                    <li>Raat ko kambal chura lena (5 kg)</li>
+                    <li>Noseeyyy unconstitutionally pyari (5 kg)</li>
+                    <li>"hm hm hm" se har baat jeetna (5 kg)</li>
                   </ul>
                 </div>
 
                 {/* Right Pan */}
                 <div style={{ backgroundColor: 'var(--color-void-navy)', padding: '12px', borderLeft: `3px solid ${isScalesBalanced ? 'var(--color-lantern-gold)' : 'var(--color-warm-peach)'}` }}>
                   <div className="font-mono" style={{ color: isScalesBalanced ? 'var(--color-lantern-gold)' : 'var(--color-warm-peach)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '6px' }}>
-                    DEFENSE PAN ({currentWeight} kg / 15 kg)
+                    PAAAARI KA SCALE ({currentWeight} kg / 15 kg)
                   </div>
                   <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)' }}>
-                    {activeTokens.length === 0 ? 'No evidence tokens placed on scale yet.' : (
+                    {activeTokens.length === 0 ? 'Abhi koi baat add nai hui. Neeche se 3 options chunein!' : (
                       <ul style={{ margin: 0, paddingLeft: '16px', color: 'var(--color-moon-cream)', lineHeight: '1.7' }}>
                         {activeTokens.map(tId => {
                           const tok = tokens.find(t => t.id === tId);
@@ -939,7 +1146,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               {/* Token Selector Buttons */}
               <div style={{ marginBottom: '14px' }}>
                 <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--color-dusty-lavender)', marginBottom: '6px' }}>
-                  SELECT EVIDENCE TO PLACE ON SCALES:
+                  TEEN (3) PYARI BAATEIN CHUNEIN TA-KAY SCALE 15 KG HO JAYE:
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   {tokens.map(tok => {
@@ -967,10 +1174,10 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               <div style={{ textAlign: 'center', padding: '8px', backgroundColor: isScalesBalanced ? 'rgba(246, 215, 139, 0.15)' : 'rgba(235, 122, 154, 0.1)', border: `1px dashed ${isScalesBalanced ? 'var(--color-lantern-gold)' : 'var(--color-rose-glow)'}` }}>
                 <span className="font-mono" style={{ fontSize: '0.82rem', fontWeight: 'bold', color: isScalesBalanced ? 'var(--color-lantern-gold)' : 'var(--color-rose-glow)' }}>
                   {isScalesBalanced 
-                    ? '[ SCALES PERFECTLY LEVEL IN 24K GOLD: ZERO FLAWS ESTABLISHED! ]'
+                    ? '♥ Scales bilkul barabar ho gayin: Zero Flaws Certified! ♥'
                     : currentWeight < 15 
-                      ? '[ SCALES TILTED LEFT: NEED MORE LOVE EVIDENCE ON RIGHT PAN ]' 
-                      : '[ SCALES TILTED RIGHT: OVERLOADED WITH SWEETNESS! ]'}
+                      ? '(Thora sa pyaar aur add karein scales barabar karne k liye!)' 
+                      : '(Bohooot zyada meetha ho gaya!)'}
                 </span>
               </div>
             </div>
@@ -983,18 +1190,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 </div>
                 <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-lantern-gold)', padding: '14px', maxWidth: '520px', margin: '0 auto 14px auto', textAlign: 'left' }}>
                   <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '4px' }}>
-                    STAGE 4 NEXT // AHMAD'S NOTE:
+                    Ahmad's Note (For Meri Paaaari ♥):
                   </div>
                   <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', lineHeight: '1.7' }}>
                     "The court declares Beenish Tasaffar completely and wonderfully perfect. Now exit the Court and follow the stone road Southeast to the ancient stone Archive to recover our musical memories!"
                   </div>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="pixel-btn pixel-btn-primary font-display"
                   style={{ width: '100%', maxWidth: '520px', justifyContent: 'center', padding: '12px' }}
                 >
-                  CONTINUE TO STAGE 4: THE ARCHIVE →
+                  Chalo Archive of Memories Chalein Meri Jaan →
                 </button>
               </div>
             ) : (
@@ -1079,13 +1286,13 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     };
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '660px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
             <span className="font-mono" style={{ color: 'var(--color-dream-lilac)', fontSize: '0.75rem' }}>
-              ARCHIVE OF THINGS THAT HAPPENED // {activeMem.dateOrMoment.toUpperCase()}
+              Archive of Memories // Humari Pyari Yaadain ♥
             </span>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ textAlign: 'center', padding: '14px' }}>
@@ -1093,7 +1300,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-dream-lilac)', padding: '14px', marginBottom: '16px', textAlign: 'left' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <span className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.98rem' }}>
-                  CRYSTAL RECORD: {activeMem.title.toUpperCase()}
+                  ♥ {activeMem.title}
                 </span>
                 <button
                   onClick={() => {
@@ -1103,7 +1310,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   className="pixel-btn pixel-btn-ghost font-mono"
                   style={{ fontSize: '0.68rem', padding: '3px 8px' }}
                 >
-                  {state.readMemories.includes(activeMem.id) ? '[✓ ARCHIVED]' : '[ARCHIVE MEMORY]'}
+                  {state.readMemories.includes(activeMem.id) ? '♥ Saved' : 'Save Memory'}
                 </button>
               </div>
               <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.8rem', lineHeight: '1.65', margin: '0 0 8px 0' }}>
@@ -1147,7 +1354,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             </div>
 
             <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.08rem', marginBottom: '6px' }}>
-              MEMORY CRYSTAL RESONANCE PUZZLE
+              Humari Yaadon Ki Timeline ♥
             </h3>
             <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', marginBottom: '16px', lineHeight: '1.6' }}>
               The memory shards on the pedestal are scrambled in time! Click any card to select it, then click another to swap their positions into correct chronological sequence:
@@ -1175,14 +1382,14 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   >
                     <div>
                       <div className="font-mono" style={{ color: isCorrectSlot ? 'var(--color-forest-moss)' : 'var(--color-warm-peach)', fontSize: '0.82rem', fontWeight: 'bold' }}>
-                        [Slot #{idx + 1}] {shard.title}
+                        #{idx + 1}. {shard.title}
                       </div>
                       <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.75rem', marginTop: '2px' }}>
                         {shard.desc}
                       </div>
                     </div>
                     <span className="font-mono" style={{ fontSize: '0.72rem', color: isCorrectSlot ? 'var(--color-forest-moss)' : 'var(--color-dusty-lavender)' }}>
-                      {isCorrectSlot ? '[✓ ALIGNED]' : isSelected ? '[SELECTED]' : '[CLICK TO SWAP]'}
+                      {isCorrectSlot ? '♥ Sahi Jagah' : isSelected ? 'Selected' : 'Tap to Swap'}
                     </span>
                   </div>
                 );
@@ -1193,7 +1400,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {isChronologyResonant ? (
               <div style={{ backgroundColor: 'rgba(246, 215, 139, 0.15)', border: '1px dashed var(--color-lantern-gold)', padding: '12px', marginBottom: '18px' }}>
                 <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.92rem', marginBottom: '4px' }}>
-                  ALL 4 MEMORY CRYSTALS IN HARMONIC RESONANCE!
+                  ♥ Saari pyari yaadein apni jagah par aa gayin! ♥
                 </div>
                 <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.8rem' }}>
                   The ancient Gothic stained glass window shines radiant pink and gold. The melody of Bol Na Halke Halke fills the stone chamber.
@@ -1201,7 +1408,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               </div>
             ) : (
               <div className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.75rem', marginBottom: '16px' }}>
-                [ Swap the memory crystals until all 4 slots are aligned with our timeline ]
+                (Cards ko tap kar k timeline ke mutabiq arrange karein!)
               </div>
             )}
 
@@ -1209,22 +1416,22 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {state.recoveredStarIds.includes(4) ? (
               <div>
                 <div className="pixel-badge pixel-badge-gold font-mono" style={{ marginBottom: '14px', padding: '6px 14px' }}>
-                  STAR 4 RECOVERED &bull; THE STAR OF ETERNAL MEMORY SHINES IN THE SKY
+                  Star #4 Chamak Gaya! Saari Yaadein Hamesha K Liye Mehfooz Hain ♥
                 </div>
                 <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-lantern-gold)', padding: '14px', marginBottom: '14px', textAlign: 'left' }}>
                   <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '4px' }}>
-                    STAGE 5 NEXT // AHMAD'S NOTE:
+                    Ahmad's Note (For Meri Paaaari ♥):
                   </div>
                   <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', lineHeight: '1.7' }}>
                     "The memories of our first year are eternal, meri jaan. Now exit the Archive and follow the northern mountain trail up to the Hilltop Observatory to link our 5 Dream Constellations!"
                   </div>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="pixel-btn pixel-btn-primary font-display"
                   style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
                 >
-                  CONTINUE TO STAGE 5: THE OBSERVATORY →
+                  Chalo Hilltop Observatory Chalein Meri Jaan →
                 </button>
               </div>
             ) : (
@@ -1275,18 +1482,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     };
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div className="pixel-panel-header">
             <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
-              HILLTOP CELESTIAL OBSERVATORY // THE 5 DREAM ESTATES
+              Hilltop Celestial Observatory ♥
             </span>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ textAlign: 'center', padding: '16px' }}>
             <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginBottom: '8px' }}>
-              CELESTIAL DREAM CONSTELLATION LINKER
+              Humare 5 Dream Estates Ke Sitaray ♥
             </h3>
             <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', marginBottom: '16px', lineHeight: '1.6' }}>
               Gaze through the great brass telescope upon the northern night sky! Click each of our 5 Dream Estate star nodes to connect the celestial circuit of our future:
@@ -1303,7 +1510,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                     className={`pixel-btn ${isLinked ? 'pixel-btn-primary' : 'pixel-btn-ghost'} font-mono`}
                     style={{ fontSize: '0.75rem', padding: '10px', textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
                   >
-                    <span style={{ fontWeight: 'bold' }}>{isLinked ? '★ [LINKED] ' : '☆ [UNLINKED] '} {n.name}</span>
+                    <span style={{ fontWeight: 'bold' }}>{isLinked ? '★ ' : '☆ '} {n.name}</span>
                     <span style={{ fontSize: '0.7rem', color: isLinked ? 'var(--color-void-navy)' : 'var(--color-dusty-lavender)' }}>{n.tag}</span>
                   </button>
                 );
@@ -1313,7 +1520,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {selectedVignette && (
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-dream-lilac)', padding: '12px', marginBottom: '14px', textAlign: 'left' }}>
                 <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.78rem', fontWeight: 'bold', marginBottom: '4px' }}>
-                  TELESCOPE VISION // {selectedVignette.title.toUpperCase()} ({selectedVignette.category})
+                  Telescope Vision: {selectedVignette.title} ♥
                 </div>
                 <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.76rem', lineHeight: '1.6' }}>
                   {selectedVignette.description}
@@ -1327,7 +1534,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {/* Progress status */}
             <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: `1px dashed ${allNodesLinked ? 'var(--color-lantern-gold)' : 'var(--color-twilight-blue)'}`, padding: '10px', marginBottom: '16px' }}>
               <span className="font-mono" style={{ color: allNodesLinked ? 'var(--color-lantern-gold)' : 'var(--color-warm-peach)', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                CIRCUIT STATUS: {linkedNodes.length} / 5 DREAM ESTATES LINKED
+                Dream Estates Linked: {linkedNodes.length} / 5 ♥
               </span>
             </div>
 
@@ -1335,7 +1542,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {allNodesLinked && !namedConstellation && (
               <div style={{ backgroundColor: 'var(--color-midnight-indigo)', padding: '16px', border: '1px solid var(--color-lantern-gold)', marginBottom: '16px', textAlign: 'left' }}>
                 <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '8px' }}>
-                  NAME OUR FUTURE CONSTELLATION:
+                  Humare Sitaron Ka Naam Rakhein:
                 </div>
                 <input
                   type="text"
@@ -1350,7 +1557,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   className="pixel-btn pixel-btn-primary font-display"
                   style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
                 >
-                  INSCRIBE IN SKY &amp; UNLOCK SECRET ROSE GARDEN GATE
+                  Aasman Mein Naam Likhein &amp; Secret Garden Kholein ♥
                 </button>
               </div>
             )}
@@ -1358,22 +1565,22 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             {namedConstellation && (
               <div>
                 <div className="pixel-badge pixel-badge-gold font-mono" style={{ marginBottom: '14px', padding: '6px 14px' }}>
-                  CONSTELLATION INSCRIBED: "{namedConstellation}" &bull; STAR 5 AWAKENED
+                  Sitaron Ka Naam: "{namedConstellation}" &bull; Star #5 Roshan Ho Gaya ♥
                 </div>
                 <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-lantern-gold)', padding: '14px', marginBottom: '14px', textAlign: 'left' }}>
                   <div className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '4px' }}>
-                    STAGE 6 NEXT &bull; THE HEAVY IVY GATE IS UNLOCKED!
+                    Secret Rose Garden Ka Darwaza Khul Gaya!
                   </div>
                   <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', lineHeight: '1.7' }}>
                     "The celestial energy has broken the seal! The blooming Ivy Rose Gate in the Southeast has swung wide open. Walk southeast to the Secret Rose Garden for your final surprise!"
                   </div>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="pixel-btn pixel-btn-primary font-display"
                   style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
                 >
-                  CONTINUE TO STAGE 6: SECRET ROSE GARDEN →
+                  Chalo Secret Rose Garden Chalein Meri Jaan →
                 </button>
               </div>
             )}
@@ -1407,12 +1614,12 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     };
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '680px', backgroundColor: 'var(--color-void-navy)', padding: '30px 24px', border: '2px solid var(--color-lantern-gold)' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '20px', borderBottom: '1px dashed var(--color-twilight-blue)', paddingBottom: '14px' }}>
             <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
-              October 31 &bull; The Secret Rose Garden Sanctuary
+              October 31 &bull; Humara Secret Rose Garden ♥
             </div>
             <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem' }}>
               {allLanternsLit ? BIRTHDAY_LETTER.title : 'THE 3 ROSE LANTERNS OF DEVOTION'}
@@ -1442,7 +1649,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                     >
                       <div>
                         <div className="font-display" style={{ color: isLit ? l.color : 'var(--color-warm-peach)', fontSize: '0.92rem' }}>
-                          {isLit ? '★ [BURNING BRIGHT] ' : '☆ [UNLIT] '} {l.name}
+                          {isLit ? '★ ' : '☆ '} {l.name}
                         </div>
                         <div className="font-mono" style={{ color: 'var(--color-dusty-lavender)', fontSize: '0.75rem', marginTop: '2px' }}>
                           {l.virtue}
@@ -1454,7 +1661,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                         className={`pixel-btn ${isLit ? 'pixel-btn-ghost' : 'pixel-btn-primary'} font-mono`}
                         style={{ fontSize: '0.75rem', padding: '6px 12px', whiteSpace: 'nowrap' }}
                       >
-                        {isLit ? 'IGNITED' : 'LIGHT LANTERN'}
+                        {isLit ? '♥ Roshan' : 'Roshan Karein'}
                       </button>
                     </div>
                   );
@@ -1462,7 +1669,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
               </div>
 
               <div className="font-mono" style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--color-warm-peach)' }}>
-                [ Light all 3 lanterns to awaken the final stars &amp; Ahmad's birthday letter ]
+                (Teeno pyari lanterns ko jala kar Ahmad ka birthday letter parhein!)
               </div>
             </div>
           ) : (
@@ -1494,17 +1701,17 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   className="pixel-btn pixel-btn-peach font-display"
                   style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: '0.95rem' }}
                 >
-                  ACCEPT LETTER &amp; AWAKEN THE 7TH STAR (THE ETERNAL HEART)
+                  Birthday Letter Parhein &amp; Star #7 Roshan Karein ♥
                 </button>
               ) : (
                 <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-lantern-gold)', padding: '14px', textAlign: 'center' }}>
                   <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.95rem', marginBottom: '4px' }}>
-                    ★ ALL 7 LOST CONSTELLATION STARS FULLY RESTORED! ★
+                    ★ Saaray 7 Sitaray Roshan Ho Gaye! Happy Birthday Meri Paaaari! ★
                   </div>
                   <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.82rem', marginBottom: '12px' }}>
                     The entire Valley of the Stars is ablaze with celestial light! Return to the Central Birthday Table in the Overworld to blow the candles with Ahmad!
                   </div>
-                  <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+                  <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
                     RETURN TO CENTRAL BIRTHDAY TABLE
                   </button>
                 </div>
@@ -1520,7 +1727,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   if (activeObject.type === 'birthday_cake') {
     const isGrandFinale = state.starsRecovered >= 7;
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div 
           className="pixel-modal-content pixel-panel pixel-panel-gold" 
           onClick={e => e.stopPropagation()} 
@@ -1529,19 +1736,19 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           <div className="pixel-panel-header" style={{ marginBottom: '18px' }}>
             <div>
               <span className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.75rem', letterSpacing: '0.12em' }}>
-                {isGrandFinale ? 'OCTOBER 31 • ALL 7 STARS RESTORED • GRAND FINALE' : 'OCTOBER 31 • CENTRAL PLAZA'}
+                {isGrandFinale ? 'October 31 • 00:00:00 • Happy Birthday Meri Jaan!' : 'October 31 • Birthday Plaza'}
               </span>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.15rem', marginTop: '2px' }}>
                 {isGrandFinale ? 'Happy Birthday, Meri Paaaari (Beenish Tasaffar)!' : 'A Birthday Moment For Paaaari (Beenish)'}
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {isGrandFinale && (
             <div style={{ backgroundColor: 'rgba(246, 215, 139, 0.16)', border: '2px solid var(--color-lantern-gold)', padding: '12px', marginBottom: '16px', textAlign: 'center' }}>
               <div className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.95rem' }}>
-                ★ ALL 7 CONSTELLATION STARS SHINE OVER THE VALLEY! ★
+                ★ Saaray 7 Sitaray Valley Par Chamak Rahay Hain! ★
               </div>
               <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.78rem', marginTop: '4px' }}>
                 Constellation "{namedConstellation || "Paaaari's Starlight"}" is inscribed forever in the October 31st sky.
@@ -1617,11 +1824,11 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   Relight Candles
                 </button>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="pixel-btn pixel-btn-peach font-display"
                   style={{ flex: 2, padding: '12px', justifyContent: 'center' }}
                 >
-                  Continue The Expedition
+                  Valley Ghoomein &amp; Enjoy Karein ♥
                 </button>
               </div>
             </div>
@@ -1644,7 +1851,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     let actions: Array<{ label: string; feedback: string }> = [];
 
     if (id === 'world_signpost') {
-      category = 'WORLD COMPASS // 5 DREAM HOUSES';
+      category = 'Humare 5 Dream Estates Ka Map ♥';
       title = 'Map of The 5 Dream Estates';
       accentColor = '#38BDF8';
       description = 'Ahmad (Pagluu) ka banaya hua master map! Is valley say 5 mukhtalif pathways nikalte hain jo seedha humary 5 dream houses ki taraf jatay hain:\n\n1. North-West: Margalla Trail -> Islamabad 5-Marla Luxury Villa\n2. West: Stealth Highway -> The Batcave & Dark Brutalist Safehouse\n3. East: Pastry Lane -> Sweet Dreams Bakery & Patisserie\n4. North-East: Mountain Pass -> Queen Beenish\'s Royal Mountain Castle\n5. South: Desi Trail -> 12-Marla Gaon Haveli & Gushing Tubewell';
@@ -1653,29 +1860,29 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'PLAN TODAY\'S ROAD TRIP', feedback: 'Pehle Batmobile may long drive, phir Bakery may white pasta aur strawberry cake, aur shaam ko Haveli may tubewell k paani may sukoon!' }
       ];
     } else if (id === 'pond_bench') {
-      category = 'REFLECTING LAKESIDE RETREAT';
+      category = 'Sukoon Bhari Jheel ♥';
       title = 'Willow Lakeside Bench & Still Waters';
       accentColor = '#38BDF8';
       description = "Thandi shaam, weeping willow ki jhuki hui tehniyan, aur neelay paani par tairtay lotus blossoms...\n\n\"Yahan baith kar bas aap ka hath pakarna hai, aur paani may chaand ka aks dekhna hai. Sari dunya ka shor tham jata hai jab aap sath hoti hain meri Paaaari.\"";
-      extraNote = 'Ahmad\'s Promise: "Paani may girnay nahi doon ga, hamesha thaam kar rakhun ga!"';
+      extraNote = 'Ahmad\'s Promise: "Paani may girnay nai doon ga, hamesha thaam kar rakhun ga!"';
       actions = [
         { label: 'WATCH LOTUS RIPPLES WITH AHMAD', feedback: 'Lotus k phool paani par softly float kar rahy hain... ek gehri, sukoon bhari khamoshi aur be-inteha pyaar.' },
         { label: 'SKIP A SMOOTH RIVER PEBBLE', feedback: 'Pebble paani par 4 dafa bounce hua! Ahmad taaliyan bajanay laga: "Meri Paaaari ka nishana 100/100!"' }
       ];
     } else if (id === 'hub_signpost') {
-      category = 'VALLEY GUIDEPOST';
+      category = 'Valley Crossroads ♥';
       title = 'Valley of the Stars Crossroads';
       accentColor = 'var(--color-lantern-gold)';
       description = 'North ki taraf Bureau of Unreasonable Paglu, Museum of Beenish, aur Court of No Flaws hain. East may ancient Archive tower aur Secret Rose Garden hai. Charon konon say humary dream houses k pathways nikalte hain!';
       extraNote = 'Har rasta khula hai meri jaan. Aap jahan bhi jayen gi, aap ka Pagluu aap k peechay peechay chalay ga!';
     } else if (id === 'estates_signpost') {
-      category = 'ARCHWAY INSCRIPTION';
+      category = 'Dream Estates Gateway ♥';
       title = 'The 5 Dream Estates Gateway';
       accentColor = '#C084FC';
       description = 'Yahan se aap The 5 Dream Estates ki plaza may dakhil hotay hain, jahan Islamabad, Mafia Safehouse, Bakery, Castle aur Gaon Haveli sab aik sath bikhray huay hain!';
       extraNote = 'Aik aik ghar may aap k liye dher saara pyaar aur memories sanjo kar rakhi hain.';
     } else if (id === 'arrival_plaque') {
-      category = 'ARRIVAL BIRTHDAY PAVILION // WELCOME ARCHWAY';
+      category = 'Welcome Meri Paaaari ♥';
       title = "Paaaari's Birthday Expedition Archway";
       accentColor = '#F59E0B';
       description = "Mera paala bacha, meri jaan Beenish! Welcome to the Valley of the Stars, crafted with every ounce of my heart for October 31st!\n\nIs valley may humari zindagi ki saari pyari memories, sapnay, aur 6 Lost Constellation Stars bikhray huay hain. North ki taraf Bureau, Museum aur Court hain. East may Archive aur Secret Garden hai. Charon konon say humary 5 dream houses k raastay nikalte hain.\n\nAap jahan bhi jayen gi, aap ka Ahmad (Pagluu) hamesha aap k sath hai!";
@@ -1685,16 +1892,16 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'SMELL FRESH JASMINE BOUQUET', feedback: 'Chambeli aur motia ki behad meethi aur taaza khushboo hawa may ghol gayi... bilkul aap ki tarah pakeeza aur pyari!' }
       ];
     } else if (id === 'note_pavilion') {
-      category = 'AHMAD\'S HANDWRITTEN POST-IT NOTE';
+      category = 'Pagluu Ka Pyara Sa Note ♥';
       title = 'Sticky Note #1: Pavilion Timber Pillar';
       accentColor = '#FACC15';
-      description = "Melaa bachaaa! Alyyy lyyyy lyyy!\n\nAik saal se sath hain hum, aur har din pehle se zyada pyara lagta hai. Itna chotu sa dill hai aap ka, aur itna narm. Ap sa talented, ap sa pyara, ap sa kind insan poori kainat may doosra koi nahi hai. Happy Birthday meri Beenish!";
+      description = "Melaa bachaaa! Alyyy lyyyy lyyy!\n\nAik saal se sath hain hum, aur har din pehle se zyada pyara lagta hai. Itna chotu sa dill hai aap ka, aur itna narm. Ap sa talented, ap sa pyara, ap sa kind insan poori kainat may doosra koi nai hai. Happy Birthday meri Beenish!";
       extraNote = 'PS: Pagluu ki taraf se 10,000 hugs aur unlimited forehead kisses!';
       actions = [
         { label: 'POCKET THE STICKY NOTE', feedback: 'Aap nay yellow note hifazat say apnay inventory pouch may rakh liya taakay hamesha parh sakein!' }
       ];
     } else if (id === 'note_willow') {
-      category = 'AHMAD\'S HANDWRITTEN POST-IT NOTE';
+      category = 'Pagluu Ka Pyara Sa Note ♥';
       title = 'Sticky Note #2: Weeping Willow by the Water';
       accentColor = '#FACC15';
       description = "Caution: Beenie might get galli geeli in the pond! mmxmmMmXMm!\n\nWater bohot gehra aur thanda hai paaaari, boat par beth kar lotus flowers dekhein, lekin paani may chhalang mat lagana warna Pagluu ko bhi tairna paray ga aap ko bachanay k liye!";
@@ -1703,7 +1910,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'SPLASH SOME COLD WATER ON AHMAD', feedback: 'Chapaaak! Thanda paani Ahmad k face par gaya aur wo hansnay laga: \'Hayee meri zalim paaaari!\'' }
       ];
     } else if (id === 'note_bureau') {
-      category = 'AHMAD\'S HANDWRITTEN POST-IT NOTE';
+      category = 'Pagluu Ka Pyara Sa Note ♥';
       title = 'Sticky Note #3: Bureau Street Lantern';
       accentColor = '#FACC15';
       description = "Bubu's Official Complaints Box!\n\nSection 42-A: Pagluu k saray unreasonable harkatain are hereby classified as 'unconstitutionally cute'. Kisi bhi shikayat ki soorat may sirf hug aur chocolates di jayen gi!";
@@ -1712,16 +1919,16 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'FILE CUTE COMPLAINT', feedback: 'Shikayat darj hui: \'Pagluu bohot zyada tang karta hai aur bohot zyada pyar karta hai!\' Case closed!' }
       ];
     } else if (id === 'note_museum') {
-      category = 'AHMAD\'S HANDWRITTEN POST-IT NOTE';
+      category = 'Pagluu Ka Pyara Sa Note ♥';
       title = 'Sticky Note #4: Museum Marble Pillar';
       accentColor = '#FACC15';
       description = "Official Record from the Ministry of Genius:\n\nPosition holder, topper, gold medalist of my heart, and greatest human being alive. Yahan museum may har drawing aur har achievement aap ki mehnat ki gawahi deti hai!";
-      extraNote = 'PS: Beenish Tasaffar jaisa koi aur ban hi nahi sakta, period.';
+      extraNote = 'PS: Beenish Tasaffar jaisa koi aur ban hi nai sakta, period.';
       actions = [
         { label: 'PROUDLY ADJUST GLASSES', feedback: 'Aap nay muskura kar apnay specs theek kiye... 100/10 elegance aur genius energy!' }
       ];
     } else if (id === 'note_court') {
-      category = 'AHMAD\'S HANDWRITTEN POST-IT NOTE';
+      category = 'Pagluu Ka Pyara Sa Note ♥';
       title = 'Sticky Note #5: Court Bronze Post';
       accentColor = '#FACC15';
       description = "Road to the Court of No Flaws!\n\nSpoiler Alert: Honorable Chief Justice Ahmad has already examined the evidence across 365 days. The verdict is irrevocable: Beenish Tasaffar has ZERO flaws. Absolutely none!";
@@ -1730,7 +1937,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'BANG THE JUDGE\'S GAVEL', feedback: 'Thak! Thak! Thak! \'Adalat faisla sunati hai k Beenish dunya ki sab say pyari larki hain!\'' }
       ];
     } else if (id === 'islamabad_sofa_bay') {
-      category = 'ISLAMABAD 5-MARLA VILLA // LIVING ROOM';
+      category = 'Islamabad Villa: Living Room &amp; Bara Sofa ♥';
       title = 'The Baraaa Sofa for Beenie (Window View)';
       accentColor = '#FB7185';
       description = 'Khirki say andar dekhein: Floor-to-ceiling panoramic glass k peechay living room ka warm golden glow! Andar rakha hai the famous BARAAA SOFA FOR BEENIE — massive plush cream velvet L-shaped sofa, blush pink silk cushions, aur walnut coffee table par garam garam steaming cardamom (elaichi) chai k 2 mugs!';
@@ -1740,7 +1947,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'SIP STEAMING ELAICHI CHAI', feedback: 'Chuski lein taaza cardamom chai ki... garam, meethi, aur full of sukoon!' }
       ];
     } else if (id === 'islamabad_kids_rooms') {
-      category = 'ISLAMABAD 5-MARLA VILLA // 2ND FLOOR';
+      category = 'Islamabad Villa: Bachon Ke Rooms ♥';
       title = 'The 3 Kids\' Balconies & Rooms';
       accentColor = '#38BDF8';
       description = 'Upar 3 balconies nazar aa rahi hain, har bache ka apna separate themed room:\n\n• Room 1 (Left): Boy 1 — Samurai Jack Japanese room, ocean blue lighting, aur railing par rakhi hui steel Samurai Jack Katana!\n• Room 2 (Center): Boy 2 — Starry lavender galaxy room, constellation wall art, fairy lights, aur brass telescope!\n• Room 3 (Right): Baby Girl — Princess room, sheer white canopy, aur balcony chair par betha hua THE GIANT 6-FOOT TEDDY BEAR with pink bow tie!';
@@ -1750,13 +1957,13 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'INSPECT SAMURAI JACK KATANA', feedback: 'Chamakdar Japanese steel blade... perfectly balanced for justice and chivalry!' }
       ];
     } else if (id === 'islamabad_lawn_sign') {
-      category = 'VILLA FOUNDATION STONE';
+      category = 'Margalla Hills Dream Sanctuary ♥';
       title = 'Sector F-7 Margalla Dream Sanctuary';
       accentColor = '#22C55E';
       description = 'Margalla Hills ki thandi hawayen, samnay khulay pahaad, aur lawn may khilti hui hot pink Bougainvillea aur khushbudaar Chambeli (jasmine). Sukoon, shanti aur humari choti si duniya.';
       extraNote = 'Dunya ka sab say pyara ghar, jahan sirf Beenish Tasaffar ki hukmarani hai.';
     } else if (id === 'bakery_display') {
-      category = 'SWEET DREAMS PATISSERIE // DISPLAY BAY';
+      category = 'Sweet Dreams Bakery ♥';
       title = 'Tiered Pastry Display Window';
       accentColor = '#F472B6';
       description = 'Sheeshay k andar dekhein: Tiered mahogany shelves par saji hain taaza bakes:\n\n• Top Shelf: Multi-tiered strawberry birthday cake with vanilla rosettes & fresh red strawberries, plus pastel heart macarons!\n• Middle Shelf: Golden flaky chocolate croissants (pain au chocolat), cinnamon buns, aur wicker basket may French baguettes!\n• Bottom Shelf: Glossy fruit tarts with blueberries and raspberries, chocolate truffles, and eclairs!';
@@ -1767,7 +1974,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'EAT A PISTACHIO MACARON', feedback: 'Crunchy delicate shell with velvety smooth pistachio ganache! Parisian perfection!' }
       ];
     } else if (id === 'bakery_cafe_table') {
-      category = 'PARISIAN STREET CAFE';
+      category = 'Cozy Cafe Table ♥';
       title = 'Bistro Table & Cafe au Lait';
       accentColor = '#F59E0B';
       description = 'Rain-slicked wet cobblestones k kinare cast-iron bistro set. Samnay taaza cappuccino with delicate heart-shaped latte art aur macarons ki plate.';
@@ -1776,12 +1983,12 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'SIP TAAZA CAPPUCCINO WITH LATTE ART', feedback: 'Creamy froth with rich aromatic coffee... warming your hands in the cool evening breeze!' }
       ];
     } else if (id === 'bakery_pretzel_sign') {
-      category = 'HISTORIC BOULANGERIE EMBLEM';
+      category = 'Sweet Dreams Bakery Emblem ♥';
       title = 'Gilded Golden Pretzel & Cupcake Crest';
       accentColor = '#F59E0B';
       description = 'Wrought-iron bracket par latakta hua gilded golden pretzel emblem. Ye sign mark karta hai k ye Sweet Dreams Patisserie sirf aur sirf Beenish Tasaffar (Bubu) ki khushi k liye waqf hai!';
     } else if (id === 'haveli_charpai') {
-      category = '12-MARLA HAVELI // VEHRRA';
+      category = '12-Marla Haveli: Khula Vehrra ♥';
       title = 'Woven Charpai under Ancient Neem Tree';
       accentColor = '#F59E0B';
       description = 'Khulay earthen aangan (vehrra) may ancient Neem tree ki thandi chhaon talay bichi hai authentic turned-walnut charpai. Upar Phulkari aur geometric Khes bicha hai, cylindrical cotton bolsters (gao takkay) lagay huay hain. Sath may brass glasses may chilled sweet lassi with fresh white butter (makkhan) rakhi hai!';
@@ -1791,7 +1998,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'DRINK CHILLED MEETHI LASSI', feedback: 'Heavy brass tumbler say thandi lassi ka ghoont... upar terta hua taaza makkhan! Hayee maza!' }
       ];
     } else if (id === 'haveli_tubewell') {
-      category = 'PUNJAB COUNTRYSIDE // TUBEWELL';
+      category = 'Thanda Tubewell &amp; Taaza Aam ♥';
       title = 'Working Tubewell & Fresh Mango Crates';
       accentColor = '#38BDF8';
       description = 'Cast-iron electric motor tezz chal raha hai, aur thick curved pipe say crystal-clear barf jaisa thanda paani lagataar gush kar k concrete hauzi may gir raha hai! Hauzi may foaming white froth aur ripples ban rahe hain. Sath may Chaunsa aur Sindhri aam ki lakri ki crates bhari pari hain!';
@@ -1801,17 +2008,17 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
         { label: 'EAT A RIPE CHAUNSA MANGO', feedback: 'Meetha, raseela Chaunsa aam! Hath pooray mango juice say bhar gaye... itna tasty!' }
       ];
     } else if (id === 'haveli_jharoka') {
-      category = 'MUGHAL ARCHITECTURE // UPPER HAVELI';
+      category = 'Sheesham Jharoka Balcony ♥';
       title = 'Carved Sheesham Jharoka Balcony';
       accentColor = '#F59E0B';
       description = 'Lal eenton ki haveli k upper floor par khubsoorat antique Sheesham wood jharoka with hand-carved geometric jali lattice. Yahan se poora pind, gandum k khait aur tubewell ka nazaara dikhta hai.';
       extraNote = 'Sham k waqt yahan lantern jalta hai aur hawayen aati hain.';
     } else if (id === 'castle_balcony') {
-      category = 'QUEEN BEENISH\'S THRONE // BALCONY';
+      category = 'Queen Beenish Ka Shahi Mehal ♥';
       title = 'Karakoram Mountain Vista Balcony';
       accentColor = '#C084FC';
       description = 'Buland pahaari choti par shahi stone balcony. Samnay Karakoram aur Himalaya k barfeele peaks, aasman may chamakta hua crescent moon aur celestial nebula! Is unchaai par khare ho kar lagta hai dunya humary kadmon may hai.';
-      extraNote = 'Queen Beenish ki saltanat, jahan koi gham dakhil nahi ho sakta.';
+      extraNote = 'Queen Beenish ki saltanat, jahan koi gham dakhil nai ho sakta.';
       actions = [
         { label: 'GAZE OVER THE MOUNTAIN KINGDOM', feedback: 'Aap nay badalon aur barfeele pahaaron ko dekha... hawa thandi aur taaza hai, aur aap sach may saltanat ki malika hain!' }
       ];
@@ -1828,7 +2035,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     }
 
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel" onClick={e => e.stopPropagation()} style={{ maxWidth: '620px', backgroundColor: 'var(--color-void-navy)', borderColor: accentColor }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '14px' }}>
             <div>
@@ -1839,7 +2046,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 {title}
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '14px', lineHeight: '1.75' }}>
@@ -1878,34 +2085,8 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             )}
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
             CLOSE INSPECTION
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // 11. SECRET GARDEN GATE (LOCKED HINT)
-  if (activeObject.id === 'door_garden' && !state.secretGardenUnlocked) {
-    return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
-        <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
-          <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', marginBottom: '8px' }}>
-            [ CONCEALED IVY GATE &bull; LOCKED ]
-          </div>
-          <h3 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1rem', marginBottom: '10px' }}>
-            CONCEALED IVY GATE
-          </h3>
-          <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.85rem', lineHeight: '1.7', marginBottom: '16px' }}>
-            Dense ivy and wild roses twist around an old iron gate. A weathered wooden plaque reads:
-          </p>
-          <div className="font-mono" style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '14px', color: 'var(--color-warm-peach)', fontSize: '0.82rem', lineHeight: '1.7', marginBottom: '20px' }}>
-            "The key is hidden behind the White Jet frame in the Museum of Beenish.
-            It opens Bureau Drawer #07, where the Botanical Map rests."
-          </div>
-          <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
-            FOLLOW THE CLUES
           </button>
         </div>
       </div>
@@ -1915,23 +2096,23 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 12. HIGH-OCTANE SPEED GARAGE: NINJA H2R & DODGE CHALLENGER
   if (activeObject.type === 'garage_vehicles') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
             <div>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                [ 11/10 BADDIE HIGH-OCTANE GARAGE ]
+                Paaaari Ka Speed Garage ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', margin: '4px 0 0 0' }}>
                 Kawasaki Ninja H2R &amp; Dodge Challenger
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px', lineHeight: '1.7' }}>
             <p className="font-mono" style={{ fontSize: '0.88rem', color: 'var(--color-moon-cream)', margin: '0 0 10px 0' }}>
-              Meri Paaaari ko ordinary speed bilkul pasand nahi! Yahan aapki two favorite machines full shine kar rahi hain:
+              Meri Paaaari ko ordinary speed bilkul pasand nai! Yahan aapki two favorite machines full shine kar rahi hain:
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
               <div style={{ backgroundColor: 'rgba(74, 222, 128, 0.1)', border: '1px solid #4ADE80', padding: '10px' }}>
@@ -1986,7 +2167,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             >
               RUMBLE THE CHALLENGER
             </button>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display">
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display">
               CLOSE GARAGE
             </button>
           </div>
@@ -1998,18 +2179,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 13. PRIVATE JET APRON & RED CARPET VISION
   if (activeObject.type === 'jet_tarmac') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '620px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
             <div>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ CLASSIFIED VISION RECORD &bull; FUTURE MEMORY ]
+                Humara Khawab: White Jet &amp; Red Carpet Walk ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', margin: '4px 0 0 0' }}>
                 The White Jet &amp; Red Carpet Vision
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '18px', lineHeight: '1.8' }}>
@@ -2031,7 +2212,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             </div>
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-peach font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-peach font-display" style={{ width: '100%', justifyContent: 'center' }}>
             I AM READY FOR MY RED CARPET WALK
           </button>
         </div>
@@ -2042,18 +2223,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 14. 2 AM FEAST TABLE: WHITE PASTA & SWEETS
   if (activeObject.type === 'feast_table') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '620px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
             <div>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ MIDNIGHT CRAVINGS HEADQUARTERS ]
+                2 AM Feast: White Pasta &amp; Chocolates ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', margin: '4px 0 0 0' }}>
                 2 AM Feast Table: White Pasta &amp; Sweets
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px', lineHeight: '1.8' }}>
@@ -2112,7 +2293,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             <button
               onClick={() => {
                 soundEngine.playClick();
-                setSnackMessage('Bara sa Nutella ka chamach! Pure chocolate heaven! Pagluu: "Jitna dil chahe khayein, koi rokne wala nahi!"');
+                setSnackMessage('Bara sa Nutella ka chamach! Pure chocolate heaven! Pagluu: "Jitna dil chahe khayein, koi rokne wala nai!"');
               }}
               className="pixel-btn font-display"
               style={{ flex: 1, minWidth: '140px', backgroundColor: '#78350F', color: '#FEF3C7', justifyContent: 'center' }}
@@ -2121,7 +2302,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             </button>
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
             SAVOR THE LATE NIGHT FEAST
           </button>
         </div>
@@ -2132,10 +2313,10 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 15. PAISAY VAULT: DHAYYERRRR SARYYYYYYYYYY PAISAY
   if (activeObject.type === 'paisay_vault') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '580px', backgroundColor: 'var(--color-void-navy)', textAlign: 'center' }}>
           <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em', marginBottom: '6px' }}>
-            [ THE INFINITE WEALTH VAULT ]
+            Dhayeeer Saaray Paisay ♥
           </div>
           <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.3rem', margin: '0 0 14px 0' }}>
             DHAYYERRRR SARYYYYYYYYYY PAISAY
@@ -2154,7 +2335,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
           </div>
 
           <p className="font-mono" style={{ fontSize: '0.86rem', color: 'var(--color-moon-cream)', lineHeight: '1.7', marginBottom: '18px' }}>
-            Meri Beghum G ko mangne ki bhi zaroorat nahi hai. Dunya ka saara paisa, saari daulat, aur saari khushiyan aap k kadmon may hazir hain!
+            Meri Beghum G ko mangne ki bhi zaroorat nai hai. Dunya ka saara paisa, saari daulat, aur saari khushiyan aap k kadmon may hazir hain!
           </p>
 
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
@@ -2168,7 +2349,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             >
               ADD MORE PAISAY (+ 50 BILLION)
             </button>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display">
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display">
               CLOSE VAULT
             </button>
           </div>
@@ -2180,18 +2361,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 16. SPORTS ARENA: CRICKET & BADMINTON
   if (activeObject.type === 'sports_arena') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
             <div>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ CHAMPIONSHIP ARENA &bull; UNDEFEATED ]
+                Cricket &amp; Badminton Arena ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', margin: '4px 0 0 0' }}>
                 Cricket &amp; Badminton Championship Ground
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px', lineHeight: '1.8' }}>
@@ -2212,7 +2393,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             </div>
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
             ACCEPT THE CHAMPIONSHIP TROPHY
           </button>
         </div>
@@ -2223,18 +2404,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 17. LOCKED SECRET GARDEN ROSE GATE
   if (activeObject.id === 'door_garden' && !state.secretGardenUnlocked) {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-rose" onClick={e => e.stopPropagation()} style={{ maxWidth: '580px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
             <div>
               <div className="font-mono" style={{ color: 'var(--color-rose-glow)', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ LOCKED SANCTUARY GATE ]
+                Secret Rose Garden Ka Darwaza
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.2rem', margin: '4px 0 0 0' }}>
                 The Secret Hidden Garden Gate
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px', lineHeight: '1.8' }}>
@@ -2248,7 +2429,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             </div>
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
             I WILL RECOVER THE STARS FOR MY PAGLUU
           </button>
         </div>
@@ -2259,18 +2440,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 19. BUILDING 1: ISLAMABAD 5-MARLA FAMILY HOUSE
   if (activeObject.type === 'house_islamabad') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-peach" onClick={e => e.stopPropagation()} style={{ maxWidth: '680px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '14px' }}>
             <div>
               <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ ESTATE #01 // ISLAMABAD HILLS ]
+                Islamabad 5-Marla Villa ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', margin: '4px 0 0 0' }}>
                 The Islamabad 5-Marla Family House
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Room Navigation Tabs */}
@@ -2412,7 +2593,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             </div>
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
             CLOSE BLUEPRINT VIEW
           </button>
         </div>
@@ -2423,18 +2604,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 20. BUILDING 2: SECRET MAFIA SAFEHOUSE & BATMOBILE
   if (activeObject.type === 'house_mafia') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-rose" onClick={e => e.stopPropagation()} style={{ maxWidth: '660px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '14px' }}>
             <div>
               <div className="font-mono" style={{ color: '#EF4444', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ ESTATE #02 // LEVEL 5 CLASSIFIED ]
+                The Batcave Safehouse &amp; Batmobile Tumbler ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', margin: '4px 0 0 0' }}>
                 Secret Mafia Safehouse &amp; Batmobile Tumbler
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Sub-tabs */}
@@ -2501,7 +2682,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                   BIOMETRIC ARMORY &amp; PROTECTIVE VAULT
                 </div>
                 <p className="font-mono" style={{ fontSize: '0.84rem', color: 'var(--color-moon-cream)' }}>
-                  State-of-the-art encrypted safehouse. Facial recognition sirf 2 logon ko allow karta hai: The Boss (Ahmad) and The Real Boss (Beenish). Dunya may koi bhi meri Paaaari ki taraf aankh utha kar bhi nahi dekh sakta, 24/7 automated drone security active rehti hai!
+                  State-of-the-art encrypted safehouse. Facial recognition sirf 2 logon ko allow karta hai: The Boss (Ahmad) and The Real Boss (Beenish). Dunya may koi bhi meri Paaaari ki taraf aankh utha kar bhi nai dekh sakta, 24/7 automated drone security active rehti hai!
                 </p>
               </div>
             )}
@@ -2518,7 +2699,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             )}
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
             EXIT SAFEHOUSE
           </button>
         </div>
@@ -2529,18 +2710,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 21. BUILDING 3: SWEET DREAMS BAKERY & PASTRY PARLOUR
   if (activeObject.type === 'house_bakery') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-rose" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '14px' }}>
             <div>
               <div className="font-mono" style={{ color: '#F472B6', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ ESTATE #03 // ARTISANAL PATISSERIE ]
+                Sweet Dreams Bakery &amp; Pastry Parlour ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', margin: '4px 0 0 0' }}>
                 Sweet Dreams Bakery &amp; Pastry Parlour
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Sub-tabs */}
@@ -2619,7 +2800,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             )}
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
             EXIT BAKERY
           </button>
         </div>
@@ -2630,18 +2811,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 22. BUILDING 4: QUEEN BEENISH'S MOUNTAIN CASTLE
   if (activeObject.type === 'house_castle') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-lilac" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '14px' }}>
             <div>
               <div className="font-mono" style={{ color: '#C084FC', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ ESTATE #04 // ROYAL CITADEL ]
+                Queen Beenish’s Mountain Castle ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', margin: '4px 0 0 0' }}>
                 Queen Beenish’s Mountain Castle
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Sub-tabs */}
@@ -2689,7 +2870,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             )}
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
             EXIT CASTLE
           </button>
         </div>
@@ -2700,18 +2881,18 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
   // 23. BUILDING 5: 12-MARLA GAON HAVELI (HIRA KI HAVELI)
   if (activeObject.type === 'house_haveli') {
     return (
-      <div className="pixel-modal-backdrop" onClick={onClose}>
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
         <div className="pixel-modal-content pixel-panel pixel-panel-gold" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', backgroundColor: 'var(--color-void-navy)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '14px' }}>
             <div>
               <div className="font-mono" style={{ color: '#F59E0B', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
-                [ ESTATE #05 // GAON SUKOON ]
+                12-Marla Gaon Haveli (Hira Ki Haveli) ♥
               </div>
               <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', margin: '4px 0 0 0' }}>
                 12-Marla Gaon Haveli (Hira Ki Haveli)
               </h2>
             </div>
-            <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
           </div>
 
           {/* Sub-tabs */}
@@ -2775,7 +2956,7 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
             )}
           </div>
 
-          <button onClick={onClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
+          <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-display" style={{ width: '100%', justifyContent: 'center' }}>
             EXIT HAVELI
           </button>
         </div>

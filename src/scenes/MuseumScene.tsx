@@ -269,7 +269,7 @@ export const MuseumScene: React.FC = () => {
             <div className="pixel-panel-header">
               <div>
                 <span className="font-mono" style={{ color: 'var(--color-lantern-gold)', fontSize: '0.75rem' }}>
-                  {activeExhibit.badge} // MUSEUM ARTIFACT DOSSIER
+                  {activeExhibit.badge} // MUSEUM ARTIFACT FILE
                 </span>
                 <h3 className="font-display" style={{ color: 'var(--color-dream-lilac)', fontSize: '1.1rem', marginTop: '4px' }}>
                   {activeExhibit.title}

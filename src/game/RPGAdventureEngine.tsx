@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { ExpeditionMapModal } from '../components/ExpeditionMapModal';
+import { getActiveObjective, MAP_LANDMARKS } from '../data/landmarksData';
 import { useExpedition } from '../state/ExpeditionContext';
 import { Direction, Position, RoomId, InteractableObject, LightSource } from './types';
 import { ROOMS } from './maps';
@@ -7,7 +9,13 @@ import { EnvironmentRenderer } from './environmentRenderer';
 import { soundEngine } from '../audio/soundEngine';
 import { JournalModal } from '../components/JournalModal';
 import { LocationId } from '../types/expedition';
-import { OBJECT_PROXIMITY_BARKS } from '../data/personalization';
+import { 
+  ROOM_OBJECT_DIALOGUES,
+  PAGLU_CHASE_LINES,
+  PAGLU_STOP_LINES,
+  PAGLU_FAINT_LINES,
+  POND_SHORE_DIALOGUES,
+} from '../data/dialogueData';
 
 interface RPGAdventureEngineProps {
   onTriggerInteraction: (interactable: InteractableObject) => void;
@@ -33,13 +41,6 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     secretGardenUnlocked, 
     currentLocation, 
     bureauStamped, 
-    bureauChargesSolved,
-    museumJetCodeSolved,
-    drawer07Unlocked,
-    courtScalesBalanced,
-    archiveChronologySolved,
-    observatoryConstellationConnected,
-    gardenLanternsLit,
     courtVerdictReached, 
     namedConstellation, 
     inventory,
@@ -72,6 +73,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   const trailRef = useRef<Position[]>([]);
   const pagluEmoteRef = useRef<'heart' | 'exclamation' | 'question' | 'music' | 'blush' | 'sparkle' | 'sleep' | null>('heart');
   const pagluEmoteTimerRef = useRef<number>(120);
+  const doorCooldownRef = useRef<number>(0);
 
   // Dynamic Bark & Fainting System for Paaaari (Beghum G)
   const pagluBarkRef = useRef<{ text: string; timer: number } | null>(null);
@@ -93,6 +95,40 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   const [activeInteractable, setActiveInteractable] = useState<InteractableObject | null>(null);
   const activeInteractableRef = useRef<InteractableObject | null>(null);
   const [isJournalOpen, setIsJournalOpen] = useState<boolean>(false);
+  const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
+  const [customWaypoint, setCustomWaypoint] = useState<{ x: number; y: number; label: string } | null>(null);
+  const [hudCoord, setHudCoord] = useState<{ x: number; y: number }>({ x: 800, y: 720 });
+
+  // Active Objective & Waypoint Compass Calculation
+  const currentObjective = useMemo(() => getActiveObjective(state), [state]);
+
+  const targetPoint = useMemo(() => {
+    if (customWaypoint) return customWaypoint;
+    const landmark = MAP_LANDMARKS.find(l => l.id === currentObjective.targetLandmarkId);
+    return landmark ? { x: landmark.x, y: landmark.y, label: landmark.name } : { x: 270, y: 465, label: 'Bureau' };
+  }, [customWaypoint, currentObjective]);
+
+  const { compassArrow, distMeters } = useMemo(() => {
+    if (currentRoomId !== 'overworld') {
+      return { compassArrow: '✦', distMeters: 0 };
+    }
+    const dx = targetPoint.x - hudCoord.x;
+    const dy = targetPoint.y - hudCoord.y;
+    const dist = Math.round(Math.hypot(dx, dy) / 10);
+
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+    let arrow = '▲';
+    if (angle >= -22.5 && angle < 22.5) arrow = '▶';
+    else if (angle >= 22.5 && angle < 67.5) arrow = '◢';
+    else if (angle >= 67.5 && angle < 112.5) arrow = '▼';
+    else if (angle >= 112.5 && angle < 157.5) arrow = '◣';
+    else if (angle >= 157.5 || angle < -157.5) arrow = '◀';
+    else if (angle >= -157.5 && angle < -112.5) arrow = '◤';
+    else if (angle >= -112.5 && angle < -67.5) arrow = '▲';
+    else if (angle >= -67.5 && angle < -22.5) arrow = '◥';
+
+    return { compassArrow: arrow, distMeters: dist };
+  }, [currentRoomId, targetPoint, hudCoord]);
 
   // Mouse Pan, Free-Look & Dynamic Camera Zoom Controls
   const panOffsetRef = useRef<Position>({ x: 0, y: 0 });
@@ -144,8 +180,34 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     const targetRoom = ROOMS[newRoomId] || ROOMS['overworld'];
     const newSpawn = spawnPos || targetRoom.defaultSpawn;
 
+    doorCooldownRef.current = 45; // 0.75s grace period so player never gets trapped or auto-bounced
     playerPosRef.current = { ...newSpawn };
-    pagluPosRef.current = { x: newSpawn.x, y: newSpawn.y + 24 };
+
+    // Infer facing direction based on entry point
+    let entryDir: Direction = 'down';
+    if (newSpawn.y <= 120) {
+      entryDir = 'down';
+    } else if (newSpawn.y >= targetRoom.height - 120) {
+      entryDir = 'up';
+    } else if (newSpawn.x <= 120) {
+      entryDir = 'right';
+    } else if (newSpawn.x >= targetRoom.width - 120) {
+      entryDir = 'left';
+    } else {
+      entryDir = playerDirRef.current;
+    }
+    playerDirRef.current = entryDir;
+
+    // Position Pagluu safely behind Beenish based on direction
+    let pagluSpawnX = newSpawn.x;
+    let pagluSpawnY = newSpawn.y;
+    if (entryDir === 'down') pagluSpawnY -= 22;
+    else if (entryDir === 'up') pagluSpawnY += 22;
+    else if (entryDir === 'right') pagluSpawnX -= 22;
+    else if (entryDir === 'left') pagluSpawnX += 22;
+    pagluPosRef.current = { x: pagluSpawnX, y: pagluSpawnY };
+    pagluDirRef.current = entryDir;
+
     trailRef.current = [];
     targetPosRef.current = null;
     activeInteractableRef.current = null;
@@ -212,6 +274,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        if (isMapOpen) {
+          setIsMapOpen(false);
+          return;
+        }
         if (isJournalOpen) {
           setIsJournalOpen(false);
           return;
@@ -222,9 +288,19 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
       }
 
-      // Suspend movement & action hotkeys when a modal/Journal is open or an input field is focused
+      // 'M' key toggles World Map & Guide
+      if (e.key.toLowerCase() === 'm') {
+        const activeTag = document.activeElement?.tagName.toLowerCase();
+        if (activeTag !== 'input' && activeTag !== 'textarea') {
+          soundEngine.playClick();
+          setIsMapOpen(prev => !prev);
+          return;
+        }
+      }
+
+      // Suspend movement & action hotkeys when a modal/Journal/Map is open or an input field is focused
       const activeTag = document.activeElement?.tagName.toLowerCase();
-      if (isModalOpen || isJournalOpen || activeTag === 'input' || activeTag === 'textarea') {
+      if (isModalOpen || isJournalOpen || isMapOpen || activeTag === 'input' || activeTag === 'textarea') {
         keysPressed.current = {};
         return;
       }
@@ -252,7 +328,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [handleAction, isModalOpen, isJournalOpen, onCloseModal]);
+  }, [handleAction, isModalOpen, isJournalOpen, isMapOpen, onCloseModal]);
 
   // 60fps Game & Camera Loop
   useEffect(() => {
@@ -285,6 +361,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
     const loop = () => {
       frameCount++;
+      if (frameCount % 10 === 0) {
+        setHudCoord({ x: Math.floor(playerPosRef.current.x), y: Math.floor(playerPosRef.current.y) });
+      }
       const currentRoom = ROOMS[currentRoomId] || ROOMS['overworld'];
 
       const vw = canvas.width;
@@ -299,7 +378,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       const isRunning = keysPressed.current['shift'] || isVirtualRunning;
       const speed = isRunning ? 3.8 : 2.4;
 
-      if (!isModalOpen && !isJournalOpen) {
+      if (!isModalOpen && !isJournalOpen && !isMapOpen) {
         if (keysPressed.current['w'] || keysPressed.current['arrowup']) {
           dy -= speed;
           playerDirRef.current = 'up';
@@ -375,27 +454,46 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           playerPosRef.current.y = Math.max(10, Math.min(currentRoom.height - 34, nextY));
         }
 
-        // --- DOOR AUTO-ENTER TRIGGER ---
-        // Walking directly into any doorway immediately enters the room seamlessly!
-        const px = playerPosRef.current.x + 8;
-        const py = playerPosRef.current.y + 16;
-        for (const item of currentRoom.interactables) {
-          if (item.type === 'door' && item.targetRoom) {
-            if (
-              px >= item.x - 8 &&
-              px <= item.x + item.width + 8 &&
-              py >= item.y - 8 &&
-              py <= item.y + item.height + 12
-            ) {
-              if (item.id === 'door_garden' && !secretGardenUnlocked) {
-                // Retreat northward away from locked gate back onto open stone road!
-                playerPosRef.current.y -= 14;
-                soundEngine.playClick();
-                onTriggerInteraction(item);
-                break;
+        // --- DOOR AUTO-ENTER TRIGGER (ONE-WAY & ANTI-STUCK PROTECTED) ---
+        if (doorCooldownRef.current > 0) {
+          doorCooldownRef.current--;
+        } else {
+          const px = playerPosRef.current.x + 8;
+          const py = playerPosRef.current.y + 16;
+          const isActivelyMoving = (dx !== 0 || dy !== 0) || Boolean(targetPosRef.current);
+
+          if (isActivelyMoving) {
+            for (const item of currentRoom.interactables) {
+              if (item.type === 'door' && item.targetRoom) {
+                if (
+                  px >= item.x - 6 &&
+                  px <= item.x + item.width + 6 &&
+                  py >= item.y - 6 &&
+                  py <= item.y + item.height + 10
+                ) {
+                  // Directional movement verification: player must be moving towards the doorway
+                  const doorCenterY = item.y + item.height / 2;
+                  const doorCenterX = item.x + item.width / 2;
+                  const movingTowardsDoor = (
+                    (doorCenterY < py - 4 && (dy < 0 || playerDirRef.current === 'up')) ||
+                    (doorCenterY > py + 4 && (dy > 0 || playerDirRef.current === 'down')) ||
+                    (doorCenterX < px - 4 && (dx < 0 || playerDirRef.current === 'left')) ||
+                    (doorCenterX > px + 4 && (dx > 0 || playerDirRef.current === 'right')) ||
+                    Math.hypot(px - doorCenterX, py - doorCenterY) < 14
+                  );
+
+                  if (movingTowardsDoor) {
+                    if (item.id === 'door_garden' && !secretGardenUnlocked) {
+                      playerPosRef.current.y -= 14;
+                      soundEngine.playClick();
+                      onTriggerInteraction(item);
+                      break;
+                    }
+                    changeRoom(item.targetRoom, item.targetPos);
+                    return;
+                  }
+                }
               }
-              changeRoom(item.targetRoom, item.targetPos);
-              return;
             }
           }
         }
@@ -407,7 +505,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             // Stage 2: Springs up vibrating with shock scream!
             soundEngine.playEmote();
             pagluFaintStateRef.current = { stage: 'screaming', timer: 75 };
-            pagluBarkRef.current = { text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", timer: 75 };
+            pagluBarkRef.current = { text: PAGLU_FAINT_LINES.scream, timer: 75 };
             pagluEmoteRef.current = 'exclamation';
             pagluEmoteTimerRef.current = 75;
           }
@@ -416,7 +514,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           if (pagluFaintStateRef.current.timer <= 0) {
             // Stage 3: Jumps to his feet and sprints back towards her!
             pagluFaintStateRef.current = { stage: 'sprinting_back', timer: 180 };
-            pagluBarkRef.current = { text: "aryyyy.....sunyen tooo!", timer: 100 };
+            pagluBarkRef.current = { text: PAGLU_FAINT_LINES.catchUp, timer: 100 };
             pagluEmoteRef.current = 'heart';
             pagluEmoteTimerRef.current = 100;
           }
@@ -460,33 +558,33 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           pagluEmoteTimerRef.current = 60;
         }
 
-        // --- POND PROXIMITY DIALOGUES FOR PAAARI ---
+        // --- POND PROXIMITY DIALOGUES FOR PAAARI (TIGHTLY CONFINED TO SHORELINE) ---
         if (currentRoom.id === 'overworld') {
           const pondCenterX = 310;
           const pondCenterY = 835;
           const distToPond = Math.hypot(playerPosRef.current.x - pondCenterX, playerPosRef.current.y - pondCenterY);
 
-          // Right at the pond / water edge
-          if (distToPond < 85) {
+          // Right at the water pebbles only (tight radius so it doesn't leak into other paths)
+          if (distToPond < 55) {
             if (!atPondTriggeredRef.current) {
-              pagluBarkRef.current = { text: "galli geeli beenie, mmxmmMmXMm", timer: 180 };
+              pagluBarkRef.current = { text: POND_SHORE_DIALOGUES.atWater, timer: 180 };
               pagluEmoteRef.current = 'heart';
               pagluEmoteTimerRef.current = 100;
               atPondTriggeredRef.current = true;
               nearPondTriggeredRef.current = true;
             }
           } 
-          // Walking near the pond
-          else if (distToPond < 135) {
+          // Stepping right near the shoreline
+          else if (distToPond < 75) {
             if (!nearPondTriggeredRef.current) {
-              pagluBarkRef.current = { text: "Allyy gleeei ho jaye ginnnnn", timer: 170 };
+              pagluBarkRef.current = { text: POND_SHORE_DIALOGUES.nearWater, timer: 170 };
               pagluEmoteRef.current = 'exclamation';
               pagluEmoteTimerRef.current = 90;
               nearPondTriggeredRef.current = true;
             }
           } 
-          // Reset when walking away from the pond
-          else if (distToPond > 175) {
+          // Reset cleanly when stepping away
+          else if (distToPond > 95) {
             nearPondTriggeredRef.current = false;
             atPondTriggeredRef.current = false;
           }
@@ -497,17 +595,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           moveDurationRef.current++;
           // When she runs/moves continuously for a bit, Paglu calls out after her (only if not showing a landmark dialogue)
           if (!lastNearbyIdRef.current && moveDurationRef.current > 50 && moveDurationRef.current % 160 === 0 && pagluFaintStateRef.current.stage === 'none') {
-            const chaseLines = [
-              "alyyyy lyyyy lyyy, mela paala bacha!",
-              "meri BuBu, meri Catoooooo, rukiye na!",
-              "aryyyy.....sunyen tooo!",
-              "kahan bhagi ja rahi hain!",
-              "11/10 baddie itni speed may!",
-              "Beenish Tasaffar jesi genius itni tezz!",
-              "beghum g aaram say chalen na!",
-              "dhayeeer saari chocolates le aaon?",
-            ];
-            const line = chaseLines[Math.floor(Math.random() * chaseLines.length)];
+            const line = PAGLU_CHASE_LINES[Math.floor(Math.random() * PAGLU_CHASE_LINES.length)];
             pagluBarkRef.current = { text: line, timer: 140 };
           }
         } else {
@@ -519,22 +607,12 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             if (shouldFaint && pagluFaintStateRef.current.stage === 'none') {
               soundEngine.playEmote();
               pagluFaintStateRef.current = { stage: 'fainted', timer: 150 };
-              pagluBarkRef.current = { text: "uffffff, itaaa hussssnn, may to bayhosh ho gya", timer: 150 };
+              pagluBarkRef.current = { text: PAGLU_FAINT_LINES.faint, timer: 150 };
               pagluEmoteRef.current = 'heart';
               pagluEmoteTimerRef.current = 150;
               trailRef.current = [];
             } else if (pagluFaintStateRef.current.stage === 'none') {
-              const stopLines = [
-                "sari ki sari malai hain aap!",
-                "white white baal wali meri haseena!",
-                "wo chotu si chin to mera permanent crush hay!",
-                "noseeyyyy khaaa jani manyyyyy!",
-                "ufff kitu sundar hain meri dream wife!",
-                "yummm yumm chaaki mar leni many!",
-                "sweet photoshoot aur couple reels banayenge na!",
-                "mashallah meri paaaari, meri BuBu!",
-              ];
-              const line = stopLines[Math.floor(Math.random() * stopLines.length)];
+              const line = PAGLU_STOP_LINES[Math.floor(Math.random() * PAGLU_STOP_LINES.length)];
               pagluBarkRef.current = { text: line, timer: 150 };
               pagluEmoteRef.current = 'heart';
               pagluEmoteTimerRef.current = 90;
@@ -592,33 +670,19 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
       }
 
-      // Also detect proximity to Paglu to talk to him anywhere!
-      const distToPaglu = Math.hypot(
-        playerPosRef.current.x - pagluPosRef.current.x,
-        playerPosRef.current.y - pagluPosRef.current.y
-      );
-      if (!closest && distToPaglu < 36 && !isMoving) {
-        closest = {
-          id: 'npc_ted',
-          type: 'npc_ted',
-          promptLabel: '[ E ] Talk to Pagluu',
-          x: pagluPosRef.current.x,
-          y: pagluPosRef.current.y,
-          width: 24,
-          height: 28,
-        };
-      }
+      // Automatic companion proximity prompt removed so it never pops up constantly
 
       if (activeInteractableRef.current?.id !== closest?.id) {
         setActiveInteractable(closest);
       }
       activeInteractableRef.current = closest;
 
-      // --- DYNAMIC DIALOGUE REACTION FOR PAGLUU ("Yae dekhyen, apky liye...") ---
-      // When Paaaari gets near any landmark, house, car, feast table, or door,
-      // Pagluu proactively calls out to her with a loving Pakistani reaction!
+      // --- ROOM-SCOPED DYNAMIC DIALOGUE REACTION FOR PAGLUU ---
+      // Scoped strictly to current room so no wrong dialogues ever trigger at the wrong place!
+      const currentRoomDialogues = ROOM_OBJECT_DIALOGUES[currentRoom.id] || {};
+
       let nearItem: InteractableObject | null = null;
-      let minObjDist = 65;
+      let minObjDist = 30; // Reduced from 65 to 30 for strictly adjacent activation only!
 
       for (const item of currentRoom.interactables) {
         const nearestX = Math.max(item.x, Math.min(px, item.x + item.width));
@@ -630,18 +694,16 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
       }
 
-      let detectedKey: string | null = nearItem
-        ? nearItem.id in OBJECT_PROXIMITY_BARKS
-          ? nearItem.id
-          : nearItem.type in OBJECT_PROXIMITY_BARKS
-          ? nearItem.type
-          : null
-        : null;
+      // Exact ID lookup in current room's dialogue map
+      let detectedKey: string | null = null;
+      if (nearItem && nearItem.id in currentRoomDialogues) {
+        detectedKey = nearItem.id;
+      }
 
-      // Special check: Reflective Pond in overworld (around x: 310, y: 835)
-      if (currentRoom.id === 'overworld') {
+      // Confined shoreline check for overworld pond
+      if (currentRoom.id === 'overworld' && !detectedKey) {
         const distPond = Math.hypot(px - 310, py - 835);
-        if (distPond < 110 && minObjDist > 38) {
+        if (distPond < 48 && minObjDist > 25 && 'pond' in currentRoomDialogues) {
           detectedKey = 'pond';
         }
       }
@@ -649,9 +711,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       if (detectedKey) {
         if (lastNearbyIdRef.current !== detectedKey) {
           lastNearbyIdRef.current = detectedKey;
-          const barkText = OBJECT_PROXIMITY_BARKS[detectedKey];
+          const barkText = currentRoomDialogues[detectedKey];
           if (barkText) {
-            pagluBarkRef.current = { text: barkText, timer: 230 };
+            pagluBarkRef.current = { text: barkText, timer: 240 };
             pagluEmoteRef.current = 'heart';
             pagluEmoteTimerRef.current = 110;
 
@@ -668,8 +730,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           }
         }
       } else {
-        // Reset when she steps away so he can re-trigger when approaching again
-        if (minObjDist > 80) {
+        // Reset when she steps away (beyond 45px) so he can re-trigger when approaching again
+        if (minObjDist > 45) {
           lastNearbyIdRef.current = null;
         }
       }
@@ -872,31 +934,76 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         currentRoom.theme
       );
 
-      // --- UN-DARKENED DIEGETIC UI PASS (Speech Bubbles, Emotes & [ E ] Prompts) ---
-      if (pagluBarkRef.current) {
-        SpriteRenderer.drawSpeechBubble(
-          ctx,
-          pagluPosRef.current.x + 12,
-          pagluPosRef.current.y,
-          pagluBarkRef.current.text
-        );
-      } else if (pagluEmoteRef.current) {
-        SpriteRenderer.drawEmoteBubble(
-          ctx,
-          pagluPosRef.current.x + 12,
-          pagluPosRef.current.y,
-          pagluEmoteRef.current,
-          frameCount
-        );
-      }
+      // --- UN-DARKENED DIEGETIC UI PASS (Speech Bubbles, Emotes & [ Enter ] Prompts) ---
+      // ABSOLUTE ZERO OVERLAP - MAGNETIC REPULSION BUBBLE SYSTEM:
+      // Bubbles act like like-pole magnets repelling to opposite sides, never meeting while tied to their person.
+      if (!isModalOpen && !isJournalOpen) {
+        const pagluX = Math.floor(pagluPosRef.current.x + 12);
+        const pagluY = Math.floor(pagluPosRef.current.y);
+        const playerX = Math.floor(playerPosRef.current.x + 12);
+        const playerY = Math.floor(playerPosRef.current.y);
 
-      if (activeInteractableRef.current && !isModalOpen && !isJournalOpen) {
-        SpriteRenderer.drawPromptBubble(
-          ctx,
-          playerPosRef.current.x + 12,
-          playerPosRef.current.y,
-          activeInteractableRef.current.promptLabel
-        );
+        const bark = pagluBarkRef.current;
+        const emote = !bark ? pagluEmoteRef.current : null;
+        const interactable = activeInteractableRef.current;
+
+        if (bark && interactable) {
+          // Both Paglu Speech AND Action Prompt active: repel to opposite sides like magnets!
+          const speechMeas = SpriteRenderer.measureSpeechBubble(ctx, bark.text);
+          const promptMeas = SpriteRenderer.measurePromptBubble(ctx, interactable.promptLabel);
+
+          const { bubbleA: pagluLayout, bubbleB: playerLayout } = SpriteRenderer.resolveMagneticBubbles(
+            { width: speechMeas.width, height: speechMeas.height, anchorX: pagluX, anchorY: pagluY },
+            { width: promptMeas.width, height: promptMeas.height, anchorX: playerX, anchorY: playerY },
+            { width: currentRoom.width, height: currentRoom.height }
+          );
+
+          SpriteRenderer.drawSpeechBubble(ctx, pagluX, pagluY, bark.text, {
+            customX: pagluLayout.x,
+            customY: pagluLayout.y,
+            targetX: pagluLayout.targetX,
+            targetY: pagluLayout.targetY,
+          });
+
+          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, interactable.promptLabel, {
+            customX: playerLayout.x,
+            customY: playerLayout.y,
+            targetX: playerLayout.targetX,
+            targetY: playerLayout.targetY,
+          });
+        } else if (emote && interactable) {
+          // Both Paglu Emote AND Action Prompt active: repel to opposite sides like magnets!
+          const promptMeas = SpriteRenderer.measurePromptBubble(ctx, interactable.promptLabel);
+
+          const { bubbleA: emoteLayout, bubbleB: playerLayout } = SpriteRenderer.resolveMagneticBubbles(
+            { width: 24, height: 20, anchorX: pagluX, anchorY: pagluY },
+            { width: promptMeas.width, height: promptMeas.height, anchorX: playerX, anchorY: playerY },
+            { width: currentRoom.width, height: currentRoom.height }
+          );
+
+          SpriteRenderer.drawEmoteBubble(ctx, pagluX, pagluY, emote, frameCount, {
+            customX: emoteLayout.x,
+            customY: emoteLayout.y,
+            targetX: emoteLayout.targetX,
+            targetY: emoteLayout.targetY,
+          });
+
+          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, interactable.promptLabel, {
+            customX: playerLayout.x,
+            customY: playerLayout.y,
+            targetX: playerLayout.targetX,
+            targetY: playerLayout.targetY,
+          });
+        } else if (bark) {
+          // Only Paglu speaking
+          SpriteRenderer.drawSpeechBubble(ctx, pagluX, pagluY, bark.text);
+        } else if (emote) {
+          // Only Paglu emoting
+          SpriteRenderer.drawEmoteBubble(ctx, pagluX, pagluY, emote, frameCount);
+        } else if (interactable) {
+          // Only Action Prompt
+          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, interactable.promptLabel);
+        }
       }
 
       ctx.restore();
@@ -917,6 +1024,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     isVirtualRunning,
     isModalOpen,
     isJournalOpen,
+    isMapOpen,
     changeRoom,
     onTriggerInteraction
   ]);
@@ -988,88 +1096,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     keysPressed.current[keyMap[dir]] = isDown;
   };
 
-  // Dynamic Objective & Directional Compass Calculation (Engineered Flow)
-  let targetLocation: { x: number; y: number; chapter: string; text: string } = {
-    x: 285,
-    y: 465,
-    chapter: 'CH. 1: THE BUREAU',
-    text: 'Walk West to the Bureau & solve the 3 Defense Pleadings on the filing cabinet!',
-  };
-
-  if (!bureauChargesSolved || !bureauStamped) {
-    targetLocation = {
-      x: 285,
-      y: 465,
-      chapter: 'CH. 1: THE BUREAU',
-      text: 'Walk West to the Bureau & solve the 3 Defense Pleadings on the filing cabinet!',
-    };
-  } else if (!inventory.includes('brass_key') || !museumJetCodeSolved) {
-    targetLocation = {
-      x: 800,
-      y: 300,
-      chapter: 'CH. 2: THE MUSEUM',
-      text: 'Walk North to the Museum & crack the White Jet observation cipher for Antique Key #07!',
-    };
-  } else if (inventory.includes('brass_key') && !drawer07Unlocked) {
-    targetLocation = {
-      x: 285,
-      y: 465,
-      chapter: 'CH. 2: DRAWER #07',
-      text: 'Return West to the Bureau to unlock Drawer #07 with your Antique Brass Key!',
-    };
-  } else if (!courtScalesBalanced || !courtVerdictReached) {
-    targetLocation = {
-      x: 1315,
-      y: 465,
-      chapter: 'CH. 3: THE COURT',
-      text: 'Walk East along the floral promenade to the Court of No Flaws & balance the Scales of Love!',
-    };
-  } else if (!archiveChronologySolved || starsRecovered < 4) {
-    targetLocation = {
-      x: 1320,
-      y: 835,
-      chapter: 'CH. 4: THE ARCHIVE',
-      text: 'Visit the stone library in the southeast & resonate the Chronology of Love crystals!',
-    };
-  } else if (!namedConstellation || !observatoryConstellationConnected) {
-    targetLocation = {
-      x: 800,
-      y: 35,
-      chapter: 'CH. 5: OBSERVATORY',
-      text: 'Climb the northern mountain trail to the Observatory & link the 5 Dream Constellations!',
-    };
-  } else if (!secretGardenUnlocked || (gardenLanternsLit || 0) < 3 || starsRecovered < 7) {
-    targetLocation = {
-      x: 1320,
-      y: 1040,
-      chapter: 'CH. 6: SECRET ROSE GARDEN',
-      text: 'Walk southeast to the blooming Ivy Rose Gate & ignite the 3 Rose Lanterns of Devotion!',
-    };
-  } else {
-    targetLocation = {
-      x: 800,
-      y: 620,
-      chapter: 'GRAND FINALE: BIRTHDAY HEARTH',
-      text: 'The Valley of the Stars is restored! Return to the Central Birthday Table & blow the candles with Ahmad!',
-    };
-  }
-
-  let compassArrow = '✦';
-  let distMeters = 0;
-  if (currentRoomId === 'overworld') {
-    const cdx = targetLocation.x - (playerPosRef.current.x + 12);
-    const cdy = targetLocation.y - (playerPosRef.current.y + 16);
-    distMeters = Math.max(5, Math.round(Math.hypot(cdx, cdy) / 4));
-    const angle = Math.atan2(cdy, cdx) * (180 / Math.PI);
-    if (angle >= -22.5 && angle < 22.5) compassArrow = '→';
-    else if (angle >= 22.5 && angle < 67.5) compassArrow = '↘';
-    else if (angle >= 67.5 && angle < 112.5) compassArrow = '↓';
-    else if (angle >= 112.5 && angle < 157.5) compassArrow = '↙';
-    else if (angle >= 157.5 || angle < -157.5) compassArrow = '←';
-    else if (angle >= -157.5 && angle < -112.5) compassArrow = '↖';
-    else if (angle >= -112.5 && angle < -67.5) compassArrow = '↑';
-    else if (angle >= -67.5 && angle < -22.5) compassArrow = '↗';
-  }
+  // Top objective banner and compass removed per design cleanup
+  // Compass computation removed with objective banner
 
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', overflow: 'hidden' }}>
@@ -1138,49 +1166,62 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         )}
       </div>
 
-      {/* TOP-CENTER OBJECTIVE GUIDANCE COMPASS */}
+      {/* SLEEK FLOATING ACTIVE OBJECTIVE & COMPASS BAR */}
       <div 
+        onClick={() => {
+          soundEngine.playClick();
+          setIsMapOpen(true);
+        }}
         style={{ 
           position: 'fixed', 
           top: 14, 
           left: '50%', 
           transform: 'translateX(-50%)', 
-          zIndex: 99, 
-          pointerEvents: 'none',
-          maxWidth: 'min(90vw, 750px)',
+          zIndex: 100, 
+          cursor: 'pointer',
+          pointerEvents: 'auto',
+          maxWidth: 'min(90vw, 700px)',
         }}
+        title="Click to Open World Map & Guide (or press M)"
       >
         <div
           className="font-mono"
           style={{
-            backgroundColor: 'rgba(27, 32, 66, 0.94)',
+            backgroundColor: 'rgba(15, 23, 42, 0.94)',
             backdropFilter: 'blur(10px)',
-            border: '2px solid var(--color-lantern-gold)',
+            border: '2px solid #F59E0B',
+            borderRadius: '6px',
             padding: '7px 18px',
-            fontSize: '0.78rem',
-            color: 'var(--color-moon-cream)',
-            letterSpacing: '0.04em',
-            boxShadow: '0 4px 20px rgba(16, 19, 41, 0.8)',
-            textAlign: 'center',
+            fontSize: '0.8rem',
+            color: '#FFFFFF',
+            letterSpacing: '0.03em',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(245, 158, 11, 0.2)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '10px',
             whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
           }}
         >
-          <span style={{ color: 'var(--color-lantern-gold)', fontWeight: 'bold' }}>
-            {currentRoomId === 'overworld' ? `${compassArrow} ${distMeters}m` : '✦'}
+          <span style={{ color: '#F59E0B', fontWeight: 900, fontSize: '0.9rem' }}>
+            {compassArrow} {distMeters > 0 ? `${distMeters}m` : '✦'}
           </span>
-          <span style={{ color: 'var(--color-twilight-blue)' }}>|</span>
-          <span style={{ color: 'var(--color-lantern-gold)', fontWeight: 600 }}>
-            {targetLocation.chapter}
+          <span style={{ color: '#475569' }}>|</span>
+          <span style={{ color: '#FEF08A', fontWeight: 700 }}>
+            {targetPoint.label}
           </span>
-          <span style={{ color: 'var(--color-twilight-blue)' }}>:</span>
-          <span style={{ color: 'var(--color-warm-peach)' }}>
-            {targetLocation.text}
+          <span style={{ color: '#475569' }}>|</span>
+          <span 
+            style={{ 
+              backgroundColor: '#F59E0B', 
+              color: '#0F172A', 
+              padding: '2px 7px', 
+              borderRadius: '3px', 
+              fontSize: '0.72rem', 
+              fontWeight: 900 
+            }}
+          >
+            🗺️ MAP [M]
           </span>
         </div>
       </div>
@@ -1208,7 +1249,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           }}
           title="Recenter Camera on Beenish"
         >
-          [ ⌖ RECENTER ON PAAARI ]
+          ⌖ Recenter on Paaaari
         </button>
       )}
 
@@ -1241,8 +1282,21 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           }}
           title="Open Expedition Journal"
         >
-          <span>STARS: {starsRecovered} / 7</span>
+          <span>✦ {starsRecovered} / 7 Stars</span>
         </div>
+
+        {/* World Map Button */}
+        <button
+          onClick={() => {
+            soundEngine.playClick();
+            setIsMapOpen(true);
+          }}
+          className="pixel-btn pixel-btn-peach font-display"
+          style={{ padding: '6px 12px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+          title="Open World Map & Expedition Guide (M)"
+        >
+          <span>🗺️ MAP</span>
+        </button>
 
         {/* Journal Button */}
         <button
@@ -1268,7 +1322,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           title="Toggle Bol Na Halke Halke Music-Box Tune"
         >
           <span style={{ color: 'var(--color-rose-glow)' }}>♪</span>
-          <span>{isTunePlaying ? 'TUNE: ON' : 'TUNE: OFF'}</span>
+          <span>{isTunePlaying ? '♪ Music: On' : '♪ Music: Off'}</span>
         </button>
 
         {/* Audio Mute/Unmute */}
@@ -1347,36 +1401,74 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         </div>
       </div>
 
-      {/* FLOATING BOTTOM-RIGHT ACTION BUTTON */}
-      <div 
-        style={{ 
-          position: 'fixed', 
-          bottom: 20, 
-          right: 20, 
-          zIndex: 100,
-          pointerEvents: 'auto',
-        }}
-      >
-        <button
-          onClick={handleAction}
-          className={`pixel-btn ${activeInteractable ? 'pixel-btn-primary animate-glow' : 'pixel-btn-ghost'} font-display`}
-          style={{
-            width: '66px',
-            height: '66px',
-            fontSize: '1.1rem',
-            borderRadius: 0,
-            boxShadow: activeInteractable ? 'var(--pixel-border-gold), 0 0 20px var(--color-lantern-gold)' : undefined,
-            backgroundColor: activeInteractable ? 'var(--color-lantern-gold)' : 'rgba(27, 32, 66, 0.75)',
-            backdropFilter: 'blur(8px)',
+      {/* FLOATING ACTION PROMPT - ONLY VISIBLE WHEN READY TO ACT */}
+      {activeInteractable && !isModalOpen && !isJournalOpen && !isMapOpen && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            bottom: 24, 
+            right: 24, 
+            zIndex: 100,
+            pointerEvents: 'auto',
           }}
-          title="Interact (E / Space / Enter)"
         >
-          [ E ]
-        </button>
-      </div>
+          <button
+            onClick={handleAction}
+            className="pixel-btn animate-glow font-display"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '12px 20px',
+              height: 'auto',
+              borderRadius: '6px',
+              fontSize: '0.95rem',
+              fontWeight: 'bold',
+              color: '#FFFFFF',
+              backgroundColor: '#0F172A',
+              border: '2px solid #F59E0B',
+              boxShadow: '0 0 25px rgba(245, 158, 11, 0.6), inset 0 0 12px rgba(245, 158, 11, 0.25)',
+              cursor: 'pointer',
+              letterSpacing: '0.5px',
+            }}
+            title="Press Enter / Space / Click to Interact"
+          >
+            <span 
+              style={{
+                backgroundColor: '#F59E0B',
+                color: '#0F172A',
+                padding: '3px 8px',
+                borderRadius: '4px',
+                fontWeight: 900,
+                fontSize: '0.85rem',
+              }}
+            >
+              ↵ Press Enter
+            </span>
+            <span style={{ color: '#FEF08A' }}>
+              {(activeInteractable.promptLabel || '').replace(/\[\s*E\s*\]/gi, '').trim()}
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* IN-GAME EXPEDITION JOURNAL MODAL */}
-      {isJournalOpen && <JournalModal onClose={() => setIsJournalOpen(false)} />}
+      {isJournalOpen && <JournalModal onClose={() => setIsJournalOpen(false)} onOpenMap={() => setIsMapOpen(true)} />}
+
+      {/* INTERACTIVE EXPEDITION WORLD MAP & GUIDE MODAL */}
+      {isMapOpen && (
+        <ExpeditionMapModal
+          onClose={() => setIsMapOpen(false)}
+          playerPos={playerPosRef.current}
+          currentRoomId={currentRoomId}
+          onFastTravel={(roomId, targetPos) => {
+            changeRoom(roomId, targetPos);
+          }}
+          onSetWaypoint={(pos, label) => {
+            setCustomWaypoint({ ...pos, label });
+          }}
+        />
+      )}
     </div>
   );
 };

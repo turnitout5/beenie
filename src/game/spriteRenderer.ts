@@ -352,58 +352,36 @@ export class SpriteRenderer {
   }
 
   /**
-   * Draws interactive Action Bubble "[ E ] Prompt"
+   * Pre-measures the size of an Action Prompt Bubble without rendering
    */
-  public static drawPromptBubble(
+  public static measurePromptBubble(
     ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
     label: string
-  ): void {
+  ): { width: number; height: number; cleanLabel: string } {
     ctx.save();
-    ctx.font = '10px "IBM Plex Mono", monospace';
-    const textWidth = ctx.measureText(label).width;
-    const bubbleWidth = textWidth + 16;
-    const bubbleHeight = 20;
-    const bx = Math.floor(x - bubbleWidth / 2);
-    const by = Math.floor(y - 36);
-
-    // Stepped pixel background
-    ctx.fillStyle = '#101329';
-    ctx.fillRect(bx, by, bubbleWidth, bubbleHeight);
-    ctx.strokeStyle = '#F6D78B';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(bx, by, bubbleWidth, bubbleHeight);
-
-    // Text
-    ctx.fillStyle = '#F6D78B';
-    ctx.textAlign = 'center';
-    ctx.fillText(label, bx + bubbleWidth / 2, by + 14);
-
-    // Pointer
-    ctx.fillStyle = '#F6D78B';
-    ctx.beginPath();
-    ctx.moveTo(x - 4, by + bubbleHeight);
-    ctx.lineTo(x + 4, by + bubbleHeight);
-    ctx.lineTo(x, by + bubbleHeight + 4);
-    ctx.fill();
-
+    ctx.font = 'bold 9px "IBM Plex Mono", monospace';
+    const cleanLabel = (label || '').replace(/\[\s*E\s*\]/gi, '').trim();
+    const actionText = `[ Enter ↵ ] ${cleanLabel}`;
+    const textWidth = ctx.measureText(actionText).width;
     ctx.restore();
+    return {
+      width: textWidth + 20,
+      height: 22,
+      cleanLabel,
+    };
   }
 
   /**
-   * Draws Paglu's dynamic speech bubble above his head
+   * Pre-measures Paglu\'s dynamic speech bubble without rendering
    */
-  public static drawSpeechBubble(
+  public static measureSpeechBubble(
     ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
     text: string
-  ): void {
-    ctx.save();
+  ): { width: number; height: number; lines: string[]; isScream: boolean; isFaint: boolean } {
     const isScream = text.startsWith('AAAA');
     const isFaint = text.includes('bayhosh') || text.includes('hussssnn');
 
+    ctx.save();
     ctx.font = isScream ? 'bold 10px "IBM Plex Mono", monospace' : 'bold 9px "IBM Plex Mono", monospace';
 
     // Word wrap into max 220px wide lines
@@ -428,12 +406,278 @@ export class SpriteRenderer {
       const w = ctx.measureText(l).width;
       if (w > maxW) maxW = w;
     }
+    ctx.restore();
 
     const bubbleWidth = Math.max(48, maxW + 18);
     const lineHeight = 12;
     const bubbleHeight = 10 + lines.length * lineHeight;
-    const bx = Math.floor(x - bubbleWidth / 2);
-    const by = Math.floor(y - (bubbleHeight + 14));
+
+    return { width: bubbleWidth, height: bubbleHeight, lines, isScream, isFaint };
+  }
+
+  /**
+   * Resolves two colliding diegetic bubbles like repelling magnets to opposite sides,
+   * guaranteeing they never meet while keeping each bubble tied to its respective person.
+   */
+  public static resolveMagneticBubbles(
+    bubbleA: { width: number; height: number; anchorX: number; anchorY: number },
+    bubbleB: { width: number; height: number; anchorX: number; anchorY: number },
+    bounds: { width: number; height: number; margin?: number }
+  ): {
+    bubbleA: { x: number; y: number; width: number; height: number; targetX: number; targetY: number };
+    bubbleB: { x: number; y: number; width: number; height: number; targetX: number; targetY: number };
+  } {
+    const cxA = bubbleA.anchorX;
+    const cyA = bubbleA.anchorY - bubbleA.height / 2 - 14;
+    const cxB = bubbleB.anchorX;
+    const cyB = bubbleB.anchorY - bubbleB.height / 2 - 14;
+
+    let dx = cxA - cxB;
+    let dy = cyA - cyB;
+    if (dx === 0 && dy === 0) {
+      dx = -1;
+      dy = 0;
+    }
+
+    const gap = 16;
+    const reqX = (bubbleA.width + bubbleB.width) / 2 + gap;
+    const reqY = (bubbleA.height + bubbleB.height) / 2 + gap;
+
+    const sepX = Math.abs(dx);
+    const sepY = Math.abs(dy);
+
+    const overlapX = reqX - sepX;
+    const overlapY = reqY - sepY;
+
+    const roomMargin = bounds.margin || 8;
+    const minX = roomMargin;
+    const maxX = bounds.width - roomMargin;
+
+    if (overlapX > 0 && overlapY > 0) {
+      const roomAvailableW = maxX - minX;
+      const totalBubbleW = bubbleA.width + bubbleB.width + gap;
+      const canSplitH = (roomAvailableW >= totalBubbleW);
+      const preferVertical = (Math.abs(dy) > Math.abs(dx) * 1.5) || !canSplitH;
+
+      let newAx = cxA - bubbleA.width / 2;
+      let newAy = cyA - bubbleA.height / 2;
+      let newBx = cxB - bubbleB.width / 2;
+      let newBy = cyB - bubbleB.height / 2;
+
+      if (preferVertical) {
+        const repelSignY = dy <= 0 ? -1 : 1;
+        const pushY = (overlapY / 2) * repelSignY;
+        newAy += pushY;
+        newBy -= pushY;
+
+        const minY = roomMargin;
+        const maxY = bounds.height - roomMargin;
+        if (newAy < minY) {
+          const delta = minY - newAy;
+          newAy = minY;
+          newBy = Math.min(maxY - bubbleB.height, newBy + delta);
+        }
+        if (newBy + bubbleB.height > maxY) {
+          const delta = (newBy + bubbleB.height) - maxY;
+          newBy = maxY - bubbleB.height;
+          newAy = Math.max(minY, newAy - delta);
+        }
+        if (newAy + bubbleA.height > maxY) {
+          const delta = (newAy + bubbleA.height) - maxY;
+          newAy = maxY - bubbleA.height;
+          newBy = Math.max(minY, newBy - delta);
+        }
+        if (newBy < minY) {
+          const delta = minY - newBy;
+          newBy = minY;
+          newAy = Math.min(maxY - bubbleA.height, newAy + delta);
+        }
+
+        newAx = Math.max(minX, Math.min(maxX - bubbleA.width, newAx));
+        newBx = Math.max(minX, Math.min(maxX - bubbleB.width, newBx));
+      } else {
+        const repelSignX = dx <= 0 ? -1 : 1;
+        const pushA = (overlapX / 2) * repelSignX;
+        const pushB = -(overlapX / 2) * repelSignX;
+
+        const newCxA = cxA + pushA;
+        const newCxB = cxB + pushB;
+
+        newAx = newCxA - bubbleA.width / 2;
+        newBx = newCxB - bubbleB.width / 2;
+
+        if (newAx < minX) {
+          const delta = minX - newAx;
+          newAx = minX;
+          newBx = Math.min(maxX - bubbleB.width, newBx + delta);
+        }
+        if (newBx + bubbleB.width > maxX) {
+          const delta = (newBx + bubbleB.width) - maxX;
+          newBx = maxX - bubbleB.width;
+          newAx = Math.max(minX, newAx - delta);
+        }
+        if (newAx + bubbleA.width > maxX) {
+          const delta = (newAx + bubbleA.width) - maxX;
+          newAx = maxX - bubbleA.width;
+          newBx = Math.max(minX, newBx - delta);
+        }
+        if (newBx < minX) {
+          const delta = minX - newBx;
+          newBx = minX;
+          newAx = Math.min(maxX - bubbleA.width, newAx + delta);
+        }
+
+        const currentSepX = (newAx <= newBx)
+          ? newBx - (newAx + bubbleA.width)
+          : newAx - (newBx + bubbleB.width);
+
+        if (currentSepX < gap) {
+          const repelSignY = dy <= 0 ? -1 : 1;
+          const vPushA = (overlapY / 2) * repelSignY;
+          const vPushB = -(overlapY / 2) * repelSignY;
+          newAy += vPushA;
+          newBy += vPushB;
+          newAy = Math.max(roomMargin, Math.min(bounds.height - roomMargin - bubbleA.height, newAy));
+          newBy = Math.max(roomMargin, Math.min(bounds.height - roomMargin - bubbleB.height, newBy));
+        }
+      }
+
+      return {
+        bubbleA: { x: Math.floor(newAx), y: Math.floor(newAy), width: bubbleA.width, height: bubbleA.height, targetX: bubbleA.anchorX, targetY: bubbleA.anchorY },
+        bubbleB: { x: Math.floor(newBx), y: Math.floor(newBy), width: bubbleB.width, height: bubbleB.height, targetX: bubbleB.anchorX, targetY: bubbleB.anchorY },
+      };
+    } else {
+      const newAx = Math.max(minX, Math.min(maxX - bubbleA.width, cxA - bubbleA.width / 2));
+      const newAy = Math.max(roomMargin, Math.min(bounds.height - roomMargin - bubbleA.height, cyA - bubbleA.height / 2));
+      const newBx = Math.max(minX, Math.min(maxX - bubbleB.width, cxB - bubbleB.width / 2));
+      const newBy = Math.max(roomMargin, Math.min(bounds.height - roomMargin - bubbleB.height, cyB - bubbleB.height / 2));
+      return {
+        bubbleA: { x: Math.floor(newAx), y: Math.floor(newAy), width: bubbleA.width, height: bubbleA.height, targetX: bubbleA.anchorX, targetY: bubbleA.anchorY },
+        bubbleB: { x: Math.floor(newBx), y: Math.floor(newBy), width: bubbleB.width, height: bubbleB.height, targetX: bubbleB.anchorX, targetY: bubbleB.anchorY },
+      };
+    }
+  }
+
+  /**
+   * Draws interactive Action Bubble "[ Enter ↵ ] Prompt"
+   * With dynamic magnetic pointer tail leaning towards the person!
+   */
+  public static drawPromptBubble(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    label: string,
+    options?: {
+      customX?: number;
+      customY?: number;
+      targetX?: number;
+      targetY?: number;
+      pointerDirection?: 'down' | 'up';
+    }
+  ): { x: number; y: number; width: number; height: number } {
+    ctx.save();
+    ctx.font = 'bold 9px "IBM Plex Mono", monospace';
+    const cleanLabel = (label || '').replace(/\[\s*E\s*\]/gi, '').trim();
+    const actionText = `[ Enter ↵ ] ${cleanLabel}`;
+    const textWidth = ctx.measureText(actionText).width;
+    const bubbleWidth = textWidth + 20;
+    const bubbleHeight = 22;
+
+    const tx = options?.targetX !== undefined ? options.targetX : x;
+    const ty = options?.targetY !== undefined ? options.targetY : y;
+
+    const bx = options?.customX !== undefined 
+      ? Math.floor(options.customX) 
+      : Math.floor(x - bubbleWidth / 2);
+    const by = options?.customY !== undefined 
+      ? Math.floor(options.customY) 
+      : Math.floor(y - 38);
+
+    const pointerDir = options?.pointerDirection || (by + bubbleHeight <= ty ? 'down' : 'up');
+
+    // Dark drop shadow for maximum separation from background
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 2;
+
+    // Solid deep dark midnight background
+    ctx.fillStyle = '#090D1A';
+    ctx.fillRect(bx, by, bubbleWidth, bubbleHeight);
+
+    // Glowing Gold Border
+    ctx.strokeStyle = '#F59E0B';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, bubbleWidth, bubbleHeight);
+
+    // Reset shadow for crisp text
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+
+    // Key badge "[ Enter ↵ ]" in gold
+    ctx.fillStyle = '#F59E0B';
+    ctx.textAlign = 'left';
+    ctx.fillText('[ Enter ↵ ]', bx + 8, by + 15);
+
+    // Action label in pure white
+    const badgeW = ctx.measureText('[ Enter ↵ ] ').width;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(cleanLabel, bx + 8 + badgeW, by + 15);
+
+    // Pointer arrow tied to target person (leans towards person when repelled by magnet)
+    const attachX = Math.max(bx + 10, Math.min(bx + bubbleWidth - 10, tx));
+    const tipOffset = Math.max(-12, Math.min(12, (tx - attachX) * 0.45));
+    const tipX = attachX + tipOffset;
+
+    ctx.fillStyle = '#F59E0B';
+    ctx.beginPath();
+    if (pointerDir === 'up') {
+      ctx.moveTo(attachX - 5, by);
+      ctx.lineTo(attachX + 5, by);
+      ctx.lineTo(tipX, by - 7);
+    } else {
+      ctx.moveTo(attachX - 5, by + bubbleHeight);
+      ctx.lineTo(attachX + 5, by + bubbleHeight);
+      ctx.lineTo(tipX, by + bubbleHeight + 7);
+    }
+    ctx.fill();
+
+    ctx.restore();
+
+    return { x: bx, y: by, width: bubbleWidth, height: bubbleHeight };
+  }
+
+  /**
+   * Draws Paglu\'s dynamic speech bubble above his head
+   * With dynamic magnetic pointer tail leaning towards Paglu!
+   */
+  public static drawSpeechBubble(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    text: string,
+    options?: {
+      customX?: number;
+      customY?: number;
+      targetX?: number;
+      targetY?: number;
+    }
+  ): { x: number; y: number; width: number; height: number } {
+    const { width: bubbleWidth, height: bubbleHeight, lines, isScream, isFaint } = this.measureSpeechBubble(ctx, text);
+
+    const tx = options?.targetX !== undefined ? options.targetX : x;
+    const ty = options?.targetY !== undefined ? options.targetY : y;
+
+    const bx = options?.customX !== undefined 
+      ? Math.floor(options.customX) 
+      : Math.floor(x - bubbleWidth / 2);
+    const by = options?.customY !== undefined 
+      ? Math.floor(options.customY) 
+      : Math.floor(y - (bubbleHeight + 14));
+
+    const pointerDir = (by + bubbleHeight <= ty) ? 'down' : 'up';
+
+    ctx.save();
 
     // Drop shadow
     ctx.fillStyle = 'rgba(16, 19, 41, 0.75)';
@@ -447,22 +691,36 @@ export class SpriteRenderer {
     ctx.strokeRect(bx, by, bubbleWidth, bubbleHeight);
 
     // Multi-line Text
+    ctx.font = isScream ? 'bold 10px "IBM Plex Mono", monospace' : 'bold 9px "IBM Plex Mono", monospace';
     ctx.fillStyle = isScream ? '#F6D78B' : isFaint ? '#FFD4E2' : '#F4EBDD';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    const lineHeight = 12;
     lines.forEach((line, idx) => {
       ctx.fillText(line, bx + bubbleWidth / 2, by + 6 + idx * lineHeight + lineHeight / 2);
     });
 
-    // Pointer down
+    // Pointer tail tied to speaker (leans towards speaker when repelled by magnet)
+    const attachX = Math.max(bx + 12, Math.min(bx + bubbleWidth - 12, tx));
+    const tipOffset = Math.max(-14, Math.min(14, (tx - attachX) * 0.45));
+    const tipX = attachX + tipOffset;
+
     ctx.fillStyle = isScream ? '#F6D78B' : isFaint ? '#E98FAF' : '#F3B79C';
     ctx.beginPath();
-    ctx.moveTo(x - 4, by + bubbleHeight);
-    ctx.lineTo(x + 4, by + bubbleHeight);
-    ctx.lineTo(x, by + bubbleHeight + 5);
+    if (pointerDir === 'up') {
+      ctx.moveTo(attachX - 5, by);
+      ctx.lineTo(attachX + 5, by);
+      ctx.lineTo(tipX, by - 7);
+    } else {
+      ctx.moveTo(attachX - 5, by + bubbleHeight);
+      ctx.lineTo(attachX + 5, by + bubbleHeight);
+      ctx.lineTo(tipX, by + bubbleHeight + 7);
+    }
     ctx.fill();
 
     ctx.restore();
+
+    return { x: bx, y: by, width: bubbleWidth, height: bubbleHeight };
   }
 
   /**
@@ -515,11 +773,21 @@ export class SpriteRenderer {
     x: number,
     y: number,
     emote: 'heart' | 'exclamation' | 'question' | 'music' | 'blush' | 'sparkle' | 'sleep',
-    frame: number
-  ): void {
+    frame: number,
+    options?: {
+      customX?: number;
+      customY?: number;
+      targetX?: number;
+      targetY?: number;
+    }
+  ): { x: number; y: number; width: number; height: number } {
     const bob = Math.sin(frame * 0.12) * 2;
-    const bx = Math.floor(x - 12);
-    const by = Math.floor(y - 32 + bob);
+    const tx = options?.targetX !== undefined ? options.targetX : x;
+    const ty = options?.targetY !== undefined ? options.targetY : y;
+    const bx = options?.customX !== undefined ? Math.floor(options.customX) : Math.floor(x - 12);
+    const by = options?.customY !== undefined ? Math.floor(options.customY) : Math.floor(y - 32 + bob);
+
+    const pointerDir = (by + 18 <= ty) ? 'down' : 'up';
 
     ctx.save();
     // Shadow
@@ -533,12 +801,22 @@ export class SpriteRenderer {
     ctx.lineWidth = 2;
     ctx.strokeRect(bx, by, 22, 18);
 
-    // Pointer tail
+    // Pointer tail tied to person (leans towards targetX)
+    const attachX = Math.max(bx + 6, Math.min(bx + 16, tx));
+    const tipOffset = Math.max(-6, Math.min(6, (tx - attachX) * 0.45));
+    const tipX = attachX + tipOffset;
+
     ctx.fillStyle = '#F4EBDD';
     ctx.beginPath();
-    ctx.moveTo(bx + 9, by + 18);
-    ctx.lineTo(bx + 13, by + 18);
-    ctx.lineTo(bx + 11, by + 22);
+    if (pointerDir === 'up') {
+      ctx.moveTo(attachX - 3, by);
+      ctx.lineTo(attachX + 3, by);
+      ctx.lineTo(tipX, by - 5);
+    } else {
+      ctx.moveTo(attachX - 3, by + 18);
+      ctx.lineTo(attachX + 3, by + 18);
+      ctx.lineTo(tipX, by + 23);
+    }
     ctx.fill();
 
     // Emote Icon
@@ -580,6 +858,8 @@ export class SpriteRenderer {
     }
 
     ctx.restore();
+
+    return { x: bx, y: by, width: 22, height: 18 };
   }
 
   /**
