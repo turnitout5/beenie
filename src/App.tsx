@@ -18,16 +18,15 @@ const ExpeditionAppContent: React.FC = () => {
         style={{ 
           width: '100vw', 
           height: '100vh', 
-          overflow: 'hidden', 
           position: 'fixed', 
           inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         <StarfieldCanvas />
-        <main style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }}>
+        <main style={{ width: '100%', minHeight: '100%', position: 'relative', zIndex: 1 }}>
           <BootScene />
         </main>
       </div>

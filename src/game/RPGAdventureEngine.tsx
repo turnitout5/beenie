@@ -185,6 +185,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
   // Start room audio theme and background exploration track
   useEffect(() => {
+    soundEngine.stopBirthdayTuneLoop();
     soundEngine.pauseSong();
     if (currentRoomId === 'overworld') {
       soundEngine.stopRoomTheme();
@@ -257,6 +258,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     pagluEmoteTimerRef.current = 100;
 
     savePlayerPosition(newRoomId, newSpawn, entryDir);
+    soundEngine.stopBirthdayTuneLoop();
     soundEngine.pauseSong();
     if (newRoomId === 'overworld') {
       soundEngine.stopRoomTheme();

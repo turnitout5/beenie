@@ -431,6 +431,7 @@ export const BootScene: React.FC = () => {
   const [sadQuoteIdx, setSadQuoteIdx] = useState(0);
   const runawayBtnRef = useRef<HTMLButtonElement | null>(null);
   const lastSecRef = useRef<number>(-1);
+  const actionButtonsRef = useRef<HTMLDivElement | null>(null);
   const openedAfterTargetRef = useRef<boolean>(
     typeof window !== 'undefined' && getTargetTimestamp() <= Date.now()
   );
@@ -475,8 +476,8 @@ export const BootScene: React.FC = () => {
     soundEngine.playBirthdayHornFanfare();
     soundEngine.playKissChime();
     setTimeout(() => {
-      soundEngine.playBirthdayJingle();
-    }, 1500);
+      soundEngine.startBirthdayTuneLoop();
+    }, 1200);
 
     const particleTypes: Array<'heart' | 'star' | 'petal' | 'crown' | 'sparkle'> = [
       'heart',
@@ -533,6 +534,27 @@ const handleAcknowledgeLate = useCallback(() => {
     }
   }, [isUnlocked, hasCelebrationFired, triggerMidnightCelebration]);
 
+  // Keep the Happy Birthday tune playing continuously while on the birthday screen!
+  useEffect(() => {
+    if (isUnlocked && hasCelebrationFired) {
+      if (!soundEngine.isBirthdayTunePlaying()) {
+        soundEngine.startBirthdayTuneLoop();
+      }
+    }
+    return () => {
+      soundEngine.stopBirthdayTuneLoop();
+    };
+  }, [isUnlocked, hasCelebrationFired]);
+
+  // Smoothly scroll to action button when birthday note typing completes
+  useEffect(() => {
+    if (bootStep >= noteLines.length) {
+      setTimeout(() => {
+        actionButtonsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 300);
+    }
+  }, [bootStep, noteLines.length]);
+
   // Gentle automatic kiss & hug pulse in Heavenly mode
   useEffect(() => {
     if (!isUnlocked) return;
@@ -580,6 +602,7 @@ const handleAcknowledgeLate = useCallback(() => {
 
   const handleAccept = () => {
     soundEngine.playStarChime();
+    soundEngine.stopBirthdayTuneLoop();
     soundEngine.pauseSong();
     soundEngine.startBolNaHalkeHalkeTuneLoop();
     setPuzzleState({ bootCompleted: true });
@@ -634,12 +657,13 @@ const handleAcknowledgeLate = useCallback(() => {
       <div
         style={{
           minHeight: '100vh',
-          width: '100vw',
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '28px 20px',
+          padding: '28px 16px 60px 16px',
+          boxSizing: 'border-box',
           position: 'relative',
           zIndex: 2,
           overflow: 'hidden',
@@ -955,16 +979,15 @@ const handleAcknowledgeLate = useCallback(() => {
     <div
       style={{
         minHeight: '100vh',
-        width: '100vw',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px 20px',
+        justifyContent: 'flex-start',
+        padding: '28px 16px 120px 16px',
         position: 'relative',
         zIndex: 2,
-        overflowY: 'auto',
-        overflowX: 'hidden',
+        boxSizing: 'border-box',
         background:
           'radial-gradient(circle at 50% 18%, rgba(255, 194, 224, 0.42) 0%, rgba(233, 115, 172, 0.28) 32%, rgba(74, 21, 59, 0.92) 72%, rgba(42, 13, 36, 0.97) 100%)',
       }}
@@ -1238,6 +1261,7 @@ const handleAcknowledgeLate = useCallback(() => {
       {/* Action Buttons to Step Into The 7-Stage Valley */}
       {bootStep >= noteLines.length && (
         <div
+          ref={actionButtonsRef}
           style={{
             display: 'flex',
             alignItems: 'center',

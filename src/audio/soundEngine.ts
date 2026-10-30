@@ -24,6 +24,9 @@ class SoundEngine {
   private currentRoomTheme: string | null = null;
   private roomThemeInterval: ReturnType<typeof setInterval> | null = null;
   private roomThemeGain: GainNode | null = null;
+  private birthdayTuneTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private isBirthdayTuneLooping: boolean = false;
+  private birthdayGain: GainNode | null = null;
 
   constructor() {
     const savedMute = localStorage.getItem('beenish_expedition_muted');
@@ -78,6 +81,9 @@ class SoundEngine {
     if (this.musicAudio) {
       this.musicAudio.volume = this.isMuted ? 0 : this.masterVolume * 0.8;
     }
+    if (this.ctx && this.birthdayGain) {
+      this.birthdayGain.gain.setValueAtTime(this.isMuted ? 0 : 0.85 * this.masterVolume, this.ctx.currentTime);
+    }
   }
 
   public toggleMute(): boolean {
@@ -94,6 +100,9 @@ class SoundEngine {
     }
     if (this.roomThemeGain) {
       this.roomThemeGain.gain.setValueAtTime(this.isMuted ? 0 : 0.14 * this.masterVolume, this.ctx?.currentTime || 0);
+    }
+    if (this.birthdayGain && this.ctx) {
+      this.birthdayGain.gain.setValueAtTime(this.isMuted ? 0 : 0.85 * this.masterVolume, this.ctx.currentTime);
     }
     if (this.ambientGain && this.ctx) {
       this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.04, this.ctx.currentTime);
@@ -234,13 +243,18 @@ class SoundEngine {
     if (this.isMuted || typeof window === 'undefined') return;
     const hornSequence: Array<{ variant: 1 | 2; delay: number }> = [
       { variant: 1, delay: 0 },
-      { variant: 1, delay: 180 },
-      { variant: 2, delay: 420 },
-      { variant: 1, delay: 780 },
-      { variant: 1, delay: 960 },
-      { variant: 2, delay: 1260 },
-      { variant: 2, delay: 1560 },
-      { variant: 1, delay: 1920 },
+      { variant: 1, delay: 140 },
+      { variant: 2, delay: 300 },
+      { variant: 1, delay: 480 },
+      { variant: 2, delay: 660 },
+      { variant: 1, delay: 840 },
+      { variant: 1, delay: 1020 },
+      { variant: 2, delay: 1220 },
+      { variant: 2, delay: 1440 },
+      { variant: 1, delay: 1680 },
+      { variant: 2, delay: 1920 },
+      { variant: 1, delay: 2160 },
+      { variant: 2, delay: 2400 },
     ];
 
     hornSequence.forEach(({ variant, delay }) => {
@@ -682,39 +696,94 @@ class SoundEngine {
   /**
    * Procedural Happy Birthday Music Box Jingle
    */
-  public playBirthdayJingle(): void {
-    if (this.isMuted) return;
+  /**
+   * Continuous celebratory music-box loop of Happy Birthday melody for Beenish
+   */
+  public startBirthdayTuneLoop(): void {
+    if (this.isBirthdayTuneLooping) return;
+    this.pauseSong();
+    this.stopBolNaHalkeHalkeTuneLoop();
+    this.isBirthdayTuneLooping = true;
+
     const ctx = this.initContext();
-    const dest = this.getDestination();
-    if (!ctx || !dest) return;
+    if (!ctx) return;
 
-    // Temporarily duck the background celesta loop while the birthday jingle plays
-    if (this.melodyGain) {
-      this.melodyGain.gain.setValueAtTime(0, ctx.currentTime);
-      this.melodyGain.gain.setValueAtTime(this.isGardenActive ? 0 : 1, ctx.currentTime + 6.2);
+    if (!this.birthdayGain) {
+      this.birthdayGain = ctx.createGain();
+      this.birthdayGain.connect(this.masterGain || ctx.destination);
     }
+    const targetGain = this.isMuted ? 0 : 0.85 * this.masterVolume;
+    this.birthdayGain.gain.setValueAtTime(targetGain, ctx.currentTime);
 
-    const notes: [number, number][] = [
-      [392.00, 0.22], // G4
-      [392.00, 0.22], // G4
-      [440.00, 0.44], // A4
-      [392.00, 0.44], // G4
-      [523.25, 0.44], // C5
-      [493.88, 0.88], // B4
-      [392.00, 0.22], // G4
-      [392.00, 0.22], // G4
-      [440.00, 0.44], // A4
-      [392.00, 0.44], // G4
-      [587.33, 0.44], // D5
-      [523.25, 0.90], // C5
+    const playLoop = () => {
+      if (!this.isBirthdayTuneLooping) return;
+      const durationMs = this.playFullBirthdayMelody();
+      this.birthdayTuneTimeoutId = setTimeout(playLoop, durationMs + 1200);
+    };
+
+    playLoop();
+  }
+
+  public stopBirthdayTuneLoop(): void {
+    this.isBirthdayTuneLooping = false;
+    if (this.birthdayTuneTimeoutId) {
+      clearTimeout(this.birthdayTuneTimeoutId);
+      this.birthdayTuneTimeoutId = null;
+    }
+    if (this.ctx && this.birthdayGain) {
+      this.birthdayGain.gain.setValueAtTime(0, this.ctx.currentTime);
+    }
+  }
+
+  public isBirthdayTunePlaying(): boolean {
+    return this.isBirthdayTuneLooping;
+  }
+
+  private playFullBirthdayMelody(): number {
+    const ctx = this.initContext();
+    if (!ctx || !this.birthdayGain || this.isMuted) return 12000;
+
+    const notes: [number, number, number][] = [
+      // Phrase 1: Happy birthday to you
+      [392.00, 0.28, 261.63],
+      [392.00, 0.28, 261.63],
+      [440.00, 0.54, 261.63],
+      [392.00, 0.54, 261.63],
+      [523.25, 0.54, 261.63],
+      [493.88, 1.10, 246.94],
+
+      // Phrase 2: Happy birthday to you
+      [392.00, 0.28, 196.00],
+      [392.00, 0.28, 196.00],
+      [440.00, 0.54, 196.00],
+      [392.00, 0.54, 196.00],
+      [587.33, 0.54, 196.00],
+      [523.25, 1.10, 261.63],
+
+      // Phrase 3: Happy birthday dear Beenish / Paaaari
+      [392.00, 0.28, 261.63],
+      [392.00, 0.28, 261.63],
+      [783.99, 0.54, 261.63],
+      [659.25, 0.54, 329.63],
+      [523.25, 0.54, 261.63],
+      [493.88, 0.54, 220.00],
+      [440.00, 1.10, 220.00],
+
+      // Phrase 4: Happy birthday to you!
+      [698.46, 0.28, 174.61],
+      [698.46, 0.28, 174.61],
+      [659.25, 0.54, 261.63],
+      [523.25, 0.54, 261.63],
+      [587.33, 0.65, 196.00],
+      [523.25, 1.40, 261.63],
     ];
 
     let timeOffset = ctx.currentTime + 0.05;
 
-    notes.forEach(([freq, dur]) => {
+    notes.forEach(([freq, dur, bassFreq], idx) => {
       const osc = ctx.createOscillator();
       const oscHarmonic = ctx.createOscillator();
-      const gain = ctx.createGain();
+      const noteGain = ctx.createGain();
 
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, timeOffset);
@@ -722,26 +791,44 @@ class SoundEngine {
       oscHarmonic.type = 'triangle';
       oscHarmonic.frequency.setValueAtTime(freq * 2, timeOffset);
 
-      gain.gain.setValueAtTime(0.001, timeOffset);
-      gain.gain.exponentialRampToValueAtTime(0.12, timeOffset + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, timeOffset + dur);
+      const peakGain = 0.13 * this.masterVolume;
+      noteGain.gain.setValueAtTime(0.001, timeOffset);
+      noteGain.gain.exponentialRampToValueAtTime(peakGain, timeOffset + 0.02);
+      noteGain.gain.exponentialRampToValueAtTime(0.0001, timeOffset + dur + 0.18);
 
-      osc.connect(gain);
-      oscHarmonic.connect(gain);
-      gain.connect(dest);
+      osc.connect(noteGain);
+      oscHarmonic.connect(noteGain);
+      noteGain.connect(this.birthdayGain!);
 
       osc.start(timeOffset);
       oscHarmonic.start(timeOffset);
-      osc.stop(timeOffset + dur + 0.05);
-      oscHarmonic.stop(timeOffset + dur + 0.05);
+      osc.stop(timeOffset + dur + 0.22);
+      oscHarmonic.stop(timeOffset + dur + 0.22);
 
-      timeOffset += dur + 0.06;
+      if (idx === 0 || idx === 4 || idx === 6 || idx === 10 || idx === 12 || idx === 14 || idx === 19 || idx === 21) {
+        const bassOsc = ctx.createOscillator();
+        const bassGain = ctx.createGain();
+        bassOsc.type = 'sine';
+        bassOsc.frequency.setValueAtTime(bassFreq, timeOffset);
+        bassGain.gain.setValueAtTime(0.001, timeOffset);
+        bassGain.gain.exponentialRampToValueAtTime(0.06 * this.masterVolume, timeOffset + 0.03);
+        bassGain.gain.exponentialRampToValueAtTime(0.0001, timeOffset + dur + 0.35);
+        bassOsc.connect(bassGain);
+        bassGain.connect(this.birthdayGain!);
+        bassOsc.start(timeOffset);
+        bassOsc.stop(timeOffset + dur + 0.4);
+      }
+
+      timeOffset += dur + 0.08;
     });
+
+    return Math.ceil((timeOffset - ctx.currentTime) * 1000);
   }
 
-  /**
-   * Soft airy puff sound when blowing out birthday candles
-   */
+  public playBirthdayJingle(): void {
+    this.playFullBirthdayMelody();
+  }
+
   public playBlowCandles(): void {
     if (this.isMuted) return;
     const ctx = this.initContext();
