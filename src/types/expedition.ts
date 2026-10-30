@@ -89,6 +89,7 @@ export interface ExpeditionState {
   viewedVignettes: string[];
   namedConstellation: string | null;
   secretGardenUnlocked: boolean;
+  dreamEstatesUnlocked?: boolean;
   courtVerdictReached: boolean;
   bureauStamped: boolean;
   bureauChargesSolved?: boolean;

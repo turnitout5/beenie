@@ -39,6 +39,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   const { 
     starsRecovered, 
     secretGardenUnlocked, 
+    dreamEstatesUnlocked,
     currentLocation, 
     bureauStamped, 
     courtVerdictReached, 
@@ -46,6 +47,23 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     inventory,
     isMuted,
   } = state;
+
+  const isDreamEstatesUnlocked = Boolean(
+    dreamEstatesUnlocked ||
+    state.candlesBlown ||
+    state.recoveredStarIds.includes(6) ||
+    starsRecovered >= 6
+  );
+
+  const getPromptLabel = useCallback((item: InteractableObject) => {
+    if (item.id === 'door_garden' && !secretGardenUnlocked) {
+      return 'Secret Rose Gate (Locked 🔒)';
+    }
+    if (item.id === 'path_to_estates' && !isDreamEstatesUnlocked) {
+      return 'Grand Royal Arch (Dream Island • Locked 🔒)';
+    }
+    return item.promptLabel;
+  }, [secretGardenUnlocked, isDreamEstatesUnlocked]);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -261,6 +279,11 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         onTriggerInteraction(interactable);
         return;
       }
+      if (interactable.id === 'path_to_estates' && !isDreamEstatesUnlocked) {
+        soundEngine.playClick();
+        onTriggerInteraction(interactable);
+        return;
+      }
       changeRoom(interactable.targetRoom, interactable.targetPos);
     } else {
       soundEngine.playClick();
@@ -268,7 +291,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       pagluEmoteTimerRef.current = 120;
       onTriggerInteraction(interactable);
     }
-  }, [changeRoom, onTriggerInteraction, secretGardenUnlocked]);
+  }, [changeRoom, onTriggerInteraction, secretGardenUnlocked, isDreamEstatesUnlocked]);
 
   // Keyboard Listeners
   useEffect(() => {
@@ -484,6 +507,12 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
                   if (movingTowardsDoor) {
                     if (item.id === 'door_garden' && !secretGardenUnlocked) {
+                      playerPosRef.current.y -= 14;
+                      soundEngine.playClick();
+                      onTriggerInteraction(item);
+                      break;
+                    }
+                    if (item.id === 'path_to_estates' && !isDreamEstatesUnlocked) {
                       playerPosRef.current.y -= 14;
                       soundEngine.playClick();
                       onTriggerInteraction(item);
@@ -779,7 +808,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           currentRoom.height,
           frameCount,
           starsRecovered,
-          secretGardenUnlocked
+          secretGardenUnlocked,
+          isDreamEstatesUnlocked
         );
       } else if (currentRoom.id === 'bureau') {
         lights = EnvironmentRenderer.renderBureauInterior(
@@ -950,7 +980,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         if (bark && interactable) {
           // Both Paglu Speech AND Action Prompt active: repel to opposite sides like magnets!
           const speechMeas = SpriteRenderer.measureSpeechBubble(ctx, bark.text);
-          const promptMeas = SpriteRenderer.measurePromptBubble(ctx, interactable.promptLabel);
+          const promptMeas = SpriteRenderer.measurePromptBubble(ctx, getPromptLabel(interactable));
 
           const { bubbleA: pagluLayout, bubbleB: playerLayout } = SpriteRenderer.resolveMagneticBubbles(
             { width: speechMeas.width, height: speechMeas.height, anchorX: pagluX, anchorY: pagluY },
@@ -965,7 +995,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             targetY: pagluLayout.targetY,
           });
 
-          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, interactable.promptLabel, {
+          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, getPromptLabel(interactable), {
             customX: playerLayout.x,
             customY: playerLayout.y,
             targetX: playerLayout.targetX,
@@ -973,7 +1003,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           });
         } else if (emote && interactable) {
           // Both Paglu Emote AND Action Prompt active: repel to opposite sides like magnets!
-          const promptMeas = SpriteRenderer.measurePromptBubble(ctx, interactable.promptLabel);
+          const promptMeas = SpriteRenderer.measurePromptBubble(ctx, getPromptLabel(interactable));
 
           const { bubbleA: emoteLayout, bubbleB: playerLayout } = SpriteRenderer.resolveMagneticBubbles(
             { width: 24, height: 20, anchorX: pagluX, anchorY: pagluY },
@@ -988,7 +1018,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             targetY: emoteLayout.targetY,
           });
 
-          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, interactable.promptLabel, {
+          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, getPromptLabel(interactable), {
             customX: playerLayout.x,
             customY: playerLayout.y,
             targetX: playerLayout.targetX,
@@ -1002,7 +1032,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           SpriteRenderer.drawEmoteBubble(ctx, pagluX, pagluY, emote, frameCount);
         } else if (interactable) {
           // Only Action Prompt
-          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, interactable.promptLabel);
+          SpriteRenderer.drawPromptBubble(ctx, playerX, playerY, getPromptLabel(interactable));
         }
       }
 
@@ -1017,6 +1047,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     currentRoomId, 
     starsRecovered, 
     secretGardenUnlocked, 
+    isDreamEstatesUnlocked, 
     bureauStamped, 
     courtVerdictReached, 
     namedConstellation, 
@@ -1026,7 +1057,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     isJournalOpen,
     isMapOpen,
     changeRoom,
-    onTriggerInteraction
+    onTriggerInteraction,
+    getPromptLabel
   ]);
 
   // Mouse Drag Panning & Screen-to-World Click/Tap-to-Move Projection
@@ -1446,7 +1478,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
               ↵ Press Enter
             </span>
             <span style={{ color: '#FEF08A' }}>
-              {(activeInteractable.promptLabel || '').replace(/\[\s*E\s*\]/gi, '').trim()}
+              {(getPromptLabel(activeInteractable) || '').replace(/\[\s*E\s*\]/gi, '').trim()}
             </span>
           </button>
         </div>

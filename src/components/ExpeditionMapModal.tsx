@@ -26,6 +26,12 @@ export const ExpeditionMapModal: React.FC<ExpeditionMapModalProps> = ({
   const [activeLandmark, setActiveLandmark] = useState<MapLandmark | null>(null);
 
   const activeObjective = useMemo(() => getActiveObjective(state), [state]);
+  const isDreamEstatesUnlocked = Boolean(
+    state.dreamEstatesUnlocked ||
+    state.candlesBlown ||
+    state.recoveredStarIds.includes(6) ||
+    state.starsRecovered >= 6
+  );
 
   const targetLandmark = useMemo(
     () => MAP_LANDMARKS.find(l => l.id === activeObjective.targetLandmarkId) || MAP_LANDMARKS[0],
@@ -54,7 +60,10 @@ export const ExpeditionMapModal: React.FC<ExpeditionMapModalProps> = ({
 
   const handleTravelClick = (landmark: MapLandmark) => {
     soundEngine.playDoorOpen();
-    if (landmark.targetRoom) {
+    if (landmark.targetRoom === 'dream_estates' && !isDreamEstatesUnlocked) {
+      // Navigate to the Grand Arch in Overworld
+      onFastTravel('overworld', { x: 520, y: 1045 });
+    } else if (landmark.targetRoom) {
       onFastTravel(landmark.targetRoom, landmark.targetPos);
     } else {
       // Overworld landmark
@@ -438,6 +447,9 @@ export const ExpeditionMapModal: React.FC<ExpeditionMapModalProps> = ({
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <strong style={{ color: '#F59E0B', fontSize: '0.9rem' }}>{activeLandmark.name}</strong>
+                  {activeLandmark.id === 'path_to_estates' && !isDreamEstatesUnlocked && (
+                    <span style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#F87171', border: '1px solid #EF4444', borderRadius: '3px', padding: '1px 6px', fontSize: '0.68rem', fontWeight: 'bold' }}>LOCKED 🔒</span>
+                  )}
                   <span style={{ color: '#64748B', fontSize: '0.75rem' }}>• {activeLandmark.subtitle}</span>
                 </div>
                 <p className="font-mono" style={{ margin: '2px 0 0 0', color: '#FEF08A', fontSize: '0.8rem' }}>

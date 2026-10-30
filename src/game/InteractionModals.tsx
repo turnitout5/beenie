@@ -34,6 +34,12 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
   const { readReports, bureauStamped, inventory, namedConstellation } = state;
   const hasBrassKey = inventory.includes('brass_key');
+  const isDreamEstatesUnlocked = Boolean(
+    state.dreamEstatesUnlocked ||
+    state.candlesBlown ||
+    state.recoveredStarIds.includes(6) ||
+    state.starsRecovered >= 6
+  );
 
   // Sub-states initialized to valid personal data keys & persisted expedition progress
   const [selectedReportId, setSelectedReportId] = useState<string>(BUREAU_REPORTS[0]?.id || 'hmm_protocol');
@@ -1809,6 +1815,14 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
                 <div className="font-display" style={{ color: 'var(--color-lantern-gold)', textAlign: 'right', fontSize: '0.95rem' }}>
                   — Aapka Pagluu (Ahmad)
                 </div>
+                <div style={{ marginTop: '14px', padding: '12px 14px', backgroundColor: 'rgba(192, 132, 252, 0.16)', border: '1px solid #C084FC', borderRadius: '4px' }}>
+                  <div className="font-mono" style={{ color: '#E9D5FF', fontSize: '0.82rem', fontWeight: 600 }}>
+                    ✨ CELEBRATION UNLOCKED: HUMARA DREAM ISLAND IS NOW OPEN!
+                  </div>
+                  <div className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.78rem', marginTop: '4px', lineHeight: '1.6' }}>
+                    Aap ki birthday wish qubool ho gayi! South-West par Grand Royal Archway ki celestial seal toot chuki hai. Aab aap humare 5 dream houses (Islamabad House, Mafia Batcave, French Bakery, Disney Castle, Punjabi Haveli) explore kar sakti hain!
+                  </div>
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '10px' }}>
@@ -1873,19 +1887,19 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
       category = 'Valley Crossroads ♥';
       title = 'Valley of the Stars Crossroads';
       accentColor = 'var(--color-lantern-gold)';
-      description = 'North ki taraf Bureau of Unreasonable Paglu, Museum of Beenish, aur Court of No Flaws hain. East may ancient Archive tower aur Secret Rose Garden hai. Charon konon say humary dream houses k pathways nikalte hain!';
+      description = 'North ki taraf Bureau of Unreasonable Paglu, Museum of Beenish, aur Court of No Flaws hain. East may ancient Archive tower aur Secret Rose Garden hai. South-West par Grand Royal Archway humaray Dream Island aur 5 dream houses ki taraf jata hai!';
       extraNote = 'Har rasta khula hai meri jaan. Aap jahan bhi jayen gi, aap ka Pagluu aap k peechay peechay chalay ga!';
     } else if (id === 'estates_signpost') {
       category = 'Dream Estates Gateway ♥';
       title = 'The 5 Dream Estates Gateway';
       accentColor = '#C084FC';
-      description = 'Yahan se aap The 5 Dream Estates ki plaza may dakhil hotay hain, jahan Islamabad, Mafia Safehouse, Bakery, Castle aur Gaon Haveli sab aik sath bikhray huay hain!';
-      extraNote = 'Aik aik ghar may aap k liye dher saara pyaar aur memories sanjo kar rakhi hain.';
+      description = 'Yahan se aap The 5 Dream Estates (Humara Dream Island) may dakhil hotay hain, jahan Islamabad Dream House, Mafia Batcave, French Bakery, Disney Castle aur Gaon Haveli sab moojood hain!';
+      extraNote = 'Agar gate par celestial seal lagi ho, to pehle humari memories k sitaray dhoondein aur Secret Rose Garden mein birthday letter parhein, phir yeh gate khul jaye ga!';
     } else if (id === 'arrival_plaque') {
       category = 'Welcome Meri Paaaari ♥';
       title = "Paaaari's Birthday Expedition Archway";
       accentColor = '#F59E0B';
-      description = "Mera paala bacha, meri jaan Beenish! Welcome to the Valley of the Stars, crafted with every ounce of my heart for October 31st!\n\nIs valley may humari zindagi ki saari pyari memories, sapnay, aur 6 Lost Constellation Stars bikhray huay hain. North ki taraf Bureau, Museum aur Court hain. East may Archive aur Secret Garden hai. Charon konon say humary 5 dream houses k raastay nikalte hain.\n\nAap jahan bhi jayen gi, aap ka Ahmad (Pagluu) hamesha aap k sath hai!";
+      description = "Mera paala bacha, meri jaan Beenish! Welcome to the Valley of the Stars, crafted with every ounce of my heart for October 31st!\n\nIs valley may humari zindagi ki saari pyari memories, sapnay, aur 6 Lost Constellation Stars bikhray huay hain. North ki taraf Bureau, Museum aur Court hain. East may Archive aur Secret Garden hai. South-West may humaray Dream Island ka Grand Royal Archway hai.\n\nAap jahan bhi jayen gi, aap ka Ahmad (Pagluu) hamesha aap k sath hai!";
       extraNote = 'Ahmad\'s Vow: "Sari zindagi may aap ka khayal rakhun ga, aap ko hansaoon ga, aur har din aap ka birthday celebrate karun ga!"';
       actions = [
         { label: 'HOLD AHMAD\'S HAND', feedback: 'Ahmad nay aap ka hath zor say pakar liya... dono ki ungliyan perfectly fit ho gayin! Ek pyara sa sukoon phail gaya.' },
@@ -2431,6 +2445,42 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
 
           <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
             I WILL RECOVER THE STARS FOR MY PAGLUU
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // LOCKED DREAM ISLAND ROYAL ARCHWAY
+  if (activeObject.id === 'path_to_estates' && !isDreamEstatesUnlocked) {
+    return (
+      <div className="pixel-modal-backdrop" onClick={handleClose}>
+        <div className="pixel-modal-content pixel-panel pixel-panel-purple" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', backgroundColor: 'var(--color-void-navy)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-twilight-blue)', paddingBottom: '12px', marginBottom: '16px' }}>
+            <div>
+              <div className="font-mono" style={{ color: 'var(--color-lavender-mist)', fontSize: '0.78rem', letterSpacing: '0.12em' }}>
+                ROYAL GATEWAY &bull; HUMARA DREAM ISLAND
+              </div>
+              <h2 className="font-display" style={{ color: 'var(--color-lantern-gold)', fontSize: '1.25rem', margin: '4px 0 0 0' }}>
+                Grand Royal Arch: Dream Island 🏰
+              </h2>
+            </div>
+            <button onClick={handleClose} className="pixel-btn pixel-btn-ghost font-mono">[X]</button>
+          </div>
+
+          <div style={{ backgroundColor: 'var(--color-midnight-indigo)', border: '1px solid var(--color-twilight-blue)', padding: '16px', marginBottom: '16px', lineHeight: '1.8' }}>
+            <p className="font-mono" style={{ color: 'var(--color-moon-cream)', fontSize: '0.86rem', margin: '0 0 10px 0' }}>
+              Aik shahi, starlight-glowing portal par celestial purple seal lagi hui hai. Is k par humaray future ki sari khushian aur 5 dream houses (Islamabad Dream House, Mafia Batcave, French Bakery, Disney Castle &amp; Punjabi Haveli) ban rahay hain...
+            </p>
+            <div style={{ backgroundColor: 'rgba(192, 132, 252, 0.15)', borderLeft: '3px solid #C084FC', padding: '12px 14px', borderRadius: '4px' }}>
+              <div className="font-mono" style={{ color: 'var(--color-warm-peach)', fontSize: '0.86rem' }}>
+                <strong>Ahmad (Pagluu):</strong> &ldquo;Meri pyari Paaaari, yeh humara Dream Island hai! Yeh humari puri expedition ka sab say bara celebratory reward hai. Pehle humari memories k sitaray dhoondein aur Secret Rose Garden mein mera birthday letter parh kar candles blow karein, phir yeh gate celebratory fanfare k sath hamesha k liye khul jaye ga aur hum mil kar apne future dream homes explore karenge!&rdquo;
+              </div>
+            </div>
+          </div>
+
+          <button onClick={handleClose} className="pixel-btn pixel-btn-primary font-display" style={{ width: '100%', justifyContent: 'center' }}>
+            I WILL COMPLETE OUR MEMORIES FIRST, PAGLUU ♥
           </button>
         </div>
       </div>

@@ -24,7 +24,8 @@ export class EnvironmentRenderer {
     height: number,
     frame: number,
     starsRecovered: number,
-    secretGardenUnlocked: boolean
+    secretGardenUnlocked: boolean,
+    dreamEstatesUnlocked: boolean = false
   ): LightSource[] {
     const lights: LightSource[] = [];
 
@@ -532,7 +533,7 @@ export class EnvironmentRenderer {
     lights.push({ x: 1012, y: 230, radius: 60, intensity: 0.85, color: '#FEF08A' });
 
     // Dream Estates Master Boulevard Gateway (SW-Center Avenue)
-    this.drawDreamEstatesPortal(ctx, 490, 1020, frame);
+    this.drawDreamEstatesPortal(ctx, 490, 1020, frame, dreamEstatesUnlocked);
     lights.push({ x: 517, y: 1040, radius: 55, intensity: 0.88, color: '#C084FC' });
 
     // 5 Handwritten Sticky Notes from Ahmad scattered across the expedition
@@ -2801,9 +2802,10 @@ export class EnvironmentRenderer {
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
-    frame: number
+    frame: number,
+    isUnlocked: boolean = false
   ): void {
-    // Grand Marble Archway leading north into the Dream Estates
+    // Grand Marble Archway leading into the Dream Estates
     ctx.fillStyle = '#1E293B';
     ctx.fillRect(x, y, 54, 38);
 
@@ -2821,20 +2823,48 @@ export class EnvironmentRenderer {
     ctx.fillStyle = '#64748B';
     ctx.fillRect(x + 6, y + 2, 42, 2);
 
-    // Gold Inscribed Archway Title
-    ctx.fillStyle = '#F59E0B';
+    // Archway Title
+    ctx.fillStyle = isUnlocked ? '#F59E0B' : '#C084FC';
     ctx.font = '6px monospace';
-    ctx.fillText('DREAM ESTATES', x + 5, y + 9);
+    ctx.fillText(isUnlocked ? 'DREAM ISLAND' : 'DREAM GATE', x + 5, y + 9);
 
-    // Gateway Opening with starlight shimmer
-    const glow = Math.sin(frame * 0.08) * 0.15 + 0.25;
-    ctx.fillStyle = `rgba(192, 132, 252, ${glow})`;
-    ctx.fillRect(x + 12, y + 12, 30, 26);
+    if (isUnlocked) {
+      // Gateway Opening with open golden-starlight shimmering portal
+      const glow = Math.sin(frame * 0.08) * 0.2 + 0.35;
+      ctx.fillStyle = `rgba(192, 132, 252, ${glow})`;
+      ctx.fillRect(x + 12, y + 12, 30, 26);
 
-    // Little guide stones
-    ctx.fillStyle = '#F59E0B';
-    ctx.fillRect(x + 24, y + 24, 6, 2);
-    ctx.fillRect(x + 26, y + 18, 2, 6);
+      // Warm golden inner starlight stream
+      ctx.fillStyle = 'rgba(251, 191, 36, 0.45)';
+      ctx.fillRect(x + 18, y + 15, 18, 23);
+
+      // Little guide stars
+      ctx.fillStyle = '#FBBF24';
+      ctx.fillRect(x + 24, y + 24, 6, 2);
+      ctx.fillRect(x + 26, y + 18, 2, 6);
+    } else {
+      // Locked State: Sealed with crystalline deep purple barrier & celestial padlock
+      ctx.fillStyle = 'rgba(30, 27, 75, 0.9)';
+      ctx.fillRect(x + 12, y + 12, 30, 26);
+
+      // Crystalline seal runes
+      const sealGlow = Math.sin(frame * 0.06) * 0.25 + 0.45;
+      ctx.fillStyle = `rgba(168, 85, 247, ${sealGlow})`;
+      ctx.fillRect(x + 16, y + 16, 22, 18);
+
+      // Celestial Padlock body
+      ctx.fillStyle = '#F59E0B';
+      ctx.fillRect(x + 23, y + 23, 8, 7);
+      // Shackle
+      ctx.strokeStyle = '#FCD34D';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(x + 27, y + 22, 3, Math.PI, 0);
+      ctx.stroke();
+      // Keyhole
+      ctx.fillStyle = '#1E1B4B';
+      ctx.fillRect(x + 26, y + 25, 2, 3);
+    }
   }
 
   /**

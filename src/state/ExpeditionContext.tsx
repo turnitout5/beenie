@@ -57,6 +57,7 @@ const defaultState: ExpeditionState = {
   viewedVignettes: [],
   namedConstellation: null,
   secretGardenUnlocked: false,
+  dreamEstatesUnlocked: false,
   courtVerdictReached: false,
   bureauStamped: false,
   bureauChargesSolved: false,
@@ -150,6 +151,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
 
       // Check if garden unlocks (all 5 core world stars collected, or Star 6 triggered)
       const shouldUnlockGarden = updatedRecovered.length >= 5 || prev.secretGardenUnlocked;
+      const shouldUnlockEstates = updatedRecovered.length >= 6 || updatedRecovered.includes(6) || Boolean(prev.candlesBlown) || Boolean(prev.dreamEstatesUnlocked);
 
       return {
         ...prev,
@@ -157,6 +159,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         starsRecovered: updatedRecovered.length,
         journal: updatedJournal,
         secretGardenUnlocked: shouldUnlockGarden,
+        dreamEstatesUnlocked: shouldUnlockEstates,
         unlockedLocations:
           shouldUnlockGarden && !prev.unlockedLocations.includes('garden')
             ? [...prev.unlockedLocations, 'garden']
@@ -242,7 +245,13 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
   };
 
   const setPuzzleState = (updates: Partial<ExpeditionState>) => {
-    setState(prev => ({ ...prev, ...updates }));
+    setState(prev => {
+      const merged = { ...prev, ...updates };
+      if (merged.candlesBlown || (merged.recoveredStarIds && merged.recoveredStarIds.includes(6)) || (merged.recoveredStarIds && merged.recoveredStarIds.length >= 6)) {
+        merged.dreamEstatesUnlocked = true;
+      }
+      return merged;
+    });
   };
 
   const toggleMute = () => {

@@ -166,6 +166,8 @@ export function getActiveObjective(state: {
   courtVerdictReached: boolean;
   namedConstellation: string | null;
   secretGardenUnlocked: boolean;
+  candlesBlown?: boolean;
+  dreamEstatesUnlocked?: boolean;
 }): {
   targetLandmarkId: string;
   chapter: string;
@@ -182,7 +184,11 @@ export function getActiveObjective(state: {
     courtVerdictReached,
     namedConstellation,
     secretGardenUnlocked,
+    candlesBlown,
+    dreamEstatesUnlocked,
   } = state;
+
+  const isDreamEstatesUnlocked = Boolean(dreamEstatesUnlocked || candlesBlown || starsRecovered >= 6);
 
   if (starsRecovered === 0 && !bureauStamped) {
     return {
@@ -250,23 +256,23 @@ export function getActiveObjective(state: {
     };
   }
 
-  if (namedConstellation && !secretGardenUnlocked) {
+  if (namedConstellation && (!secretGardenUnlocked || !isDreamEstatesUnlocked)) {
     return {
       targetLandmarkId: 'door_garden',
       chapter: 'Chapter 6',
-      title: 'Secret Hidden Rose Garden',
+      title: 'Secret Hidden Rose Garden & Birthday Letter',
       direction: 'South-East (Ivy Gate)',
-      ahmadGuide: 'Aasman roshan ho gaya! South-East par Secret Rose Garden ka ivy gate khul chuka hai! Aajaen chal kar Pagluu ka anniversary letter parhein!',
+      ahmadGuide: 'Aasman roshan ho gaya! South-East par Secret Rose Garden chalain, mera birthday letter parhein aur candles blow karein taakay Dream Island unlock ho sake!',
       icon: '🌹',
     };
   }
 
   return {
     targetLandmarkId: 'path_to_estates',
-    chapter: 'Chapter 7',
-    title: 'Master Boulevard of All 5 Dream Estates',
-    direction: 'South-West (Grand Arch Gate)',
-    ahmadGuide: 'Meri Queen! Ab Grand Arch se Dream Estates boulevard may dakhil hon! Islamabad house, Mafia safehouse, Sweet Bakery, Royal Castle aur Gaon Haveli ghoomein!',
+    chapter: 'Grand Finale',
+    title: 'Humara Dream Island (All 5 Dream Houses)',
+    direction: 'South-West (Grand Royal Arch)',
+    ahmadGuide: 'Meri Queen! Ab Grand Royal Arch se Humare Dream Island may dakhil hon! Islamabad house, Mafia safehouse, Sweet Bakery, Royal Castle aur Gaon Haveli ghoomein!',
     icon: '🏰',
   };
 }
