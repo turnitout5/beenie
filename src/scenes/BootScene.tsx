@@ -397,7 +397,7 @@ const CoupleVignetteSVG: React.FC<{
 export const DEV_FLAG = false;
 
 export const BootScene: React.FC = () => {
-  const { navigateTo } = useExpedition();
+  const { state, navigateTo, setPuzzleState } = useExpedition();
 
   // Compute target: 00:00:00 of October 31 (Month index 9 = October)
   const getTargetTimestamp = useCallback(() => {
@@ -434,7 +434,10 @@ export const BootScene: React.FC = () => {
 
   const targetMs = simulatedCountdownEnd !== null ? simulatedCountdownEnd : getTargetTimestamp();
   const remainingMs = Math.max(0, targetMs - nowMs);
-  const isUnlocked = forceUnlocked || remainingMs <= 0;
+  const isLateExplicit = typeof window !== 'undefined' && (new URLSearchParams(window.location.search).get('late') === '1' || new URLSearchParams(window.location.search).get('late') === 'true');
+  const hasPassedTarget = remainingMs <= 0;
+  const isMissedTimer = !forceUnlocked && (isLateExplicit || (hasPassedTarget && !state.bootCompleted && !state.missedTimerAcknowledged));
+  const isUnlocked = forceUnlocked || (!isMissedTimer && remainingMs <= 0);
 
   const sadQuotes = [
     'Abhi 31st October ke 12 nai bajay... Meri Paaaari ki birthday k bina andhera aur khamoshi hai.',
@@ -470,8 +473,8 @@ export const BootScene: React.FC = () => {
       soundEngine.playBirthdayJingle();
     }, 1500);
     setTimeout(() => {
-      soundEngine.startBolNaHalkeHalkeTuneLoop();
-    }, 4500);
+      soundEngine.playSong('bol_na_halke_halke');
+    }, 3200);
 
     const particleTypes: Array<'heart' | 'star' | 'petal' | 'crown' | 'sparkle'> = [
       'heart',
@@ -489,6 +492,12 @@ export const BootScene: React.FC = () => {
     }));
     setFloatingParticles(burst);
   }, []);
+
+const handleAcknowledgeLate = useCallback(() => {
+    setForceUnlocked(true);
+    setPuzzleState({ missedTimerAcknowledged: true, bootCompleted: true });
+    triggerMidnightCelebration();
+  }, [setPuzzleState, triggerMidnightCelebration]);
 
   // Live 1-second / 250ms timer tick
   useEffect(() => {
@@ -569,7 +578,7 @@ export const BootScene: React.FC = () => {
 
   const handleAccept = () => {
     soundEngine.playStarChime();
-    soundEngine.startBolNaHalkeHalkeTuneLoop();
+    soundEngine.playSong('mohabat');
     navigateTo('hub');
   };
 
@@ -581,6 +590,11 @@ export const BootScene: React.FC = () => {
       if (isDevActive && e.shiftKey && (e.key === 'U' || e.key === 'u')) {
         e.preventDefault();
         setForceUnlocked(true);
+        return;
+      }
+      if (isMissedTimer && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        handleAcknowledgeLate();
         return;
       }
       if (!isUnlocked) return;
@@ -598,7 +612,7 @@ export const BootScene: React.FC = () => {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isUnlocked, bootStep, noteLines.length, navigateTo, isDevActive]);
+  }, [isUnlocked, bootStep, noteLines.length, navigateTo, isDevActive, isMissedTimer, handleAcknowledgeLate]);
 
   // Breakdown remaining time into DD : HH : MM : SS
   const totalSeconds = Math.ceil(remainingMs / 1000);
@@ -664,23 +678,25 @@ export const BootScene: React.FC = () => {
             className="font-display"
             style={{
               fontSize: 'clamp(1.25rem, 3.2vw, 2rem)',
-              color: '#7A84A8',
+              color: isMissedTimer ? '#F87171' : '#7A84A8',
               letterSpacing: '0.08em',
               margin: 0,
               textShadow: '0 2px 18px rgba(0, 0, 0, 0.9)',
             }}
           >
-            ABHI 31ST OCTOBER KE 12 NAI BAJAY...
+            {isMissedTimer ? 'AREY MERI PAAARI! JALDIII KARYENN, LATE HO GAYIN AAP!' : 'ABHI 31ST OCTOBER KE 12 NAI BAJAY...'}
           </h1>
           <p
             className="font-mono"
             style={{
-              color: '#5A6385',
+              color: isMissedTimer ? '#FCA5A5' : '#5A6385',
               fontSize: '0.84rem',
               marginTop: '6px',
             }}
           >
-            Meri Paaaari ke birthday ke 12 bajnay tak Pagluu intezar kar raha hai...
+            {isMissedTimer
+              ? 'Main kab say cake, mom-batti aur confetti le kar akela khara intezar kar raha tha! 🥺💔'
+              : 'Meri Paaaari ke birthday ke 12 bajnay tak Pagluu intezar kar raha hai...'}
           </p>
         </div>
 
@@ -808,12 +824,33 @@ export const BootScene: React.FC = () => {
               {earlyClickMessage}
             </div>
           )}
+
+          {isMissedTimer && (
+            <div style={{ marginTop: '16px' }}>
+              <button
+                onClick={handleAcknowledgeLate}
+                className="pixel-btn pixel-btn-primary font-display animate-glow"
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  justifyContent: 'center',
+                  fontSize: '0.95rem',
+                  backgroundColor: '#EC4899',
+                  borderColor: '#F472B6',
+                  color: '#FFFFFF',
+                  boxShadow: '0 0 24px rgba(236, 72, 153, 0.65)',
+                }}
+              >
+                MERY PYARE PAGLUU I AM HERE NOW! FORAN CELEBRATE KAREIN ♥
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Interactive Wait / Peek Button (also primes browser audio for 00:00:00!) */}
         <div
           style={{
-            display: 'flex',
+            display: isMissedTimer ? 'none' : 'flex',
             gap: '14px',
             flexWrap: 'wrap',
             justifyContent: 'center',

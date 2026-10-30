@@ -18,6 +18,7 @@ interface ExpeditionContextType {
   setPuzzleState: (updates: Partial<ExpeditionState>) => void;
   toggleMute: () => void;
   resetExpedition: () => void;
+  savePlayerPosition: (roomId: string, pos: { x: number; y: number }, dir: 'up' | 'down' | 'left' | 'right') => void;
 }
 
 const STORAGE_KEY = 'beenish_expedition_save_v1';
@@ -68,6 +69,11 @@ const defaultState: ExpeditionState = {
   observatoryConstellationConnected: false,
   gardenLanternsLit: 0,
   candlesBlown: false,
+  bootCompleted: false,
+  missedTimerAcknowledged: false,
+  lastRoomId: 'overworld',
+  playerCoordinates: undefined,
+  playerDirection: 'down',
   journal: INITIAL_JOURNAL,
   isMuted: soundEngine.getMuted(),
 };
@@ -86,7 +92,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         return {
           ...defaultState,
           ...parsed,
-          currentLocation: isBeforeOct31 ? 'boot' : (parsed.currentLocation || 'boot'),
+          currentLocation: (isBeforeOct31 && !parsed.bootCompleted) ? 'boot' : (parsed.currentLocation || (parsed.lastRoomId === 'overworld' ? 'hub' : parsed.lastRoomId) || 'boot'),
           unlockedLocations: Array.from(
             new Set([...defaultState.unlockedLocations, ...(parsed.unlockedLocations || [])])
           ) as LocationId[],
@@ -128,9 +134,11 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         ? prev.journal.map(j => (j.id === 'estates_complete' ? { ...j, completed: true } : j))
         : prev.journal;
 
+      const isBootComplete = Boolean(prev.bootCompleted || location !== 'boot');
       return {
         ...prev,
         currentLocation: location,
+        bootCompleted: isBootComplete,
         unlockedLocations: newUnlocked,
         visitedLocations: newVisited,
         journal: updatedJournal,
@@ -259,6 +267,30 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
     setState(prev => ({ ...prev, isMuted }));
   };
 
+  const savePlayerPosition = (
+    roomId: string,
+    pos: { x: number; y: number },
+    dir: 'up' | 'down' | 'left' | 'right'
+  ) => {
+    setState(prev => {
+      if (
+        prev.lastRoomId === roomId &&
+        prev.playerCoordinates &&
+        Math.abs(prev.playerCoordinates.x - pos.x) < 2 &&
+        Math.abs(prev.playerCoordinates.y - pos.y) < 2 &&
+        prev.playerDirection === dir
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        lastRoomId: roomId,
+        playerCoordinates: pos,
+        playerDirection: dir,
+      };
+    });
+  };
+
   const resetExpedition = () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -285,6 +317,7 @@ export const ExpeditionProvider: React.FC<{ children: ReactNode }> = ({ children
         setPuzzleState,
         toggleMute,
         resetExpedition,
+        savePlayerPosition,
       }}
     >
       {children}

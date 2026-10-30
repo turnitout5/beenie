@@ -20,6 +20,10 @@ class SoundEngine {
   private tuneTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private isTuneLooping: boolean = false;
   private isGardenActive: boolean = false;
+  private masterVolume: number = 0.8;
+  private currentRoomTheme: string | null = null;
+  private roomThemeInterval: ReturnType<typeof setInterval> | null = null;
+  private roomThemeGain: GainNode | null = null;
 
   constructor() {
     const savedMute = localStorage.getItem('beenish_expedition_muted');
@@ -62,11 +66,34 @@ class SoundEngine {
     return this.isMuted;
   }
 
+  public getMasterVolume(): number {
+    return this.masterVolume;
+  }
+
+  public setMasterVolume(vol: number): void {
+    this.masterVolume = Math.max(0, Math.min(1, vol));
+    if (this.ctx && this.masterGain) {
+      this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.masterVolume, this.ctx.currentTime);
+    }
+    if (this.musicAudio) {
+      this.musicAudio.volume = this.isMuted ? 0 : this.masterVolume * 0.8;
+    }
+  }
+
   public toggleMute(): boolean {
     this.isMuted = !this.isMuted;
     localStorage.setItem('beenish_expedition_muted', String(this.isMuted));
     if (this.ctx && this.masterGain) {
-      this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 1, this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.masterVolume, this.ctx.currentTime);
+    }
+    if (this.musicAudio) {
+      this.musicAudio.volume = this.isMuted ? 0 : this.masterVolume * 0.8;
+    }
+    if (this.ambientGain) {
+      this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.04 * this.masterVolume, this.ctx?.currentTime || 0);
+    }
+    if (this.roomThemeGain) {
+      this.roomThemeGain.gain.setValueAtTime(this.isMuted ? 0 : 0.14 * this.masterVolume, this.ctx?.currentTime || 0);
     }
     if (this.ambientGain && this.ctx) {
       this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.04, this.ctx.currentTime);
@@ -205,38 +232,22 @@ class SoundEngine {
    */
   public playBirthdayHornFanfare(): void {
     if (this.isMuted || typeof window === 'undefined') return;
-    const triggerSequence = () => {
-      if (this.isMuted) return;
-      this.playHorn(1);
-      setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 420);
-      setTimeout(() => { if (!this.isMuted) this.playHorn(1); }, 880);
-      setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 1320);
-    };
+    const hornSequence: Array<{ variant: 1 | 2; delay: number }> = [
+      { variant: 1, delay: 0 },
+      { variant: 1, delay: 180 },
+      { variant: 2, delay: 420 },
+      { variant: 1, delay: 780 },
+      { variant: 1, delay: 960 },
+      { variant: 2, delay: 1260 },
+      { variant: 2, delay: 1560 },
+      { variant: 1, delay: 1920 },
+    ];
 
-    try {
-      const testHorn = new Audio('./audio/horn1.mp3');
-      testHorn.volume = 0.8;
-      const p = testHorn.play();
-      if (p !== undefined) {
-        p.then(() => {
-          setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 420);
-          setTimeout(() => { if (!this.isMuted) this.playHorn(1); }, 880);
-          setTimeout(() => { if (!this.isMuted) this.playHorn(2); }, 1320);
-        }).catch(() => {
-          const onFirstInteract = () => {
-            triggerSequence();
-            window.removeEventListener('click', onFirstInteract);
-            window.removeEventListener('touchstart', onFirstInteract);
-            window.removeEventListener('keydown', onFirstInteract);
-          };
-          window.addEventListener('click', onFirstInteract, { once: true });
-          window.addEventListener('touchstart', onFirstInteract, { once: true });
-          window.addEventListener('keydown', onFirstInteract, { once: true });
-        });
-      }
-    } catch {
-      triggerSequence();
-    }
+    hornSequence.forEach(({ variant, delay }) => {
+      setTimeout(() => {
+        if (!this.isMuted) this.playHorn(variant);
+      }, delay);
+    });
   }
 
   /**
@@ -918,6 +929,196 @@ class SoundEngine {
 
   public isTunePlaying(): boolean {
     return this.isTuneLooping;
+  }
+
+  public stopRoomTheme(): void {
+    if (this.roomThemeInterval) {
+      clearInterval(this.roomThemeInterval);
+      this.roomThemeInterval = null;
+    }
+    if (this.ctx && this.roomThemeGain) {
+      this.roomThemeGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.2);
+    }
+    this.currentRoomTheme = null;
+  }
+
+  public setRoomTheme(roomId: string): void {
+    if (this.currentRoomTheme === roomId) return;
+    this.stopRoomTheme();
+    this.currentRoomTheme = roomId;
+
+    const ctx = this.initContext();
+    const dest = this.getDestination();
+    if (!ctx || !dest) return;
+
+    if (!this.roomThemeGain) {
+      this.roomThemeGain = ctx.createGain();
+      this.roomThemeGain.connect(dest);
+    }
+    const targetGain = this.isMuted ? 0 : 0.14 * this.masterVolume;
+    this.roomThemeGain.gain.setValueAtTime(0, ctx.currentTime);
+    this.roomThemeGain.gain.setTargetAtTime(targetGain, ctx.currentTime, 0.4);
+
+    if (roomId === 'mafia_realm') {
+      let beat = 0;
+      const playBatmanBeat = () => {
+        if (this.currentRoomTheme !== 'mafia_realm' || !this.ctx || !this.roomThemeGain) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        const freqs = [55, 49, 58, 43.6];
+        osc.frequency.setValueAtTime(freqs[beat % freqs.length], now);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(160, now);
+        filter.frequency.exponentialRampToValueAtTime(70, now + 1.2);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.roomThemeGain);
+
+        osc.start(now);
+        osc.stop(now + 1.5);
+        beat++;
+      };
+      playBatmanBeat();
+      this.roomThemeInterval = setInterval(playBatmanBeat, 1600);
+    } else if (roomId === 'haveli_realm') {
+      let folkStep = 0;
+      const folkScale = [293.66, 329.63, 369.99, 392.00, 440.00, 493.88];
+      const playDesiBeat = () => {
+        if (this.currentRoomTheme !== 'haveli_realm' || !this.ctx || !this.roomThemeGain) return;
+        const now = this.ctx.currentTime;
+        const isThump = folkStep % 2 === 0;
+
+        if (isThump) {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.exponentialRampToValueAtTime(65, now + 0.12);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(this.roomThemeGain);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+
+        const melodyOsc = this.ctx.createOscillator();
+        const melodyGain = this.ctx.createGain();
+        melodyOsc.type = 'triangle';
+        const note = folkScale[(folkStep * 2 + (folkStep % 3)) % folkScale.length];
+        melodyOsc.frequency.setValueAtTime(note, now);
+        melodyGain.gain.setValueAtTime(0.12, now);
+        melodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        melodyOsc.connect(melodyGain);
+        melodyGain.connect(this.roomThemeGain);
+        melodyOsc.start(now);
+        melodyOsc.stop(now + 0.24);
+
+        folkStep++;
+      };
+      playDesiBeat();
+      this.roomThemeInterval = setInterval(playDesiBeat, 320);
+    } else if (roomId === 'bakery_realm') {
+      let waltzBeat = 0;
+      const playWaltz = () => {
+        if (this.currentRoomTheme !== 'bakery_realm' || !this.ctx || !this.roomThemeGain) return;
+        const now = this.ctx.currentTime;
+        const step = waltzBeat % 3;
+
+        if (step === 0) {
+          const bass = this.ctx.createOscillator();
+          const bg = this.ctx.createGain();
+          bass.type = 'triangle';
+          bass.frequency.setValueAtTime(174.61, now);
+          bg.gain.setValueAtTime(0.2, now);
+          bg.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          bass.connect(bg);
+          bg.connect(this.roomThemeGain);
+          bass.start(now);
+          bass.stop(now + 0.38);
+        } else {
+          [220.00, 261.63].forEach((f, idx) => {
+            if (!this.ctx || !this.roomThemeGain) return;
+            const osc = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f + (idx * 0.8), now);
+            g.gain.setValueAtTime(0.1, now);
+            g.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+            osc.connect(g);
+            g.connect(this.roomThemeGain);
+            osc.start(now);
+            osc.stop(now + 0.3);
+          });
+        }
+        waltzBeat++;
+      };
+      playWaltz();
+      this.roomThemeInterval = setInterval(playWaltz, 440);
+    } else if (roomId === 'castle_realm') {
+      const harpNotes = [523.25, 659.25, 783.99, 880.00, 1046.50];
+      const playHarpSweep = () => {
+        if (this.currentRoomTheme !== 'castle_realm' || !this.ctx || !this.roomThemeGain) return;
+        const now = this.ctx.currentTime;
+        harpNotes.forEach((f, idx) => {
+          if (!this.ctx || !this.roomThemeGain) return;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + idx * 0.08);
+          g.gain.setValueAtTime(0.14, now + idx * 0.08);
+          g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.45);
+          osc.connect(g);
+          g.connect(this.roomThemeGain);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.5);
+        });
+      };
+      playHarpSweep();
+      this.roomThemeInterval = setInterval(playHarpSweep, 2800);
+    } else if (roomId === 'islamabad_realm') {
+      const chords = [
+        [174.61, 220.00, 261.63, 329.63],
+        [164.81, 196.00, 246.94, 293.66],
+        [146.83, 174.61, 220.00, 261.63],
+        [130.81, 164.81, 196.00, 246.94],
+      ];
+      let chordIdx = 0;
+      const playLofiChord = () => {
+        if (this.currentRoomTheme !== 'islamabad_realm' || !this.ctx || !this.roomThemeGain) return;
+        const now = this.ctx.currentTime;
+        const currentChord = chords[chordIdx % chords.length];
+        currentChord.forEach((f) => {
+          if (!this.ctx || !this.roomThemeGain) return;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now);
+          g.gain.setValueAtTime(0.08, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+          osc.connect(g);
+          g.connect(this.roomThemeGain);
+          osc.start(now);
+          osc.stop(now + 1.9);
+        });
+        chordIdx++;
+      };
+      playLofiChord();
+      this.roomThemeInterval = setInterval(playLofiChord, 2200);
+    } else if (roomId === 'garden') {
+      this.startGardenMelody();
+    } else if (roomId === 'overworld' || roomId === 'hub') {
+      this.startNightAmbience();
+    }
   }
 }
 

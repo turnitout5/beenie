@@ -8,6 +8,7 @@ import { SpriteRenderer } from './spriteRenderer';
 import { EnvironmentRenderer } from './environmentRenderer';
 import { soundEngine } from '../audio/soundEngine';
 import { JournalModal } from '../components/JournalModal';
+import { ExpeditionSettingsModal } from '../components/ExpeditionSettingsModal';
 import { LocationId } from '../types/expedition';
 import { 
   ROOM_OBJECT_DIALOGUES,
@@ -35,7 +36,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   isModalOpen = false,
   onCloseModal,
 }) => {
-  const { state, navigateTo, toggleMute } = useExpedition();
+  const { state, navigateTo, savePlayerPosition } = useExpedition();
   const { 
     starsRecovered, 
     secretGardenUnlocked, 
@@ -45,7 +46,6 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     courtVerdictReached, 
     namedConstellation, 
     inventory,
-    isMuted,
   } = state;
 
   const isDreamEstatesUnlocked = Boolean(
@@ -67,8 +67,11 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Current Room
+  // Current Room & State Restoration
   const [currentRoomId, setCurrentRoomId] = useState<RoomId>(() => {
+    if (state.lastRoomId && (state.lastRoomId as RoomId) in ROOMS) {
+      return state.lastRoomId as RoomId;
+    }
     if (currentLocation && currentLocation !== 'boot' && currentLocation !== 'hub') {
       return (currentLocation as RoomId) in ROOMS ? (currentLocation as RoomId) : 'overworld';
     }
@@ -79,14 +82,18 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   // Camera State (Smooth Glide Tracking)
   const camPosRef = useRef<Position>({ x: 0, y: 0 });
 
-  // Player State
-  const playerPosRef = useRef<Position>({ ...room.defaultSpawn });
-  const playerDirRef = useRef<Direction>('down');
+  // Player & Companion State
+  const initialSpawn = (state.playerCoordinates && state.lastRoomId === currentRoomId)
+    ? state.playerCoordinates
+    : room.defaultSpawn;
+  const playerPosRef = useRef<Position>({ ...initialSpawn });
+  const playerDirRef = useRef<Direction>(state.playerDirection || 'down');
   const isWalkingRef = useRef<boolean>(false);
   const walkFrameRef = useRef<number>(0);
+  const lastSavedPosTimeRef = useRef<number>(0);
 
   // Companion (Paglu / Ahmad) Follower State
-  const pagluPosRef = useRef<Position>({ x: room.defaultSpawn.x, y: room.defaultSpawn.y + 28 });
+  const pagluPosRef = useRef<Position>({ x: initialSpawn.x, y: initialSpawn.y + 28 });
   const pagluDirRef = useRef<Direction>('up');
   const trailRef = useRef<Position[]>([]);
   const pagluEmoteRef = useRef<'heart' | 'exclamation' | 'question' | 'music' | 'blush' | 'sparkle' | 'sleep' | null>('heart');
@@ -105,7 +112,6 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     stage: 'none' | 'fainted' | 'screaming' | 'sprinting_back';
     timer: number;
   }>({ stage: 'none', timer: 0 });
-  const [isTunePlaying, setIsTunePlaying] = useState<boolean>(true);
 
   // Controls State
   const keysPressed = useRef<Record<string, boolean>>({});
@@ -114,6 +120,9 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   const activeInteractableRef = useRef<InteractableObject | null>(null);
   const [isJournalOpen, setIsJournalOpen] = useState<boolean>(false);
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isVirtualDpadVisible, setIsVirtualDpadVisible] = useState<boolean>(true);
+  const [userZoom, setUserZoom] = useState<number>(1.0);
   const [customWaypoint, setCustomWaypoint] = useState<{ x: number; y: number; label: string } | null>(null);
   const [hudCoord, setHudCoord] = useState<{ x: number; y: number }>({ x: 800, y: 720 });
 
@@ -158,15 +167,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   // Target Move (Tap-to-move on mobile/desktop)
   const targetPosRef = useRef<Position | null>(null);
 
-  // Browser Fullscreen Handler
-  const toggleBrowserFullscreen = () => {
-    soundEngine.playClick();
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
-    } else {
-      document.exitFullscreen().catch(() => {});
-    }
-  };
+
 
   // Full-Screen Resize Listener
   useEffect(() => {
@@ -182,14 +183,16 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Start procedural celesta music-box tune of "Bol Na Halke Halke" on mount
+  // Start room audio theme and background exploration track
   useEffect(() => {
-    soundEngine.startBolNaHalkeHalkeTuneLoop();
-    setIsTunePlaying(true);
+    soundEngine.setRoomTheme(currentRoomId);
+    if (!soundEngine.getSongPlaying() && soundEngine.getCurrentSong() !== 'bol_na_halke_halke') {
+      soundEngine.playSong('mohabat');
+    }
     return () => {
-      soundEngine.stopBolNaHalkeHalkeTuneLoop();
+      soundEngine.stopRoomTheme();
     };
-  }, []);
+  }, [currentRoomId]);
 
   // Room Transition Helper with Camera Snap
   const changeRoom = useCallback((newRoomId: RoomId, spawnPos?: Position, syncNav = true) => {
@@ -248,16 +251,13 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     pagluEmoteRef.current = 'sparkle';
     pagluEmoteTimerRef.current = 100;
 
-    if (newRoomId === 'garden') {
-      soundEngine.startGardenMelody();
-    } else {
-      soundEngine.stopGardenMelody();
-    }
+    savePlayerPosition(newRoomId, newSpawn, entryDir);
+    soundEngine.setRoomTheme(newRoomId);
 
     if (syncNav) {
       navigateTo(newRoomId === 'overworld' ? 'hub' : (newRoomId as LocationId));
     }
-  }, [navigateTo]);
+  }, [navigateTo, savePlayerPosition]);
 
   // Sync room when navigation changes externally (e.g. from Journal Quick-Travel)
   useEffect(() => {
@@ -297,6 +297,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        if (isSettingsOpen) {
+          setIsSettingsOpen(false);
+          return;
+        }
         if (isMapOpen) {
           setIsMapOpen(false);
           return;
@@ -321,9 +325,19 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
         }
       }
 
-      // Suspend movement & action hotkeys when a modal/Journal/Map is open or an input field is focused
+      // 'P' or 'O' key toggles Settings
+      if (e.key.toLowerCase() === 'p' || e.key.toLowerCase() === 'o') {
+        const activeTag = document.activeElement?.tagName.toLowerCase();
+        if (activeTag !== 'input' && activeTag !== 'textarea') {
+          soundEngine.playClick();
+          setIsSettingsOpen(prev => !prev);
+          return;
+        }
+      }
+
+      // Suspend movement & action hotkeys when a modal/Journal/Map/Settings is open or an input field is focused
       const activeTag = document.activeElement?.tagName.toLowerCase();
-      if (isModalOpen || isJournalOpen || isMapOpen || activeTag === 'input' || activeTag === 'textarea') {
+      if (isModalOpen || isJournalOpen || isMapOpen || isSettingsOpen || activeTag === 'input' || activeTag === 'textarea') {
         keysPressed.current = {};
         return;
       }
@@ -351,7 +365,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [handleAction, isModalOpen, isJournalOpen, isMapOpen, onCloseModal]);
+  }, [handleAction, isModalOpen, isJournalOpen, isMapOpen, isSettingsOpen, onCloseModal]);
 
   // 60fps Game & Camera Loop
   useEffect(() => {
@@ -458,6 +472,11 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
       // Footstep sound & movement physics
       if (isMoving) {
+        const nowTime = performance.now();
+        if (nowTime - lastSavedPosTimeRef.current > 300) {
+          lastSavedPosTimeRef.current = nowTime;
+          savePlayerPosition(currentRoomId, playerPosRef.current, playerDirRef.current);
+        }
         const stepRate = isRunning ? 6 : 9;
         if (frameCount % stepRate === 0) {
           walkFrameRef.current++;
@@ -1058,7 +1077,8 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     isMapOpen,
     changeRoom,
     onTriggerInteraction,
-    getPromptLabel
+    getPromptLabel,
+    savePlayerPosition
   ]);
 
   // Mouse Drag Panning & Screen-to-World Click/Tap-to-Move Projection
@@ -1324,10 +1344,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             setIsMapOpen(true);
           }}
           className="pixel-btn pixel-btn-peach font-display"
-          style={{ padding: '6px 12px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}
-          title="Open World Map & Expedition Guide (M)"
+          style={{ padding: '6px 14px', fontSize: '0.78rem' }}
+          title="Open World Map (M)"
         >
-          <span>🗺️ MAP</span>
+          MAP
         </button>
 
         {/* Journal Button */}
@@ -1337,48 +1357,28 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
             setIsJournalOpen(true);
           }}
           className="pixel-btn pixel-btn-primary font-display"
-          style={{ padding: '6px 12px', fontSize: '0.75rem' }}
-          title="Open Expedition Journal"
+          style={{ padding: '6px 14px', fontSize: '0.78rem' }}
+          title="Open Expedition Journal (J)"
         >
           JOURNAL
         </button>
 
-        {/* Bol Na Halke Halke Music-Box Tune Toggle */}
+        {/* Settings Button */}
         <button
           onClick={() => {
-            const playing = soundEngine.toggleTuneLoop();
-            setIsTunePlaying(playing);
+            soundEngine.playClick();
+            setIsSettingsOpen(true);
           }}
-          className={`pixel-btn ${isTunePlaying ? 'pixel-btn-peach' : 'pixel-btn-ghost'} font-mono`}
-          style={{ padding: '6px 12px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}
-          title="Toggle Bol Na Halke Halke Music-Box Tune"
-        >
-          <span style={{ color: 'var(--color-rose-glow)' }}>♪</span>
-          <span>{isTunePlaying ? '♪ Music: On' : '♪ Music: Off'}</span>
-        </button>
-
-        {/* Audio Mute/Unmute */}
-        <button
-          onClick={toggleMute}
           className="pixel-btn pixel-btn-ghost font-mono"
-          style={{ padding: '6px 10px', fontSize: '0.75rem' }}
-          title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+          style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+          title="Open Expedition Settings & Preferences"
         >
-          {isMuted ? 'SOUND: OFF' : 'SOUND: ON'}
-        </button>
-
-        {/* Browser Fullscreen Toggle */}
-        <button
-          onClick={toggleBrowserFullscreen}
-          className="pixel-btn pixel-btn-ghost font-mono"
-          style={{ padding: '6px 10px', fontSize: '0.75rem' }}
-          title="Toggle Browser Fullscreen (F11)"
-        >
-          FULLSCREEN
+          SETTINGS
         </button>
       </div>
 
       {/* FLOATING BOTTOM-LEFT D-PAD & SPRINT (TOUCH / MOUSE) */}
+      {isVirtualDpadVisible && (
       <div 
         style={{ 
           position: 'fixed', 
@@ -1432,6 +1432,7 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           <div />
         </div>
       </div>
+      )}
 
       {/* FLOATING ACTION PROMPT - ONLY VISIBLE WHEN READY TO ACT */}
       {activeInteractable && !isModalOpen && !isJournalOpen && !isMapOpen && (
@@ -1501,6 +1502,18 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
           }}
         />
       )}
+      {/* EXPEDITION SETTINGS & PREFERENCES MODAL */}
+      <ExpeditionSettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        isVirtualDpadVisible={isVirtualDpadVisible}
+        onToggleVirtualDpad={() => setIsVirtualDpadVisible(v => !v)}
+        userZoom={userZoom}
+        onSetUserZoom={(z) => {
+          setUserZoom(z);
+          userZoomRef.current = z;
+        }}
+      />
     </div>
   );
 };

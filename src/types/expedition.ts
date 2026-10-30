@@ -100,6 +100,11 @@ export interface ExpeditionState {
   observatoryConstellationConnected?: boolean;
   gardenLanternsLit?: number;
   candlesBlown?: boolean;
+  bootCompleted?: boolean;
+  missedTimerAcknowledged?: boolean;
+  lastRoomId?: string;
+  playerCoordinates?: { x: number; y: number };
+  playerDirection?: 'up' | 'down' | 'left' | 'right';
   journal: JournalEntry[];
   isMuted: boolean;
 }
