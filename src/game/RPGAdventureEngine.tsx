@@ -57,10 +57,10 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
   const getPromptLabel = useCallback((item: InteractableObject) => {
     if (item.id === 'door_garden' && !secretGardenUnlocked) {
-      return 'Secret Rose Gate (Locked 🔒)';
+      return 'Secret Rose Gate [Locked]';
     }
     if (item.id === 'path_to_estates' && !isDreamEstatesUnlocked) {
-      return 'Grand Royal Arch (Dream Island • Locked 🔒)';
+      return 'Grand Royal Arch to Dream Island [Locked]';
     }
     return item.promptLabel;
   }, [secretGardenUnlocked, isDreamEstatesUnlocked]);

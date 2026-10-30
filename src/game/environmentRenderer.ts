@@ -106,8 +106,8 @@ export class EnvironmentRenderer {
     // Dense Alpine Pine Tree Silhouettes along the North Valley Perimeter
     for (let px = -60; px < width + 80; px += 26) {
       const pBaseY = 32 + Math.sin(px * 0.04) * 12;
-      // Skip doorway clearings for the 3 northern estates (Islamabad, Observatory, Castle)
-      if ((px > 80 && px < 180) || (px > 730 && px < 870) || (px > 1360 && px < 1490)) continue;
+      // Skip doorway clearing only for the Hilltop Observatory
+      if (px > 730 && px < 870) continue;
       // Dark pine trunk
       ctx.fillStyle = '#091512';
       ctx.fillRect(px + 4, pBaseY - 22, 4, 22);
@@ -230,10 +230,10 @@ export class EnvironmentRenderer {
       }
     };
 
-    // 1. Main North-South Grand Avenue (extended through the entire 1200px valley height)
-    drawStoneRoad(760, 40, 80, 1120, true);
-    // 2. Main East-West Royal Promenade (extended through the entire 1600px valley width)
-    drawStoneRoad(0, 560, 1600, 70, false);
+    // 1. Main North-South Grand Avenue (from Hilltop Observatory down through the Plaza)
+    drawStoneRoad(760, 40, 80, 1040, true);
+    // 2. Main East-West Royal Promenade (connecting Bureau to Court & Archive)
+    drawStoneRoad(180, 560, 1240, 70, false);
     // 3. Central Grand Plaza Stone Courtyard (spacious 280x240 marble courtyard for the Birthday Hearth)
     drawStoneRoad(660, 520, 280, 240, false);
     // 4. Western Bureau Approach Road
@@ -242,49 +242,8 @@ export class EnvironmentRenderer {
     drawStoneRoad(1280, 460, 60, 100, true);
     // 6. South-East Archive & Secret Garden Road
     drawStoneRoad(1280, 630, 60, 410, true);
-    // 7. North-East Mountain Trail leading to Queen Beenish's Castle
-    drawStoneRoad(1380, 10, 70, 140, true);
-    // 8. North-West Pine Trail leading to Islamabad 5-Marla Villa
-    drawStoneRoad(100, 10, 65, 140, true);
-
-    // --- THEMED SURFACE OVERLAYS FOR THE 5 HIGHWAYS ---
-    // 1. West Mafia Stealth Highway (x: 0..120, y: 560..630): Carbon asphalt with yellow dashes
-    ctx.fillStyle = '#0F172A';
-    ctx.fillRect(0, 560, 120, 70);
-    ctx.fillStyle = '#1E293B';
-    ctx.fillRect(0, 562, 120, 66);
-    ctx.fillStyle = '#F59E0B';
-    for (let dx = 8; dx < 115; dx += 20) {
-      ctx.fillRect(dx, 593, 12, 4); // Road dashed markings
-    }
-
-    // 2. East Bakery Pastry Lane (x: 1480..1600, y: 560..630): Pastel pink pavers
-    ctx.fillStyle = 'rgba(244, 114, 182, 0.22)';
-    ctx.fillRect(1480, 560, 120, 70);
-    ctx.fillStyle = '#F472B6';
-    for (let px = 1490; px < 1590; px += 20) {
-      ctx.fillRect(px, 566, 4, 3);
-      ctx.fillRect(px + 8, 620, 4, 3);
-    }
-
-    // 3. North-West Islamabad Pine Trail (x: 100..165, y: 10..150): Green pine-moss trail
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.18)';
-    ctx.fillRect(100, 10, 65, 140);
-
-    // 4. North-East Mountain Pass (x: 1380..1450, y: 10..150): Slate mountain rock
-    ctx.fillStyle = 'rgba(147, 51, 234, 0.15)';
-    ctx.fillRect(1380, 10, 70, 140);
-
-    // 5. South Gaon Haveli Trail (x: 760..840, y: 1120..1200): Earthen dirt road
-    ctx.fillStyle = '#543F2B';
-    ctx.fillRect(760, 1120, 80, 80);
-    ctx.fillStyle = '#78350F';
-    ctx.fillRect(762, 1122, 76, 78);
-    ctx.fillStyle = '#92400E';
-    for (let dy = 1126; dy < 1195; dy += 14) {
-      ctx.fillRect(775, dy, 5, 9); // Wheel ruts
-      ctx.fillRect(815, dy, 5, 9);
-    }
+    // 7. South-West Grand Archway Approach Road (leading to Dream Island Portal)
+    drawStoneRoad(480, 960, 80, 70, true);
 
     // --- REFLECTIVE WATER POND (SOUTH-WEST) WITH MULTI-DEPTH SHADING ---
     const pondX = 190;
@@ -466,26 +425,7 @@ export class EnvironmentRenderer {
     this.drawObservatoryMountainTrail(ctx, 750, 0);
     lights.push({ x: 790, y: 35, radius: 60, intensity: 0.9, color: '#F6D78B' });
 
-    // 7. THE 5 PROMINENT DREAM ESTATE PATHWAY PORTALS
-    // North-East: Mountain Pass to Queen Beenish's Castle
-    this.drawCastlePortal(ctx, 1390, 0, frame);
-    lights.push({ x: 1420, y: 20, radius: 60, intensity: 0.95, color: '#F59E0B' });
-
-    // West: Stealth Highway to Dark Brutalist Mafia Home & Batmobile
-    this.drawMafiaPortal(ctx, 4, 545, frame);
-    lights.push({ x: 32, y: 580, radius: 75, intensity: 1.0, color: '#38BDF8' });
-
-    // North-West: Pine Trail to Islamabad 5-Marla Villa
-    this.drawIslamabadPortal(ctx, 100, 0, frame);
-    lights.push({ x: 130, y: 22, radius: 55, intensity: 0.9, color: '#F6D78B' });
-
-    // East: Pastry Lane to Sweet Dreams Bakery
-    this.drawBakeryPortal(ctx, 1540, 550, frame);
-    lights.push({ x: 1560, y: 580, radius: 60, intensity: 0.95, color: '#F472B6' });
-
-    // South: Desi Gaon Trail to 12-Marla Haveli & Tubewell
-    this.drawHaveliPortal(ctx, 760, 1140, frame);
-    lights.push({ x: 800, y: 1160, radius: 60, intensity: 0.95, color: '#F59E0B' });
+    // (Dream Estates are exclusively located inside The Dream Island through the Grand Archway below)
 
     // 8. CENTRAL PLAZA ELEMENTS (GENEROUS BREATHING SPACE)
     // Central Crossroads: Grand 5-Way World Directional Guidepost
@@ -2752,40 +2692,40 @@ export class EnvironmentRenderer {
     ctx.fillStyle = '#451A03';
     ctx.fillRect(x + 14, y + 12, 4, 30);
 
-    // Signboard 1: Top-Left (Islamabad 5-Marla Villa)
+    // Signboard 1: Top (Observatory & Museum)
     ctx.fillStyle = '#064E3B';
-    ctx.fillRect(x, y + 4, 28, 8);
+    ctx.fillRect(x, y + 4, 32, 8);
     ctx.fillStyle = '#FEF08A';
     ctx.font = '4px monospace';
-    ctx.fillText('^ ISLAMABAD', x + 2, y + 10);
+    ctx.fillText('^ OBSERVATORY', x + 2, y + 10);
 
-    // Signboard 2: Top-Right (Queen's Castle)
+    // Signboard 2: Top-Right (Museum of Beenish)
     ctx.fillStyle = '#7C3AED';
     ctx.fillRect(x + 16, y + 11, 26, 8);
     ctx.fillStyle = '#F59E0B';
     ctx.font = '4px monospace';
-    ctx.fillText("CASTLE >", x + 18, y + 17);
+    ctx.fillText("MUSEUM ^", x + 18, y + 17);
 
-    // Signboard 3: Left (Brutalist Mafia Home)
+    // Signboard 3: Left (Bureau of Unreasonable Paglu)
     ctx.fillStyle = '#0F172A';
     ctx.fillRect(x - 2, y + 18, 26, 8);
     ctx.fillStyle = '#38BDF8';
     ctx.font = '4px monospace';
-    ctx.fillText("< MAFIA", x, y + 24);
+    ctx.fillText("< BUREAU", x, y + 24);
 
-    // Signboard 4: Right (Sweet Dreams Bakery)
+    // Signboard 4: Right (Court of No Flaws)
     ctx.fillStyle = '#BE185D';
     ctx.fillRect(x + 16, y + 24, 26, 8);
     ctx.fillStyle = '#FFFFFF';
     ctx.font = '4px monospace';
-    ctx.fillText("BAKERY >", x + 18, y + 30);
+    ctx.fillText("COURT >", x + 18, y + 30);
 
-    // Signboard 5: Bottom (Gaon Haveli)
+    // Signboard 5: Bottom (The Dream Island & 5 Estates)
     ctx.fillStyle = '#78350F';
-    ctx.fillRect(x + 2, y + 30, 28, 8);
+    ctx.fillRect(x + 2, y + 30, 30, 8);
     ctx.fillStyle = '#FDE68A';
     ctx.font = '4px monospace';
-    ctx.fillText("v HAVELI", x + 4, y + 36);
+    ctx.fillText("v DREAM ISLAND", x + 3, y + 36);
 
     // Brass top lantern with gentle pulsing beacon
     const bglow = Math.sin(frame * 0.1) * 0.2 + 0.8;
@@ -6313,22 +6253,7 @@ export class EnvironmentRenderer {
         }
       }
 
-      // 2. Portal Overhead Lintels & Awnings
-      // Mafia Portal top titanium beam (4, 545)
-      ctx.fillStyle = '#334155';
-      ctx.fillRect(4, 545, 52, 16);
-      ctx.fillStyle = '#64748B';
-      ctx.fillRect(4, 546, 52, 3);
-
-      // Bakery Portal top awning cap (1540, 550)
-      ctx.fillStyle = '#BE185D';
-      ctx.fillRect(1540, 550, 35, 8);
-      ctx.fillStyle = '#EC4899';
-      ctx.fillRect(1542, 550, 31, 4);
-
-      // Haveli Portal top crossbeam (760, 1140)
-      ctx.fillStyle = '#92400E';
-      ctx.fillRect(752, 1146, 80, 6);
+      // 2. Portal Overhead Lintels
 
       // Dream Estates Portal top archway beam (490, 1020)
       if (isCharBehind(1058, 480, 555)) {

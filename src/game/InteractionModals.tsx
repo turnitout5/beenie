@@ -1865,13 +1865,13 @@ export const InteractionModals: React.FC<InteractionModalsProps> = ({
     let actions: Array<{ label: string; feedback: string }> = [];
 
     if (id === 'world_signpost') {
-      category = 'Humare 5 Dream Estates Ka Map ♥';
-      title = 'Map of The 5 Dream Estates';
-      accentColor = '#38BDF8';
-      description = 'Ahmad (Pagluu) ka banaya hua master map! Is valley say 5 mukhtalif pathways nikalte hain jo seedha humary 5 dream houses ki taraf jatay hain:\n\n1. North-West: Margalla Trail -> Islamabad 5-Marla Luxury Villa\n2. West: Stealth Highway -> The Batcave & Dark Brutalist Safehouse\n3. East: Pastry Lane -> Sweet Dreams Bakery & Patisserie\n4. North-East: Mountain Pass -> Queen Beenish\'s Royal Mountain Castle\n5. South: Desi Trail -> 12-Marla Gaon Haveli & Gushing Tubewell';
-      extraNote = 'Chalein meri Paaaari, batayein pehly kahan chalna hai? Sab jagah aap ki marzi!';
+      category = 'Valley Directions & Guidepost ♥';
+      title = 'Guidepost to Valley & Dream Island';
+      accentColor = 'var(--color-lantern-gold)';
+      description = 'Ahmad (Pagluu) ka banaya hua master guidepost! Is pyari valley k raste:\n\n• North: Hilltop Observatory & Museum of Beenish\n• West: Bureau of Unreasonable Paglu (Ahmad\'s HQ)\n• East: Court of Absolutely No Flaws\n• South-East: Archive of Memories & Secret Rose Garden\n• South-West: Grand Royal Archway -> The 5 Dream Estates (Humara Dream Island: Islamabad Villa, Mafia Batcave, French Bakery, Royal Castle, aur Gaon Haveli!)';
+      extraNote = 'Chalein meri Paaaari, pehly stars collect karein aur phir Dream Island may apne dream houses explore karein! ♥';
       actions = [
-        { label: 'PLAN TODAY\'S ROAD TRIP', feedback: 'Pehle Batmobile may long drive, phir Bakery may white pasta aur strawberry cake, aur shaam ko Haveli may tubewell k paani may sukoon!' }
+        { label: 'CHECK DREAM ISLAND ROUTE', feedback: 'South-West par Grand Royal Archway seedha Dream Island k central fountain plaza ki taraf jata hai!' }
       ];
     } else if (id === 'pond_bench') {
       category = 'Sukoon Bhari Jheel ♥';

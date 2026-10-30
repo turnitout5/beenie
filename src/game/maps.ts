@@ -9,24 +9,19 @@ export const ROOMS: Record<RoomId, RoomDefinition> = {
     defaultSpawn: { x: 800, y: 720 },
     theme: 'valley',
     collisionBoxes: [
-      // Outer boundaries with wide open gateways:
-      // Top boundary: open at x: 90-180 (Islamabad Trail), x: 740-860 (Observatory), and x: 1370-1490 (Castle Mountain Pass)
-      { x: 0, y: 0, width: 90, height: 40 },
-      { x: 180, y: 0, width: 560, height: 40 },
-      { x: 860, y: 0, width: 510, height: 40 },
-      { x: 1490, y: 0, width: 110, height: 40 },
+      // Outer boundaries of the Valley (Solid perimeter with opening only for Hilltop Observatory):
+      // Top boundary: open only at x: 740-860 (Hilltop Observatory)
+      { x: 0, y: 0, width: 740, height: 40 },
+      { x: 860, y: 0, width: 740, height: 40 },
 
-      // Bottom boundary: open at x: 740-860 (Haveli Village Trail)
-      { x: 0, y: 1180, width: 740, height: 20 },
-      { x: 860, y: 1180, width: 740, height: 20 },
+      // Bottom boundary: solid lush perimeter
+      { x: 0, y: 1180, width: 1600, height: 20 },
 
-      // Left boundary: open at y: 535-635 (Mafia Stealth Highway)
-      { x: 0, y: 0, width: 25, height: 535 },
-      { x: 0, y: 635, width: 25, height: 565 },
+      // Left boundary: solid lush perimeter
+      { x: 0, y: 0, width: 25, height: 1200 },
 
-      // Right boundary: open at y: 530-630 (Bakery Pastry Lane)
-      { x: 1575, y: 0, width: 25, height: 530 },
-      { x: 1575, y: 630, width: 25, height: 570 },
+      // Right boundary: solid lush perimeter
+      { x: 1575, y: 0, width: 25, height: 1200 },
 
       // Spacious Building Footprints (Aligned to exact drawn facades):
       // 1. Bureau of Unreasonable Boyfriends (West Precinct: 200..340, 390..465)
