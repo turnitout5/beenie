@@ -185,12 +185,17 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
 
   // Start room audio theme and background exploration track
   useEffect(() => {
-    soundEngine.setRoomTheme(currentRoomId);
-    if (!soundEngine.getSongPlaying() && soundEngine.getCurrentSong() !== 'bol_na_halke_halke') {
-      soundEngine.playSong('mohabat');
+    soundEngine.pauseSong();
+    if (currentRoomId === 'overworld') {
+      soundEngine.stopRoomTheme();
+      soundEngine.startBolNaHalkeHalkeTuneLoop();
+    } else {
+      soundEngine.stopBolNaHalkeHalkeTuneLoop();
+      soundEngine.setRoomTheme(currentRoomId);
     }
     return () => {
       soundEngine.stopRoomTheme();
+      soundEngine.stopBolNaHalkeHalkeTuneLoop();
     };
   }, [currentRoomId]);
 
@@ -252,7 +257,14 @@ export const RPGAdventureEngine: React.FC<RPGAdventureEngineProps> = ({
     pagluEmoteTimerRef.current = 100;
 
     savePlayerPosition(newRoomId, newSpawn, entryDir);
-    soundEngine.setRoomTheme(newRoomId);
+    soundEngine.pauseSong();
+    if (newRoomId === 'overworld') {
+      soundEngine.stopRoomTheme();
+      soundEngine.startBolNaHalkeHalkeTuneLoop();
+    } else {
+      soundEngine.stopBolNaHalkeHalkeTuneLoop();
+      soundEngine.setRoomTheme(newRoomId);
+    }
 
     if (syncNav) {
       navigateTo(newRoomId === 'overworld' ? 'hub' : (newRoomId as LocationId));

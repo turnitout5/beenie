@@ -467,14 +467,13 @@ export const BootScene: React.FC = () => {
 
   // Trigger the celebratory burst of funny horns + birthday melody + floating particles
   const triggerMidnightCelebration = useCallback(() => {
+    soundEngine.pauseSong();
+    soundEngine.stopBolNaHalkeHalkeTuneLoop();
     soundEngine.playBirthdayHornFanfare();
     soundEngine.playKissChime();
     setTimeout(() => {
       soundEngine.playBirthdayJingle();
     }, 1500);
-    setTimeout(() => {
-      soundEngine.playSong('bol_na_halke_halke');
-    }, 3200);
 
     const particleTypes: Array<'heart' | 'star' | 'petal' | 'crown' | 'sparkle'> = [
       'heart',
@@ -578,7 +577,8 @@ const handleAcknowledgeLate = useCallback(() => {
 
   const handleAccept = () => {
     soundEngine.playStarChime();
-    soundEngine.playSong('mohabat');
+    soundEngine.pauseSong();
+    soundEngine.startBolNaHalkeHalkeTuneLoop();
     navigateTo('hub');
   };
 
