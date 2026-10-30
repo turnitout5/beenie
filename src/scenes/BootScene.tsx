@@ -431,12 +431,15 @@ export const BootScene: React.FC = () => {
   const [sadQuoteIdx, setSadQuoteIdx] = useState(0);
   const runawayBtnRef = useRef<HTMLButtonElement | null>(null);
   const lastSecRef = useRef<number>(-1);
+  const openedAfterTargetRef = useRef<boolean>(
+    typeof window !== 'undefined' && getTargetTimestamp() <= Date.now()
+  );
 
   const targetMs = simulatedCountdownEnd !== null ? simulatedCountdownEnd : getTargetTimestamp();
   const remainingMs = Math.max(0, targetMs - nowMs);
   const isLateExplicit = typeof window !== 'undefined' && (new URLSearchParams(window.location.search).get('late') === '1' || new URLSearchParams(window.location.search).get('late') === 'true');
   const hasPassedTarget = remainingMs <= 0;
-  const isMissedTimer = !forceUnlocked && (isLateExplicit || (hasPassedTarget && !state.bootCompleted && !state.missedTimerAcknowledged));
+  const isMissedTimer = !forceUnlocked && (isLateExplicit || (hasPassedTarget && openedAfterTargetRef.current && !state.bootCompleted && !state.missedTimerAcknowledged));
   const isUnlocked = forceUnlocked || (!isMissedTimer && remainingMs <= 0);
 
   const sadQuotes = [
@@ -579,6 +582,7 @@ const handleAcknowledgeLate = useCallback(() => {
     soundEngine.playStarChime();
     soundEngine.pauseSong();
     soundEngine.startBolNaHalkeHalkeTuneLoop();
+    setPuzzleState({ bootCompleted: true });
     navigateTo('hub');
   };
 
