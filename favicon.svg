@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Void Navy background -->
+  <rect width="32" height="32" fill="#101329" />
+  <!-- Midnight Indigo border -->
+  <rect x="0" y="0" width="32" height="2" fill="#1B2042" />
+  <rect x="0" y="30" width="32" height="2" fill="#1B2042" />
+  <rect x="0" y="0" width="2" height="32" fill="#1B2042" />
+  <rect x="30" y="0" width="2" height="32" fill="#1B2042" />
+  <!-- Master Star: Lantern Gold & Moon Cream center -->
+  <!-- Outer glow/points in Dusty Lavender & Dream Lilac -->
+  <rect x="15" y="4" width="2" height="4" fill="#C3A9E8" />
+  <rect x="15" y="24" width="2" height="4" fill="#C3A9E8" />
+  <rect x="4" y="15" width="4" height="2" fill="#C3A9E8" />
+  <rect x="24" y="15" width="4" height="2" fill="#C3A9E8" />
+  
+  <!-- Mid star points in Lantern Gold -->
+  <rect x="14" y="8" width="4" height="4" fill="#F6D78B" />
+  <rect x="14" y="20" width="4" height="4" fill="#F6D78B" />
+  <rect x="8" y="14" width="4" height="4" fill="#F6D78B" />
+  <rect x="20" y="14" width="4" height="4" fill="#F6D78B" />
+
+  <!-- Diagonal sparks -->
+  <rect x="10" y="10" width="2" height="2" fill="#9588BD" />
+  <rect x="20" y="10" width="2" height="2" fill="#9588BD" />
+  <rect x="10" y="20" width="2" height="2" fill="#9588BD" />
+  <rect x="20" y="20" width="2" height="2" fill="#9588BD" />
+
+  <!-- Core in Warm Peach & Moon Cream -->
+  <rect x="12" y="12" width="8" height="8" fill="#F6D78B" />
+  <rect x="13" y="13" width="6" height="6" fill="#F4EBDD" />
+  <rect x="14" y="14" width="4" height="4" fill="#FFFFFF" />
+</svg>
